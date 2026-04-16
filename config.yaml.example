@@ -1,0 +1,42 @@
+portal:
+  url_base: "https://agenciavirtual.neoenergia.com"
+  headless: true
+  browser_channel: "chrome"
+  browser_executable_path:
+  timeout_ms: 60000
+  max_retries: 3
+  delay_between_clients_s: 5.0
+  download_dir: "./downloads"
+
+database:
+  url: "sqlite:///data/faturas.db"
+
+service:
+  host: "127.0.0.1"
+  port: 8000
+  api_key: "troque-este-token"
+  max_concurrent_jobs: 1
+  artifacts_dir: "./downloads/_artifacts"
+  reset_incomplete_jobs_on_startup: true
+
+clientes:
+  - nome: "Maria Silva"
+    uc: "123456789"
+    cpf_cnpj: "123.456.789-01"
+    senha_portal: "senha_aqui"
+    uf: "BA"
+    tipo_acesso: "normal"
+
+  - nome: "Empresa ABC Ltda"
+    uc: "987654321"
+    cpf_cnpj: "12.345.678/0001-99"
+    senha_portal: "outra_senha"
+    uf: "BA"
+    tipo_acesso: "normal"
+
+  - nome: "Condomínio Residencial XYZ"
+    uc: "555666777"
+    cpf_cnpj: "98.765.432/0001-10"
+    senha_portal: "senha_imobiliaria"
+    uf: "BA"
+    tipo_acesso: "imobiliaria"

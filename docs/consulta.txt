@@ -1,0 +1,18 @@
+http://localhos:3000/api/v2/consultas/contas/neoenergia/download-ocr?token=XVxmenyNLmCdztStTM3HdTvTdIM9EfYBVemxpVCA&timeout=600&ignore_site_receipt=0&login_cpf=&login_cnpj=&login_senha=&uf=&uc=&mes_ano=&acesso_imobiliaria=
+
+
+Parâmetro	Descrição
+token *	Chave de acesso da API. É com o token que a API reconhece e autoriza quem está fazendo a chamada.
+login_cpf **	Login Cpf
+login_cnpj **	Login Cnpj
+login_senha *	Login Senha
+uf **	UF a ser acessada, se não informada será usado SP.
+Disponíveis:
+BA
+MS
+PE
+RN
+SP
+uc **	Unidade Consumidora, se não informada será retornado o primeiro resultado.
+mes_ano **	Mês e Ano da fatura desejada, devem ser informados no formato MMAAAA (Exemplo: 082024), se não informados será retornada a fatura mais recente.
+acesso_imobiliaria **	Caso deseje-se acessar o portal exclusivo de imobiliárias no site da Neoenergia, informe o valor 1.

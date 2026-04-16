@@ -1,0 +1,51 @@
+[project]
+name = "5g-energia-fatura"
+version = "0.1.0"
+description = "Automação de download e parsing de faturas Coelba/Neoenergia"
+requires-python = ">=3.12"
+dependencies = [
+    "playwright>=1.49",
+    "pdfplumber>=0.11",
+    "pydantic>=2.9",
+    "sqlalchemy>=2.0",
+    "pyyaml>=6.0",
+    "tenacity>=9.0",
+    "structlog>=24.0",
+    "rich>=13.0",
+    "fastapi>=0.115",
+    "uvicorn>=0.34",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+    "httpx>=0.28",
+    "ruff>=0.8",
+]
+ocr = [
+    "pytesseract>=0.3",
+    "Pillow>=10.0",
+]
+
+[project.scripts]
+fatura = "fatura.main:main"
+fatura-api = "fatura.api:main"
+
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+markers = [
+    "real_portal: testes reais contra o portal Neoenergia",
+]
