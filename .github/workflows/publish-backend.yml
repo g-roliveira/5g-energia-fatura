@@ -70,7 +70,10 @@ jobs:
         with:
           context: .
           file: services/backend-go/Dockerfile
+          platforms: linux/amd64
           push: true
+          provenance: false
+          sbom: false
           tags: ${{ steps.meta-backend.outputs.tags }}
           labels: ${{ steps.meta-backend.outputs.labels }}
 
@@ -79,7 +82,10 @@ jobs:
         with:
           context: .
           file: services/doc-extractor-py/Dockerfile
+          platforms: linux/amd64
           push: true
+          provenance: false
+          sbom: false
           tags: ${{ steps.meta-extractor.outputs.tags }}
           labels: ${{ steps.meta-extractor.outputs.labels }}
 
