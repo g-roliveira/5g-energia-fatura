@@ -70,7 +70,7 @@ jobs:
         with:
           context: .
           file: services/backend-go/Dockerfile
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: true
           provenance: false
           sbom: false
@@ -82,7 +82,7 @@ jobs:
         with:
           context: .
           file: services/doc-extractor-py/Dockerfile
-          platforms: linux/amd64
+          platforms: linux/amd64,linux/arm64
           push: true
           provenance: false
           sbom: false
