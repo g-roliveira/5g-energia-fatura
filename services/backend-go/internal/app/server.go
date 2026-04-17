@@ -24,6 +24,7 @@ type Server struct {
 
 func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 	mux := http.NewServeMux()
+	docs := newRouteCatalog()
 	apiClient := neoenergia.NewClient(cfg.NeoenergiaBaseURL)
 	extractorClient := extractor.NewClient(cfg.ExtractorBaseURL)
 	sqliteStore, err := store.OpenSQLite(cfg.DatabaseURL)
@@ -44,12 +45,18 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 		},
 	)
 
+	docs.add(http.MethodGet, "/healthz", "Health check", []string{"infra"}, http.StatusOK)
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, _ *http.Request) {
 		writeJSON(w, http.StatusOK, map[string]string{"status": "ok", "service": "backend-go"})
 	})
+	docs.add(http.MethodGet, "/openapi.json", "OpenAPI schema", []string{"infra"}, http.StatusOK)
+	mux.HandleFunc("/openapi.json", openAPIJSONHandler(docs.spec))
+	docs.add(http.MethodGet, "/docs", "Swagger UI", []string{"infra"}, http.StatusOK)
 	mux.HandleFunc("/docs", docsHTMLHandler)
+	docs.add(http.MethodGet, "/docs.md", "Markdown docs", []string{"infra"}, http.StatusOK)
 	mux.HandleFunc("/docs.md", docsMarkdownHandler)
 
+	docs.add(http.MethodPost, "/v1/credentials", "Create credential", []string{"credentials"}, http.StatusCreated)
 	mux.HandleFunc("/v1/credentials", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -72,6 +79,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 		writeJSON(w, http.StatusCreated, created)
 	})
 
+	docs.add(http.MethodPost, "/v1/credentials/{id}/session", "Create session from credential", []string{"credentials"}, http.StatusOK)
 	mux.HandleFunc("/v1/credentials/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -94,6 +102,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 		writeJSON(w, http.StatusOK, sessionView)
 	})
 
+	docs.add(http.MethodPost, "/v1/sync/uc", "Sync consumer unit", []string{"sync"}, http.StatusOK)
 	mux.HandleFunc("/v1/sync/uc", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -132,6 +141,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 		writeJSON(w, http.StatusOK, result)
 	})
 
+	docs.add(http.MethodGet, "/v1/consumer-units", "List consumer units", []string{"consumer-units"}, http.StatusOK)
 	mux.HandleFunc("/v1/consumer-units", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -147,6 +157,10 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 		writeJSON(w, http.StatusOK, map[string]any{"items": items, "limit": limit, "status": status})
 	})
 
+	docs.add(http.MethodGet, "/v1/consumer-units/{uc}", "Get consumer unit by UC", []string{"consumer-units"}, http.StatusOK)
+	docs.add(http.MethodGet, "/v1/consumer-units/{uc}/invoices", "List invoices by UC", []string{"invoices"}, http.StatusOK)
+	docs.add(http.MethodGet, "/v1/consumer-units/{uc}/latest-invoice", "Get latest invoice by UC", []string{"invoices"}, http.StatusOK)
+	docs.add(http.MethodPost, "/v1/consumer-units/{uc}/sync", "Sync specific UC", []string{"sync"}, http.StatusOK)
 	mux.HandleFunc("/v1/consumer-units/", func(w http.ResponseWriter, r *http.Request) {
 		parts := splitPath(r.URL.Path)
 		if len(parts) < 3 || parts[0] != "v1" || parts[1] != "consumer-units" {
@@ -247,6 +261,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 		w.WriteHeader(http.StatusNotFound)
 	})
 
+	docs.add(http.MethodGet, "/v1/invoices/{id}", "Get invoice by id", []string{"invoices"}, http.StatusOK)
 	mux.HandleFunc("/v1/invoices/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -269,6 +284,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 		writeJSON(w, http.StatusOK, item)
 	})
 
+	docs.add(http.MethodGet, "/v1/sync-runs/{id}", "Get sync run by id", []string{"sync"}, http.StatusOK)
 	mux.HandleFunc("/v1/sync-runs/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
 			w.WriteHeader(http.StatusMethodNotAllowed)
@@ -291,6 +307,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 		writeJSON(w, http.StatusOK, item)
 	})
 
+	docs.add(http.MethodGet, "/v1/extractor/contracts", "List extractor contracts", []string{"extractor"}, http.StatusOK)
 	mux.HandleFunc("/v1/extractor/contracts", func(w http.ResponseWriter, _ *http.Request) {
 		writeJSON(w, http.StatusOK, map[string]string{
 			"extractor_request":  "packages/contracts/extractor-request.schema.json",

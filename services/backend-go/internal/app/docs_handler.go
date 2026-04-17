@@ -2,8 +2,8 @@ package app
 
 import (
 	_ "embed"
+	"encoding/json"
 	"fmt"
-	"html"
 	"net/http"
 )
 
@@ -22,48 +22,47 @@ func docsHTMLHandler(w http.ResponseWriter, _ *http.Request) {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Backend Go API Docs</title>
+  <title>Swagger UI - Backend Go API</title>
   <style>
-    :root {
-      color-scheme: light dark;
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    html, body { margin: 0; padding: 0; height: 100%%; }
+    #swagger-ui { height: 100%%; }
+    .top-links {
+      position: fixed;
+      z-index: 99999;
+      right: 16px;
+      top: 12px;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      font-size: 12px;
+      background: rgba(0,0,0,.7);
+      border-radius: 6px;
+      padding: 6px 10px;
     }
-    body {
-      margin: 0;
-      background: #0b1020;
-      color: #e8edf7;
-    }
-    main {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 32px 20px 48px;
-    }
-    a {
-      color: #7dd3fc;
-    }
-    .actions {
-      margin-bottom: 16px;
-    }
-    pre {
-      white-space: pre-wrap;
-      word-break: break-word;
-      background: #11192f;
-      border: 1px solid #223255;
-      border-radius: 12px;
-      padding: 20px;
-      overflow: auto;
-      line-height: 1.5;
-      font-size: 14px;
-    }
+    .top-links a { color: #fff; text-decoration: none; }
   </style>
+  <link rel="stylesheet" href="https://unpkg.com/swagger-ui-dist@5/swagger-ui.css" />
 </head>
 <body>
-  <main>
-    <div class="actions">
-      <a href="/docs.md">Ver Markdown bruto</a>
-    </div>
-    <pre>%s</pre>
-  </main>
+  <div class="top-links"><a href="/docs.md">docs.md</a></div>
+  <div id="swagger-ui"></div>
+  <script src="https://unpkg.com/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
+  <script>
+    window.ui = SwaggerUIBundle({
+      url: "/openapi.json",
+      dom_id: "#swagger-ui",
+      deepLinking: true,
+      displayRequestDuration: true
+    });
+  </script>
 </body>
-</html>`, html.EscapeString(backendDocsMarkdown))
+</html>`)
+}
+
+func openAPIJSONHandler(specFn func() map[string]any) http.HandlerFunc {
+	return func(w http.ResponseWriter, _ *http.Request) {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		spec := specFn()
+		encoder := json.NewEncoder(w)
+		encoder.SetIndent("", "  ")
+		_ = encoder.Encode(spec)
+	}
 }

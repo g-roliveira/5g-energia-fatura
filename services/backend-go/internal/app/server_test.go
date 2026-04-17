@@ -41,8 +41,21 @@ func TestDocsEndpoints(t *testing.T) {
 		t.Fatalf("unexpected /docs status: %d", htmlResp.StatusCode)
 	}
 	htmlBody, _ := io.ReadAll(htmlResp.Body)
-	if !strings.Contains(string(htmlBody), "Backend Go API") {
-		t.Fatalf("expected docs title in /docs response: %s", string(htmlBody))
+	if !strings.Contains(string(htmlBody), "SwaggerUIBundle") {
+		t.Fatalf("expected swagger ui in /docs response: %s", string(htmlBody))
+	}
+
+	openapiResp, err := http.Get(apiServer.URL + "/openapi.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer openapiResp.Body.Close()
+	if openapiResp.StatusCode != http.StatusOK {
+		t.Fatalf("unexpected /openapi.json status: %d", openapiResp.StatusCode)
+	}
+	openapiBody, _ := io.ReadAll(openapiResp.Body)
+	if !strings.Contains(string(openapiBody), "\"openapi\": \"3.0.3\"") {
+		t.Fatalf("expected openapi version in /openapi.json response: %s", string(openapiBody))
 	}
 
 	mdResp, err := http.Get(apiServer.URL + "/docs.md")
