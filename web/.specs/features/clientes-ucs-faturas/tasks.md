@@ -1,7 +1,24 @@
 # Clientes + UCs + Faturas — Tasks
 
 **Design**: `.specs/features/clientes-ucs-faturas/design.md`
-**Status**: Approved
+**Status**: In Progress
+
+## Progress
+- [x] T01 — deps + vitest (commits: 594630f, 727a2f0)
+- [x] T02 — .env.local.example (commit: 49065b4)
+- [x] T03 — prisma schema (commit: f12bf04)
+- [x] T04 — prisma.config.ts + lib/db.ts (commit: 5b3de7d) ⚠️ migration pendente: requer PostgreSQL rodando
+- [x] T05 — go-client.ts + 4 testes (commit: 914ed0a)
+- [x] T06 — types/clientes.ts + 5 testes (commit: 17a203e)
+- [x] T07–T16 — BFF routes (Phase 2+3)
+- [x] T17–T23 — UI components (Phase 4)
+- [x] T24–T31 — Pages (Phase 5)
+- [x] T32 — seed + docs (Phase 6)
+
+## Desvios registrados
+- Prisma 7.7 não aceita `url` em schema.prisma → criado `prisma.config.ts` com `defineConfig`
+- `client_id` opcional em `CreateCredentialSchema` (vem do URL path, não do body)
+- Zod v4: `.partial()` não funciona em schemas com `.superRefine()` → padrão de base schema
 
 ---
 

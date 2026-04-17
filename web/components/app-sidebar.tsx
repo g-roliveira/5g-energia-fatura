@@ -8,6 +8,7 @@ import {
   Folder01Icon,
   Settings01Icon,
   UserIcon,
+  UserGroupIcon,
   Search01Icon,
   MailOpen01Icon,
   Calendar03Icon,
@@ -236,6 +237,52 @@ function TeamSwitcher() {
   )
 }
 
+const clientesNav = [
+  { title: "Todos os clientes", url: "/clientes" },
+  { title: "Novo cliente", url: "/clientes/novo" },
+]
+
+function NavClientes() {
+  return (
+    <SidebarGroup>
+      <SidebarGroupLabel>Clientes</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          <Collapsible defaultOpen>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild tooltip="Clientes">
+                <Link href="/clientes">
+                  <HugeiconsIcon icon={UserGroupIcon} strokeWidth={2} />
+                  <span>Clientes</span>
+                </Link>
+              </SidebarMenuButton>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuAction className="data-open:rotate-90 transition-transform">
+                  <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={2} />
+                  <span className="sr-only">Expandir</span>
+                </SidebarMenuAction>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarMenuSub>
+                  {clientesNav.map((item) => (
+                    <SidebarMenuSubItem key={item.title}>
+                      <SidebarMenuSubButton asChild>
+                        <Link href={item.url}>
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  ))}
+                </SidebarMenuSub>
+              </CollapsibleContent>
+            </SidebarMenuItem>
+          </Collapsible>
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  )
+}
+
 function NavMain() {
   return (
     <SidebarGroup>
@@ -458,6 +505,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarSeparator />
       <SidebarContent>
+        <NavClientes />
+        <SidebarSeparator />
         <NavMain />
         <SidebarSeparator />
         <NavProjects />
