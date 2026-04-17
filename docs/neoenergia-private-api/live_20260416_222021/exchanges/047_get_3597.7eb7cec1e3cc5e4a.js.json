@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/3597.7eb7cec1e3cc5e4a.js",
+  "path": "/3597.7eb7cec1e3cc5e4a.js",
+  "query": {},
+  "request_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "cache-control": "max-age=438927",
+    "content-encoding": "gzip",
+    "etag": "W/\"69ced885-6045\"",
+    "x-content-type-options": "nosniff",
+    "content-length": "5057",
+    "x-xss-protection": "1; mode=block",
+    "date": "Fri, 17 Apr 2026 01:20:33 GMT",
+    "content-type": "application/javascript",
+    "last-modified": "Thu, 02 Apr 2026 20:58:45 GMT",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "response_body": "\"use strict\";\n(self[\"webpackChunkneoenergia_web\"] = self[\"webpackChunkneoenergia_web\"] || []).push([[3597],{\n\n/***/ 39386:\n/*!****************************************************************************************!*\\\n  !*** ./src/app/core/routes/login-route/login-child-routes/selecao-de-perfis.routes.ts ***!\n  \\****************************************************************************************/\n/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {\n\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"selecaoPerfisRoutes\": () => (/* binding */ selecaoPerfisRoutes)\n/* harmony export */ });\n/* harmony import */ var app_modules_selecao_de_perfis_selecao_perfis_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! app/modules/selecao-de-perfis/selecao-perfis.component */ 16043);\n\nconst selecaoPerfisRoutes = [{\n  path: '',\n  component: app_modules_selecao_de_perfis_selecao_perfis_component__WEBPACK_IMPORTED_MODULE_0__.SelecaoPerfisComponent\n}];\n\n/***/ }),\n\n/***/ 7286:\n/*!*****************************************************************************************************************!*\\\n  !*** ./src/app/modules/selecao-de-perfis/components/dados-perfil-de-acesso/dados-perfil-de-acesso.component.ts ***!\n  \\*****************************************************************************************************************/\n/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {\n\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"DadosPerfilDeAcessoComponent\": () => (/* binding */ DadosPerfilDeAcessoComponent)\n/* harmony export */ });\n/* harmony import */ var app_core_enums_servicos__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! app/core/enums/servicos */ 68636);\n/* harmony import */ var app_core_models_home_sub_rotas_home__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! app/core/models/home/sub-rotas-home */ 32561);\n/* harmony import */ var app_core_models_multilogin_multilogin_acesso__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! app/core/models/multilogin/multilogin-acesso */ 22836);\n/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/core */ 5000);\n/* harmony import */ var app_core_services_selecao_perfil_de_acesso_selecao_perfil_de_acesso_service__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! app/core/services/selecao-perfil-de-acesso/selecao-perfil-de-acesso.service */ 35436);\n/* harmony import */ var app_core_services_multilogin_acesso_multilogin_acesso_service__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! app/core/services/multilogin-acesso/multilogin-acesso.service */ 92940);\n/* harmony import */ var app_core_services_selecao_de_imovel_selecao_de_imovel_service__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! app/core/services/selecao-de-imovel/selecao-de-imovel.service */ 16855);\n/* harmony import */ var app_core_services_user_user_service__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! app/core/services/user/user.service */ 27353);\n/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/router */ 74202);\n/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @angular/common */ 69808);\n\n\n\n\n\n\n\n\n\n\n\nconst _c0 = function (a0) {\n  return {\n    \"color\": a0\n  };\n};\n\nfunction DadosPerfilDeAcessoComponent_div_1_Template(rf, ctx) {\n  if (rf & 1) {\n    const _r4 = _angular_core__WEBPACK_IMPORTED_MODULE_7__[\"ɵɵgetCurrentView\"]();\n\n    _angular_core__WEBPACK_IMPORTED_MODULE_7__[\"ɵɵelementStart\"](0, \"div\", 2)(1, \"button\", 3);\n    _angular_core__WEBPACK_IMPORTED_MODULE_7__[\"ɵɵlistener\"](\"click\", function DadosPerfilDeAcessoComponent_div_1_Template_button_click_1_listener() {\n      const restoredCtx = _angular_core__WEBPACK_IMPOR"
+}

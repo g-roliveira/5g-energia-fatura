@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/4092.ad2a52232bdf2265.js",
+  "path": "/4092.ad2a52232bdf2265.js",
+  "query": {},
+  "request_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "cache-control": "max-age=435501",
+    "content-encoding": "gzip",
+    "etag": "W/\"69ced885-6a9b\"",
+    "x-content-type-options": "nosniff",
+    "content-length": "5573",
+    "x-xss-protection": "1; mode=block",
+    "date": "Fri, 17 Apr 2026 01:18:54 GMT",
+    "content-type": "application/javascript",
+    "last-modified": "Thu, 02 Apr 2026 20:58:45 GMT",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "response_body": "\"use strict\";\n(self[\"webpackChunkneoenergia_web\"] = self[\"webpackChunkneoenergia_web\"] || []).push([[4092],{\n\n/***/ 23343:\n/*!*********************************************************!*\\\n  !*** ./src/app/shared/Validators/password-validator.ts ***!\n  \\*********************************************************/\n/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {\n\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"PasswordValidator\": () => (/* binding */ PasswordValidator)\n/* harmony export */ });\nclass PasswordValidator {\n  static hasSequencialNumbers() {\n    return control => {\n      const regex = /^012|123|234|345|456|567|678|789|891|987|876|765|654|543|432|321|210$/;\n      const hasSequencialNumbers = regex.test(control.value);\n      return hasSequencialNumbers ? {\n        hasSequencialNumbers: true\n      } : null;\n    };\n  }\n\n  static hasPartsOfCPF(documento) {\n    return control => {\n      const numerosDocumento = documento.replace(/\\D/g, '');\n      const passwordArray = !!control.value ? control.value.split(/\\D/g) : '';\n      let hasPartsOfCPF = false;\n      let value = passwordArray[0] == null ? '' : passwordArray[0];\n\n      for (let i = 0; i <= numerosDocumento.length - 3; i++) {\n        const trecho = numerosDocumento.substring(i, i + 3);\n\n        if (value.includes(trecho)) {\n          hasPartsOfCPF = true;\n        }\n      }\n\n      return hasPartsOfCPF ? {\n        hasPartsOfCPF: true\n      } : null;\n    };\n  }\n\n  static hasRepeatParts() {\n    return control => {\n      const regex = /([0-9]+)\\1{1,}/;\n      const hasRepeatParts = regex.test(control.value);\n      return hasRepeatParts ? {\n        hasRepeatParts: true\n      } : null;\n    };\n  }\n\n  static hasNotAllowedCharacters() {\n    return control => {\n      const regex = /^[a-zA-Z0-9!?@#~^ ]+$/;\n      const hasNotAllowedCharacters = !!control.value && !regex.test(control.value);\n      return hasNotAllowedCharacters ? {\n        hasNotAllowedCharacters: true\n      } : null;\n    };\n  }\n\n  static hasEmptyString() {\n    return control => {\n      let hasEmptyString = false;\n      if (!!control.value) hasEmptyString = control.value.includes(\" \");\n      return hasEmptyString ? {\n        hasEmptyString: true\n      } : null;\n    };\n  }\n\n}\n\n/***/ }),\n\n/***/ 90592:\n/*!******************************************************************************!*\\\n  !*** ./src/app/shared/components/error-criteria/error-criteria.component.ts ***!\n  \\******************************************************************************/\n/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {\n\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ErrorCriteriaComponent\": () => (/* binding */ ErrorCriteriaComponent)\n/* harmony export */ });\n/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @angular/core */ 5000);\n/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/common */ 69808);\n/* harmony import */ var _angular_material_icon__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/material/icon */ 25245);\n\n\n\n\nconst _c0 = function (a0) {\n  return {\n    \"fw-bold\": a0\n  };\n};\n\nlet ErrorCriteriaComponent = /*#__PURE__*/(() => {\n  class ErrorCriteriaComponent {\n    constructor() {\n      this.errorName = \"\";\n      this.message = \"\";\n    }\n\n  }\n\n  ErrorCriteriaComponent.ɵfac = function ErrorCriteriaComponent_Factory(t) {\n    return new (t || ErrorCriteriaComponent)();\n  };\n\n  ErrorCriteriaComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_0__[\"ɵɵdefineComponent\"]({\n    type: ErrorCriteriaComponent,\n    selectors: [[\"app-error-criteria\"]],\n    inputs: {\n      passwordFormGroup: \"passwordFormGroup\",\n      errorName: \"errorName\",\n      message: \"message\"\n    },\n    decls: 6,\n    vars"
+}

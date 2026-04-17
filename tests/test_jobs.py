@@ -3,6 +3,7 @@ from decimal import Decimal
 from pathlib import Path
 
 import pytest
+from sqlalchemy import text
 
 from fatura.config import AppConfig, ClienteConfig, DatabaseConfig, PortalConfig, ServiceConfig, TipoAcesso
 from fatura.exceptions import DownloadError
@@ -12,6 +13,19 @@ from fatura.repository import SqliteFaturaRepository
 
 
 class FakeParser:
+    def parse(self, pdf_path: Path | str) -> ContaDistribuidora:
+        return ContaDistribuidora(
+            uc="7085489032",
+            mes=12,
+            ano=2024,
+            valor=Decimal("113.12"),
+            vencimento=date(2025, 1, 8),
+            cliente=Cliente(nome="Cliente Teste"),
+            pdf_path=str(pdf_path),
+        )
+
+
+class FakeParserWithTrimmedUc:
     def parse(self, pdf_path: Path | str) -> ContaDistribuidora:
         return ContaDistribuidora(
             uc="7085489032",
@@ -125,3 +139,73 @@ async def test_cli_processar_faturas_reuses_batch_orchestration(tmp_path: Path):
     assert result.total == 1
     assert result.sucesso == 1
     assert result.erro == 0
+
+
+@pytest.mark.asyncio
+async def test_batch_processor_preserves_input_uc_with_leading_zero(tmp_path: Path):
+    config = build_config(tmp_path)
+    repo = SqliteFaturaRepository(config.database.url)
+    FakeClient.failing_ucs = set()
+    processor = BatchProcessor(
+        config=config,
+        repo=repo,
+        parser=FakeParserWithTrimmedUc(),
+        client_factory=FakeClient,
+    )
+
+    spec = BatchSpec(
+        cpf_cnpj="12345678901",
+        senha_portal="senha",
+        uf="BA",
+        tipo_acesso=TipoAcesso.NORMAL,
+        targets=[BatchTarget(uc="007085489032", nome="UC com zero")],
+        mes_ano="122024",
+    )
+
+    result = await processor.run_batch(spec)
+
+    assert result.status == "succeeded"
+    assert repo.conta_existe("007085489032", 12, 2024) is True
+    assert repo.conta_existe("7085489032", 12, 2024) is False
+    conta = repo.buscar_conta("007085489032", 12, 2024)
+    assert conta is not None
+    assert conta.uc == "007085489032"
+    assert result.items[0].uc == "007085489032"
+
+
+@pytest.mark.asyncio
+async def test_batch_processor_persists_ocr_payload_in_sqlite(tmp_path: Path):
+    config = build_config(tmp_path)
+    repo = SqliteFaturaRepository(config.database.url)
+    FakeClient.failing_ucs = set()
+    processor = BatchProcessor(
+        config=config,
+        repo=repo,
+        parser=FakeParserWithTrimmedUc(),
+        client_factory=FakeClient,
+    )
+
+    spec = BatchSpec(
+        cpf_cnpj="12345678901",
+        senha_portal="senha",
+        uf="BA",
+        tipo_acesso=TipoAcesso.NORMAL,
+        targets=[BatchTarget(uc="007085489032", nome="UC com OCR")],
+        mes_ano="122024",
+        force=True,
+    )
+
+    result = await processor.run_batch(spec)
+
+    assert result.status == "succeeded"
+    assert result.items[0].ocr_data is not None
+    assert result.items[0].ocr_data["cliente"]["nome"] == "Cliente Teste"
+    assert result.items[0].ocr_data["mes"] == 12
+    assert result.items[0].ocr_data["normalizado_valor"] == 113.12
+
+    with repo._get_session() as session:
+        ocr_json = session.execute(text("SELECT ocr_json FROM contas LIMIT 1")).scalar_one()
+
+    assert ocr_json is not None
+    assert '"nome": "Cliente Teste"' in ocr_json
+    assert '"normalizado_valor": 113.12' in ocr_json

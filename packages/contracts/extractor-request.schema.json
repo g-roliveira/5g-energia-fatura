@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://5g-energia-fatura.local/contracts/extractor-request.schema.json",
+  "title": "ExtractorRequest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "job_id", "uc", "documento", "numero_fatura", "pdf"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "job_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "uc": {
+      "type": "string",
+      "minLength": 1
+    },
+    "documento": {
+      "type": "string",
+      "minLength": 11
+    },
+    "numero_fatura": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mes_referencia": {
+      "type": ["string", "null"]
+    },
+    "pdf": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["mode"],
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["path", "base64"]
+        },
+        "path": {
+          "type": ["string", "null"]
+        },
+        "base64": {
+          "type": ["string", "null"]
+        },
+        "file_name": {
+          "type": ["string", "null"]
+        }
+      }
+    },
+    "requested_fields": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "api_snapshot": {
+      "type": ["object", "null"]
+    }
+  }
+}

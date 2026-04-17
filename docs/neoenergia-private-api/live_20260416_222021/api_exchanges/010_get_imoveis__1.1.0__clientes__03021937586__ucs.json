@@ -1,0 +1,123 @@
+{
+  "method": "GET",
+  "url": "https://apineprd.neoenergia.com/imoveis/1.1.0/clientes/03021937586/ucs?documento=03021937586&canalSolicitante=AGC&distribuidora=COELBA&usuario=WSO2_CONEXAO&indMaisUcs=X&protocolo=123&opcaoSSOS=S&tipoPerfil=1",
+  "path": "/imoveis/1.1.0/clientes/03021937586/ucs",
+  "query": {
+    "documento": "*******7586",
+    "canalSolicitante": "AGC",
+    "distribuidora": "COELBA",
+    "usuario": "***",
+    "indMaisUcs": "X",
+    "protocolo": "123",
+    "opcaoSSOS": "S",
+    "tipoPerfil": "1"
+  },
+  "request_headers": {
+    "host": "apineprd.neoenergia.com",
+    "accept-encoding": "gzip, deflate",
+    "connection": "keep-alive",
+    "accept": "application/json",
+    "accept-language": "pt-BR",
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "authorization": "<redacted>",
+    "cookie": "<redacted>"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "activityid": "4efb08b6-bbc6-4046-b37d-effa6acddb19",
+    "access-control-expose-headers": "",
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "GET",
+    "uber-trace-id": "5fc39e1f75d95334%3A281d4fe6af0e56dd%3A171a417f21e4c7f9%3A1",
+    "access-control-allow-headers": "authorization,Access-Control-Allow-Origin,Content-Type,SOAPAction,Authorization",
+    "transactionid": "3d58c22f-0a4e-46e4-8980-d75df95274ca",
+    "content-type": "application/json; charset=UTF-8",
+    "vary": "Accept-Encoding",
+    "content-encoding": "gzip",
+    "expires": "Fri, 17 Apr 2026 01:20:40 GMT",
+    "cache-control": "max-age=0, no-cache, no-store",
+    "pragma": "no-cache",
+    "date": "Fri, 17 Apr 2026 01:20:40 GMT",
+    "content-length": "432",
+    "connection": "keep-alive",
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "set-cookie": "<redacted>"
+  },
+  "response_body": {
+    "ucs": [
+      {
+        "status": "LIGADA",
+        "uc": "007098175908",
+        "nomeCliente": "PAULA PEREIRA FERNANDES",
+        "instalacao": "0009043917",
+        "local": {
+          "endereco": "RUA BAHIA, 130",
+          "bairro": "CENTRO-LAPAO",
+          "municipio": "LAPAO",
+          "cep": "44905-000",
+          "uf": "BA"
+        },
+        "enderecoEntrega": {
+          "endereco": "RUA BAHIA 130",
+          "bairro": "CENTRO-LAPAO",
+          "municipio": "LAPAO",
+          "cep": "44905-000",
+          "uf": "BA"
+        },
+        "isGrupo": null,
+        "nomeGrupo": null,
+        "grupoTensao": "B",
+        "bOptante": null,
+        "contrato": "0023513361",
+        "dt_inicio": "2026-02-20",
+        "dt_fim": "9999-12-31",
+        "medidor": null,
+        "indMaisUcs": null,
+        "ucColetiva": null,
+        "indCCColetiva": null
+      },
+      {
+        "status": "DESLIGADA",
+        "uc": "007085489032",
+        "nomeCliente": "PAULA PEREIRA FERNANDES",
+        "instalacao": "0009043917",
+        "local": {
+          "endereco": "RUA BAHIA, 130",
+          "bairro": "CENTRO-LAPAO",
+          "municipio": "LAPAO",
+          "cep": "44905-000",
+          "uf": "BA"
+        },
+        "enderecoEntrega": {
+          "endereco": "RUA BAHIA 130",
+          "bairro": "CENTRO-LAPAO",
+          "municipio": "LAPAO",
+          "cep": "44905-000",
+          "uf": "BA"
+        },
+        "isGrupo": null,
+        "nomeGrupo": null,
+        "grupoTensao": "B",
+        "bOptante": null,
+        "contrato": "0022215892",
+        "dt_inicio": "2024-07-31",
+        "dt_fim": "2024-12-19",
+        "medidor": null,
+        "indMaisUcs": null,
+        "ucColetiva": null,
+        "indCCColetiva": null
+      }
+    ],
+    "e_resultado": "X",
+    "retorno": {
+      "id": "ZATCWS",
+      "tipo": "S",
+      "numero": "029",
+      "mensagem": "Executado com sucesso."
+    }
+  }
+}

@@ -1,0 +1,822 @@
+{
+  "007098175908": {
+    "protocolo": {
+      "protocoloSalesforce": 20260416280227135,
+      "protocoloSalesforceStr": "20260416280227135",
+      "protocoloLegado": 20260416280227135,
+      "protocoloLegadoStr": "20260416280227135",
+      "retorno": {
+        "e_resultado": "X"
+      }
+    },
+    "imovel": {
+      "codigo": "007098175908",
+      "instalacao": "0009043917",
+      "medidor": "000000001204300816",
+      "fase": "MONOFASE",
+      "local": {
+        "endereco": "RUA BAHIA 130",
+        "bairro": "CENTRO-LAPAO",
+        "codLocalidade": "100000011936",
+        "localidade": "LAPAO",
+        "codMunicipio": "100000006161",
+        "municipio": "LAPAO",
+        "cep": "44905-000",
+        "localizacao": {
+          "sigla": "URBANO",
+          "codigo": null,
+          "descricao": null
+        },
+        "uf": "BA",
+        "tipoLogradouro": "RU",
+        "nomeLogradouro": "RUA BAHIA",
+        "numero": "130",
+        "complementoEndereco": null
+      },
+      "enderecoEntrega": {
+        "endereco": "RUA BAHIA 130",
+        "bairro": "CENTRO-LAPAO",
+        "municipio": "LAPAO",
+        "cep": "44905-000",
+        "uf": "BA"
+      },
+      "situacao": {
+        "codigo": "LG",
+        "descricao": "LIGADA",
+        "dataSituacaoUC": "20260220",
+        "cargaInstalada": "470.0000000"
+      },
+      "dataLigacao": "20260220",
+      "cliente": {
+        "codigo": "1014945628",
+        "nome": "PAULA PEREIRA FERNANDES",
+        "dataAtualizacao": "20240731",
+        "documento": {
+          "tipo": {
+            "codigo": "CPF",
+            "descricao": "CADASTRO DE PESSOA FISICA"
+          },
+          "numero": "03021937586"
+        },
+        "segundoDocumento": {
+          "uf": "BA",
+          "orgaoExpedidor": {
+            "codigo": "SSP",
+            "descricao": "Carteira identidade"
+          },
+          "tipo": {
+            "codigo": "Z_RG",
+            "descricao": "Carteira identidade"
+          },
+          "numero": "1386263591"
+        },
+        "contato": {
+          "email": "paulinha_fernandes7@hotmail.com",
+          "celular": {
+            "ddd": null,
+            "numero": null
+          },
+          "telefone": {
+            "ddd": null,
+            "numero": "74-981350825"
+          }
+        },
+        "dataNascimento": "19940626"
+      },
+      "servicos": {
+        "baixaRenda": null,
+        "faturaEmail": null,
+        "dataCerta": "X",
+        "debitoAutomatico": null,
+        "faturaBraile": null,
+        "entregaAlternativa": null,
+        "debitosVencidos": null,
+        "contaMinima": "X",
+        "parcelamentoAbertoUc": null
+      },
+      "caracteristicas": {
+        "grandeCliente": null,
+        "irrigacao": null,
+        "fotovoltaico": null,
+        "vip7": null,
+        "espelho": null,
+        "microMiniGeracaoD": null,
+        "tarifaBranca": null
+      },
+      "mini_micro": null,
+      "utd": null,
+      "carga": null,
+      "e_resultado": "X"
+    },
+    "historico_consumo": {
+      "historicoConsumo": [
+        {
+          "dataPagamento": "00/00/0000",
+          "dataVencimento": "06/05/2026",
+          "dataLeitura": "11/04/2026",
+          "consumoKw": "   418,00",
+          "mesReferencia": "04/2026",
+          "numeroLeitura": "15.065,00",
+          "tipoLeitura": "01",
+          "dataInicioPeriodoCalc": "13/03/2026",
+          "dataFimPeriodoCalc": "11/04/2026",
+          "dataProxLeitura": "12/05/2026",
+          "valorFatura": "521,53",
+          "situacaoFatura": "AB",
+          "origem": "FAT",
+          "numeroFatura": "339800707843",
+          "statusFatura": "AVENCER",
+          "indicativoCustoDisponibilidade": null,
+          "indicativoMedia": null,
+          "mensagemDisponibilidadeMedia": null,
+          "mediadiaria": "13.93"
+        },
+        {
+          "dataPagamento": "00/00/0000",
+          "dataVencimento": "06/04/2026",
+          "dataLeitura": "12/03/2026",
+          "consumoKw": "   370,00",
+          "mesReferencia": "03/2026",
+          "numeroLeitura": "14.647,00",
+          "tipoLeitura": "01",
+          "dataInicioPeriodoCalc": "20/02/2026",
+          "dataFimPeriodoCalc": "12/03/2026",
+          "dataProxLeitura": "11/04/2026",
+          "valorFatura": "460,37",
+          "situacaoFatura": "AB",
+          "origem": "FAT",
+          "numeroFatura": "337950698598",
+          "statusFatura": "VENCIDA",
+          "indicativoCustoDisponibilidade": null,
+          "indicativoMedia": null,
+          "mensagemDisponibilidadeMedia": null,
+          "mediadiaria": "17.62"
+        }
+      ],
+      "mediamensal": "      394",
+      "e_resultado": "X",
+      "retorno": null
+    },
+    "data_certa": {
+      "e_resultado": "X",
+      "possuiDataBoa": "X",
+      "dataAtual": "06",
+      "retorno": {
+        "id": "ZATCWS",
+        "tipo": "S",
+        "numero": "029",
+        "mensagem": "Executado com sucesso."
+      }
+    },
+    "fatura_digital": {
+      "e_resultado": "X",
+      "PossuiFaturaDigital": null,
+      "emailFatura": null,
+      "emailCadastro": "paulinha_fernandes7@hotmail.com",
+      "dominioWhatsapp": null,
+      "dominioSMS": null,
+      "faturaBraile": null,
+      "faturaEntregaAlternativa": null,
+      "retorno": {
+        "tipo": "S",
+        "id": "ZATCWS",
+        "numero": "029",
+        "mensagem": "Executado com sucesso."
+      }
+    },
+    "debito_automatico": {
+      "e_resultado": "X",
+      "retorno": {
+        "id": "ZATCWS",
+        "tipo": "S",
+        "numero": "145",
+        "mensagem": "UC não possui débito automático cadastrado"
+      }
+    },
+    "faturas": {
+      "entregaFaturas": {
+        "codigoTipoEntrega": "01",
+        "descricaoTipoEntrega": "Entrega no Imóvel",
+        "enderecoEntrega": "RUA BAHIA 130  LAPAO CENTRO-LAPAO 44905-000",
+        "codigoTipoArrecadacao": "01",
+        "descricaoTipoArrecadacao": "Indefinida",
+        "dataCertaValida": null,
+        "dataVencimento": "06",
+        "dataCorte": "0000-00-00"
+      },
+      "faturas": [
+        {
+          "tipoFatura": {
+            "codigo": "PR",
+            "descricao": "Periodico"
+          },
+          "statusFatura": "A Vencer",
+          "dataCompetencia": "2026-04-11",
+          "dataEmissao": "2026-04-14",
+          "dataPagamento": "0000-00-00",
+          "dataVencimento": "2026-05-06",
+          "grupoTensao": null,
+          "mesReferencia": "2026/04",
+          "numeroFatura": "339800707843",
+          "origemFatura": "FAT",
+          "situacaoComercial": "AB",
+          "tipoArrecadacao": "Indefinida",
+          "tipoEntrega": "Entrega no Imóvel",
+          "tipoLeitura": "OSB",
+          "uc": "007098175908",
+          "valorEmissao": "521.53",
+          "dataInicioPeriodo": "2026-03-13",
+          "dataFimPeriodo": "2026-04-11",
+          "emitidoFatAgrupadora": null,
+          "nroFatAgrupadora": null,
+          "vencFatAgrupada": "0000-00-00",
+          "valorFatAgrupada": "0.00",
+          "tipoDoc": "FA",
+          "codigoCm": null,
+          "numeroBoletoUnico": null,
+          "agrupadorContaMinima": null,
+          "valorTotalCMAgrupada": "0.00",
+          "aceitaPix": "X"
+        },
+        {
+          "tipoFatura": {
+            "codigo": "PR",
+            "descricao": "Periodico"
+          },
+          "statusFatura": "Vencida",
+          "dataCompetencia": "2026-03-12",
+          "dataEmissao": "2026-03-13",
+          "dataPagamento": "0000-00-00",
+          "dataVencimento": "2026-04-06",
+          "grupoTensao": null,
+          "mesReferencia": "2026/03",
+          "numeroFatura": "337950698598",
+          "origemFatura": "FAT",
+          "situacaoComercial": "AB",
+          "tipoArrecadacao": "Indefinida",
+          "tipoEntrega": "Entrega no Imóvel",
+          "tipoLeitura": "OSB",
+          "uc": "007098175908",
+          "valorEmissao": "460.37",
+          "dataInicioPeriodo": "2026-02-20",
+          "dataFimPeriodo": "2026-03-12",
+          "emitidoFatAgrupadora": null,
+          "nroFatAgrupadora": null,
+          "vencFatAgrupada": "0000-00-00",
+          "valorFatAgrupada": "0.00",
+          "tipoDoc": "FA",
+          "codigoCm": null,
+          "numeroBoletoUnico": null,
+          "agrupadorContaMinima": null,
+          "valorTotalCMAgrupada": "0.00",
+          "aceitaPix": "X"
+        }
+      ],
+      "retorno": {
+        "e_resultado": "X"
+      }
+    },
+    "motivos_segunda_via": {
+      "motivos": [
+        {
+          "idMotivo": "02",
+          "descricao": "NÃO RECEBI - CLIENTE"
+        },
+        {
+          "idMotivo": "03",
+          "descricao": "FATURA DANIFICADA - CLIENTE"
+        },
+        {
+          "idMotivo": "04",
+          "descricao": "COMPROVAR RESIDÊNCIA - CLIENTE"
+        },
+        {
+          "idMotivo": "07",
+          "descricao": "MUDANÇA NA MODALIDADE DE PAGAMENTO"
+        },
+        {
+          "idMotivo": "10",
+          "descricao": "NÃO ESTOU COM FATURA EM MÃOS"
+        }
+      ],
+      "retorno": {
+        "e_resultado": "X"
+      }
+    },
+    "dados_pagamento_primeira_fatura": {
+      "codBarras": "838700000052215300300078098175908215056066285939",
+      "retorno": {
+        "e_resultado": "X"
+      }
+    },
+    "pdf_primeira_fatura": {
+      "fileName": "007098175908",
+      "fileSize": "62657 ",
+      "fileData": "<base64:83544 chars>",
+      "fileExtension": ".pdf",
+      "retorno": {
+        "tipo": "S",
+        "id": "ZATCWS",
+        "numero": "066",
+        "mensagem": "Documento gerado com sucesso.",
+        "e_resultado": "X"
+      }
+    }
+  },
+  "007085489032": {
+    "protocolo": {
+      "protocoloSalesforce": 20260416280227179,
+      "protocoloSalesforceStr": "20260416280227179",
+      "protocoloLegado": 20260416280227179,
+      "protocoloLegadoStr": "20260416280227179",
+      "retorno": {
+        "e_resultado": "X"
+      }
+    },
+    "imovel": {
+      "codigo": "007085489032",
+      "instalacao": "0009043917",
+      "medidor": null,
+      "fase": null,
+      "local": {
+        "endereco": "RUA BAHIA 130",
+        "bairro": "CENTRO-LAPAO",
+        "codLocalidade": "100000011936",
+        "localidade": "LAPAO",
+        "codMunicipio": "100000006161",
+        "municipio": "LAPAO",
+        "cep": "44905-000",
+        "localizacao": {
+          "sigla": "URBANO",
+          "codigo": null,
+          "descricao": null
+        },
+        "uf": "BA",
+        "tipoLogradouro": "RU",
+        "nomeLogradouro": "RUA BAHIA",
+        "numero": "130",
+        "complementoEndereco": null
+      },
+      "enderecoEntrega": {
+        "endereco": "RUA BAHIA 130",
+        "bairro": "CENTRO-LAPAO",
+        "municipio": "LAPAO",
+        "cep": "44905-000",
+        "uf": "BA"
+      },
+      "situacao": {
+        "codigo": "DS",
+        "descricao": "DESLIGADA",
+        "dataSituacaoUC": "20241219",
+        "cargaInstalada": "470.0000000"
+      },
+      "dataLigacao": "20240731",
+      "cliente": {
+        "codigo": "1014945628",
+        "nome": "PAULA PEREIRA FERNANDES",
+        "dataAtualizacao": "20240731",
+        "documento": {
+          "tipo": {
+            "codigo": "CPF",
+            "descricao": "CADASTRO DE PESSOA FISICA"
+          },
+          "numero": "03021937586"
+        },
+        "segundoDocumento": {
+          "uf": "BA",
+          "orgaoExpedidor": {
+            "codigo": "SSP",
+            "descricao": "Carteira identidade"
+          },
+          "tipo": {
+            "codigo": "Z_RG",
+            "descricao": "Carteira identidade"
+          },
+          "numero": "1386263591"
+        },
+        "contato": {
+          "email": "paulinha_fernandes7@hotmail.com",
+          "celular": {
+            "ddd": null,
+            "numero": null
+          },
+          "telefone": {
+            "ddd": null,
+            "numero": "74-981350825"
+          }
+        },
+        "dataNascimento": "19940626"
+      },
+      "servicos": {
+        "baixaRenda": null,
+        "faturaEmail": null,
+        "dataCerta": null,
+        "debitoAutomatico": null,
+        "faturaBraile": null,
+        "entregaAlternativa": null,
+        "debitosVencidos": null,
+        "contaMinima": "X",
+        "parcelamentoAbertoUc": null
+      },
+      "caracteristicas": {
+        "grandeCliente": null,
+        "irrigacao": null,
+        "fotovoltaico": null,
+        "vip7": null,
+        "espelho": null,
+        "microMiniGeracaoD": null,
+        "tarifaBranca": null
+      },
+      "mini_micro": null,
+      "utd": null,
+      "carga": null,
+      "e_resultado": "X"
+    },
+    "historico_consumo": {
+      "historicoConsumo": [
+        {
+          "dataPagamento": "06/02/2025",
+          "dataVencimento": "08/01/2025",
+          "dataLeitura": "19/12/2024",
+          "consumoKw": "    96,00",
+          "mesReferencia": "12/2024",
+          "numeroLeitura": " 8.877,00",
+          "tipoLeitura": "01",
+          "dataInicioPeriodoCalc": "14/12/2024",
+          "dataFimPeriodoCalc": "19/12/2024",
+          "dataProxLeitura": "10/01/2025",
+          "valorFatura": "113,12",
+          "situacaoFatura": "PG",
+          "origem": "FAT",
+          "numeroFatura": "334075735546",
+          "statusFatura": "PAGA",
+          "indicativoCustoDisponibilidade": null,
+          "indicativoMedia": null,
+          "mensagemDisponibilidadeMedia": null,
+          "mediadiaria": "16.00"
+        },
+        {
+          "dataPagamento": "20/12/2024",
+          "dataVencimento": "20/12/2024",
+          "dataLeitura": "13/12/2024",
+          "consumoKw": "   433,00",
+          "mesReferencia": "12/2024",
+          "numeroLeitura": " 8.877,00",
+          "tipoLeitura": "01",
+          "dataInicioPeriodoCalc": "13/11/2024",
+          "dataFimPeriodoCalc": "13/12/2024",
+          "dataProxLeitura": "10/01/2025",
+          "valorFatura": "536,56",
+          "situacaoFatura": "PG",
+          "origem": "FAT",
+          "numeroFatura": "333775733213",
+          "statusFatura": "PAGA",
+          "indicativoCustoDisponibilidade": null,
+          "indicativoMedia": null,
+          "mensagemDisponibilidadeMedia": null,
+          "mediadiaria": "13.97"
+        },
+        {
+          "dataPagamento": "20/12/2024",
+          "dataVencimento": "21/11/2024",
+          "dataLeitura": "12/11/2024",
+          "consumoKw": "   424,00",
+          "mesReferencia": "11/2024",
+          "numeroLeitura": " 8.444,00",
+          "tipoLeitura": "01",
+          "dataInicioPeriodoCalc": "12/10/2024",
+          "dataFimPeriodoCalc": "12/11/2024",
+          "dataProxLeitura": "13/12/2024",
+          "valorFatura": "582,88",
+          "situacaoFatura": "PG",
+          "origem": "FAT",
+          "numeroFatura": "336850523976",
+          "statusFatura": "PAGA",
+          "indicativoCustoDisponibilidade": null,
+          "indicativoMedia": null,
+          "mensagemDisponibilidadeMedia": null,
+          "mediadiaria": "13.25"
+        },
+        {
+          "dataPagamento": "01/11/2024",
+          "dataVencimento": "18/10/2024",
+          "dataLeitura": "11/10/2024",
+          "consumoKw": "   378,00",
+          "mesReferencia": "10/2024",
+          "numeroLeitura": " 8.020,00",
+          "tipoLeitura": "01",
+          "dataInicioPeriodoCalc": "14/09/2024",
+          "dataFimPeriodoCalc": "11/10/2024",
+          "dataProxLeitura": "12/11/2024",
+          "valorFatura": "497,00",
+          "situacaoFatura": "PG",
+          "origem": "FAT",
+          "numeroFatura": "338325515562",
+          "statusFatura": "PAGA",
+          "indicativoCustoDisponibilidade": null,
+          "indicativoMedia": null,
+          "mensagemDisponibilidadeMedia": null,
+          "mediadiaria": "13.50"
+        },
+        {
+          "dataPagamento": "01/11/2024",
+          "dataVencimento": "20/09/2024",
+          "dataLeitura": "13/09/2024",
+          "consumoKw": "   677,00",
+          "mesReferencia": "09/2024",
+          "numeroLeitura": " 7.642,00",
+          "tipoLeitura": "01",
+          "dataInicioPeriodoCalc": "31/07/2024",
+          "dataFimPeriodoCalc": "13/09/2024",
+          "dataProxLeitura": "11/10/2024",
+          "valorFatura": "808,03",
+          "situacaoFatura": "PG",
+          "origem": "FAT",
+          "numeroFatura": "331450740612",
+          "statusFatura": "PAGA",
+          "indicativoCustoDisponibilidade": null,
+          "indicativoMedia": null,
+          "mensagemDisponibilidadeMedia": null,
+          "mediadiaria": "15.04"
+        }
+      ],
+      "mediamensal": "    401.6",
+      "e_resultado": "X",
+      "retorno": null
+    },
+    "data_certa": {
+      "e_resultado": "X",
+      "dataAtual": "Data Normal Regulada",
+      "retorno": {
+        "id": "ZATCWS",
+        "tipo": "S",
+        "numero": "029",
+        "mensagem": "Executado com sucesso."
+      }
+    },
+    "fatura_digital": {
+      "_error": {
+        "label": "fatura_digital",
+        "status_code": 400,
+        "path": "/multilogin/2.0.0/servicos/fatura-digital/ucs/fatura-digital",
+        "message": "Client error '400 Bad Request' for url 'https://apineprd.neoenergia.com/multilogin/2.0.0/servicos/fatura-digital/ucs/fatura-digital?codigo=007085489032&canalSolicitante=AGC&usuario=WSO2_CONEXAO&distribuidora=COELBA&tipoPerfil=1'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+        "response": {
+          "e_resultado": null,
+          "retorno": {
+            "tipo": "E",
+            "id": "ZATCWS",
+            "numero": 246,
+            "mensagem": "Unidade consumidora não possui contrato ativo associado"
+          }
+        }
+      }
+    },
+    "debito_automatico": {
+      "e_resultado": "X",
+      "retorno": {
+        "id": "ZATCWS",
+        "tipo": "S",
+        "numero": "145",
+        "mensagem": "UC não possui débito automático cadastrado"
+      }
+    },
+    "faturas": {
+      "entregaFaturas": {
+        "codigoTipoEntrega": "01",
+        "descricaoTipoEntrega": "Entrega no Imóvel",
+        "enderecoEntrega": "RUA BAHIA 130  LAPAO CENTRO-LAPAO 44905-000",
+        "codigoTipoArrecadacao": "03",
+        "descricaoTipoArrecadacao": "Ficha de Compensação Bancária",
+        "dataCertaValida": "X",
+        "dataVencimento": "Regulada",
+        "dataCorte": "0000-00-00"
+      },
+      "faturas": [
+        {
+          "tipoFatura": {
+            "codigo": "PF",
+            "descricao": "Final"
+          },
+          "statusFatura": "Pago",
+          "dataCompetencia": "2024-12-20",
+          "dataEmissao": "2024-12-20",
+          "dataPagamento": "2025-02-06",
+          "dataVencimento": "2025-01-08",
+          "grupoTensao": null,
+          "mesReferencia": "2024/12",
+          "numeroFatura": "334075735546",
+          "origemFatura": "FAT",
+          "situacaoComercial": "AR",
+          "tipoArrecadacao": "Ficha Compensação Bancária",
+          "tipoEntrega": "Entrega no Imóvel",
+          "tipoLeitura": "OSB",
+          "uc": "007085489032",
+          "valorEmissao": "113.12",
+          "dataInicioPeriodo": "2024-12-14",
+          "dataFimPeriodo": "2024-12-19",
+          "emitidoFatAgrupadora": null,
+          "nroFatAgrupadora": null,
+          "vencFatAgrupada": "0000-00-00",
+          "valorFatAgrupada": "0.00",
+          "tipoDoc": "FA",
+          "codigoCm": null,
+          "numeroBoletoUnico": null,
+          "agrupadorContaMinima": null,
+          "valorTotalCMAgrupada": "0.00",
+          "aceitaPix": "X"
+        },
+        {
+          "tipoFatura": {
+            "codigo": "PR",
+            "descricao": "Periodico"
+          },
+          "statusFatura": "Pago",
+          "dataCompetencia": "2024-12-13",
+          "dataEmissao": "2024-12-14",
+          "dataPagamento": "2024-12-20",
+          "dataVencimento": "2024-12-20",
+          "grupoTensao": null,
+          "mesReferencia": "2024/12",
+          "numeroFatura": "333775733213",
+          "origemFatura": "FAT",
+          "situacaoComercial": "AR",
+          "tipoArrecadacao": "Ficha Compensação Bancária",
+          "tipoEntrega": "Entrega no Imóvel",
+          "tipoLeitura": "OSB",
+          "uc": "007085489032",
+          "valorEmissao": "536.56",
+          "dataInicioPeriodo": "2024-11-13",
+          "dataFimPeriodo": "2024-12-13",
+          "emitidoFatAgrupadora": null,
+          "nroFatAgrupadora": null,
+          "vencFatAgrupada": "0000-00-00",
+          "valorFatAgrupada": "0.00",
+          "tipoDoc": "FA",
+          "codigoCm": null,
+          "numeroBoletoUnico": null,
+          "agrupadorContaMinima": null,
+          "valorTotalCMAgrupada": "0.00",
+          "aceitaPix": "X"
+        },
+        {
+          "tipoFatura": {
+            "codigo": "PR",
+            "descricao": "Periodico"
+          },
+          "statusFatura": "Pago",
+          "dataCompetencia": "2024-11-12",
+          "dataEmissao": "2024-11-13",
+          "dataPagamento": "2024-12-20",
+          "dataVencimento": "2024-11-21",
+          "grupoTensao": null,
+          "mesReferencia": "2024/11",
+          "numeroFatura": "336850523976",
+          "origemFatura": "FAT",
+          "situacaoComercial": "AR",
+          "tipoArrecadacao": "Ficha Compensação Bancária",
+          "tipoEntrega": "Entrega no Imóvel",
+          "tipoLeitura": "OSB",
+          "uc": "007085489032",
+          "valorEmissao": "582.88",
+          "dataInicioPeriodo": "2024-10-12",
+          "dataFimPeriodo": "2024-11-12",
+          "emitidoFatAgrupadora": null,
+          "nroFatAgrupadora": null,
+          "vencFatAgrupada": "0000-00-00",
+          "valorFatAgrupada": "0.00",
+          "tipoDoc": "FA",
+          "codigoCm": null,
+          "numeroBoletoUnico": null,
+          "agrupadorContaMinima": null,
+          "valorTotalCMAgrupada": "0.00",
+          "aceitaPix": "X"
+        },
+        {
+          "tipoFatura": {
+            "codigo": "PR",
+            "descricao": "Periodico"
+          },
+          "statusFatura": "Pago",
+          "dataCompetencia": "2024-10-11",
+          "dataEmissao": "2024-10-12",
+          "dataPagamento": "2024-11-01",
+          "dataVencimento": "2024-10-18",
+          "grupoTensao": null,
+          "mesReferencia": "2024/10",
+          "numeroFatura": "338325515562",
+          "origemFatura": "FAT",
+          "situacaoComercial": "AR",
+          "tipoArrecadacao": "Indefinida",
+          "tipoEntrega": "Entrega no Imóvel",
+          "tipoLeitura": "OSB",
+          "uc": "007085489032",
+          "valorEmissao": "497.00",
+          "dataInicioPeriodo": "2024-09-14",
+          "dataFimPeriodo": "2024-10-11",
+          "emitidoFatAgrupadora": null,
+          "nroFatAgrupadora": null,
+          "vencFatAgrupada": "0000-00-00",
+          "valorFatAgrupada": "0.00",
+          "tipoDoc": "FA",
+          "codigoCm": null,
+          "numeroBoletoUnico": null,
+          "agrupadorContaMinima": null,
+          "valorTotalCMAgrupada": "0.00",
+          "aceitaPix": "X"
+        },
+        {
+          "tipoFatura": {
+            "codigo": "PR",
+            "descricao": "Periodico"
+          },
+          "statusFatura": "Pago",
+          "dataCompetencia": "2024-09-13",
+          "dataEmissao": "2024-09-14",
+          "dataPagamento": "2024-11-01",
+          "dataVencimento": "2024-09-20",
+          "grupoTensao": null,
+          "mesReferencia": "2024/09",
+          "numeroFatura": "331450740612",
+          "origemFatura": "FAT",
+          "situacaoComercial": "AR",
+          "tipoArrecadacao": "Indefinida",
+          "tipoEntrega": "Entrega no Imóvel",
+          "tipoLeitura": "OSB",
+          "uc": "007085489032",
+          "valorEmissao": "808.03",
+          "dataInicioPeriodo": "2024-07-31",
+          "dataFimPeriodo": "2024-09-13",
+          "emitidoFatAgrupadora": null,
+          "nroFatAgrupadora": null,
+          "vencFatAgrupada": "0000-00-00",
+          "valorFatAgrupada": "0.00",
+          "tipoDoc": "FA",
+          "codigoCm": null,
+          "numeroBoletoUnico": null,
+          "agrupadorContaMinima": null,
+          "valorTotalCMAgrupada": "0.00",
+          "aceitaPix": "X"
+        }
+      ],
+      "retorno": {
+        "e_resultado": "X"
+      }
+    },
+    "motivos_segunda_via": {
+      "motivos": [
+        {
+          "idMotivo": "02",
+          "descricao": "NÃO RECEBI - CLIENTE"
+        },
+        {
+          "idMotivo": "03",
+          "descricao": "FATURA DANIFICADA - CLIENTE"
+        },
+        {
+          "idMotivo": "04",
+          "descricao": "COMPROVAR RESIDÊNCIA - CLIENTE"
+        },
+        {
+          "idMotivo": "07",
+          "descricao": "MUDANÇA NA MODALIDADE DE PAGAMENTO"
+        },
+        {
+          "idMotivo": "10",
+          "descricao": "NÃO ESTOU COM FATURA EM MÃOS"
+        }
+      ],
+      "retorno": {
+        "e_resultado": "X"
+      }
+    },
+    "dados_pagamento_primeira_fatura": {
+      "_error": {
+        "label": "dados_pagamento",
+        "status_code": 400,
+        "path": "/multilogin/2.0.0/servicos/faturas/334075735546/dados-pagamento",
+        "message": "Client error '400 Bad Request' for url 'https://apineprd.neoenergia.com/multilogin/2.0.0/servicos/faturas/334075735546/dados-pagamento?codigo=007085489032&protocolo=20260416280227179&usuario=WSO2_CONEXAO&canalSolicitante=AGC&distribuidora=COELBA&regiao=NE&tipoPerfil=1&byPassActiv=X&documentoSolicitante=03021937586&documento=03021937586'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400",
+        "response": {
+          "retorno": {
+            "tipo": "E",
+            "id": "ZATCWS",
+            "numero": "448",
+            "mensagem": "Fatura vencida a mais de 365 dias. Favor procurar demais canais."
+          }
+        }
+      }
+    },
+    "pdf_primeira_fatura": {
+      "fileName": "007085489032",
+      "fileSize": "51724 ",
+      "fileData": "<base64:68968 chars>",
+      "fileExtension": ".pdf",
+      "retorno": {
+        "tipo": "S",
+        "id": "ZATCWS",
+        "numero": "066",
+        "mensagem": "Documento gerado com sucesso.",
+        "e_resultado": "X"
+      }
+    }
+  }
+}

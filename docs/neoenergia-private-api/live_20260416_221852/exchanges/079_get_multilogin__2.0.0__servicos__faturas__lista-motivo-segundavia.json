@@ -1,0 +1,73 @@
+{
+  "method": "GET",
+  "url": "https://apineprd.neoenergia.com/multilogin/2.0.0/servicos/faturas/lista-motivo-segundavia?usuario=WSO2_CONEXAO&canalSolicitante=AGC&distribuidora=COELBA&regiao=NE&tipoPerfil=1&documentoSolicitante=03021937586&codigo=007085489032",
+  "path": "/multilogin/2.0.0/servicos/faturas/lista-motivo-segundavia",
+  "query": {
+    "usuario": "***",
+    "canalSolicitante": "AGC",
+    "distribuidora": "COELBA",
+    "regiao": "NE",
+    "tipoPerfil": "1",
+    "documentoSolicitante": "*******7586",
+    "codigo": "007085489032"
+  },
+  "request_headers": {
+    "host": "apineprd.neoenergia.com",
+    "accept-encoding": "gzip, deflate",
+    "connection": "keep-alive",
+    "accept": "application/json",
+    "accept-language": "pt-BR",
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "authorization": "<redacted>",
+    "cookie": "<redacted>"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "activityid": "c6df7960-23d8-40bb-a9cf-87e39ddd8774",
+    "access-control-expose-headers": "",
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "DELETE, POST, PUT, PATCH, GET",
+    "access-control-allow-headers": "authorization,Access-Control-Allow-Origin,Content-Type,SOAPAction,Authorization",
+    "transactionid": "c4740268-1f18-4634-8aee-696afc9f4a20",
+    "content-type": "application/json; charset=UTF-8",
+    "content-length": "352",
+    "expires": "Fri, 17 Apr 2026 01:19:28 GMT",
+    "cache-control": "max-age=0, no-cache, no-store",
+    "pragma": "no-cache",
+    "date": "Fri, 17 Apr 2026 01:19:28 GMT",
+    "connection": "keep-alive",
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "set-cookie": "<redacted>"
+  },
+  "response_body": {
+    "motivos": [
+      {
+        "idMotivo": "02",
+        "descricao": "NÃO RECEBI - CLIENTE"
+      },
+      {
+        "idMotivo": "03",
+        "descricao": "FATURA DANIFICADA - CLIENTE"
+      },
+      {
+        "idMotivo": "04",
+        "descricao": "COMPROVAR RESIDÊNCIA - CLIENTE"
+      },
+      {
+        "idMotivo": "07",
+        "descricao": "MUDANÇA NA MODALIDADE DE PAGAMENTO"
+      },
+      {
+        "idMotivo": "10",
+        "descricao": "NÃO ESTOU COM FATURA EM MÃOS"
+      }
+    ],
+    "retorno": {
+      "e_resultado": "X"
+    }
+  }
+}

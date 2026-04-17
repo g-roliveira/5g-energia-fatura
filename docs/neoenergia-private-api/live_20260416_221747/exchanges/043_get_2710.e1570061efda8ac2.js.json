@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/2710.e1570061efda8ac2.js",
+  "path": "/2710.e1570061efda8ac2.js",
+  "query": {},
+  "request_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "cache-control": "max-age=167654",
+    "content-encoding": "gzip",
+    "etag": "W/\"69ced885-b039c\"",
+    "x-content-type-options": "nosniff",
+    "content-length": "158114",
+    "x-xss-protection": "1; mode=block",
+    "date": "Fri, 17 Apr 2026 01:17:59 GMT",
+    "content-type": "application/javascript",
+    "last-modified": "Thu, 02 Apr 2026 20:58:45 GMT",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "response_body": "\"use strict\";\n(self[\"webpackChunkneoenergia_web\"] = self[\"webpackChunkneoenergia_web\"] || []).push([[2710],{\n\n/***/ 52150:\n/*!**********************************************************************!*\\\n  !*** ./src/app/shared/components/pagination/pagination.component.ts ***!\n  \\**********************************************************************/\n/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {\n\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"PaginationComponent\": () => (/* binding */ PaginationComponent)\n/* harmony export */ });\n/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/core */ 5000);\n/* harmony import */ var app_core_services_utils_neo_utils_service__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! app/core/services/utils/neo-utils.service */ 93225);\n/* harmony import */ var app_core_services_user_user_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! app/core/services/user/user.service */ 27353);\n/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/common */ 69808);\n/* harmony import */ var _ng_bootstrap_ng_bootstrap__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @ng-bootstrap/ng-bootstrap */ 13707);\n\n\n\n\n\n\n\nfunction PaginationComponent_div_1_ng_template_2_Template(rf, ctx) {\n  if (rf & 1) {\n    _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵtext\"](0, \"<\");\n  }\n}\n\nfunction PaginationComponent_div_1_ng_template_3_Template(rf, ctx) {\n  if (rf & 1) {\n    _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵtext\"](0, \">\");\n  }\n}\n\nfunction PaginationComponent_div_1_Template(rf, ctx) {\n  if (rf & 1) {\n    const _r5 = _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵgetCurrentView\"]();\n\n    _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵelementStart\"](0, \"div\", 2)(1, \"ngb-pagination\", 3);\n    _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵlistener\"](\"pageChange\", function PaginationComponent_div_1_Template_ngb_pagination_pageChange_1_listener($event) {\n      _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵrestoreView\"](_r5);\n      const ctx_r4 = _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵnextContext\"]();\n      return ctx_r4.pageIndex = $event;\n    })(\"pageChange\", function PaginationComponent_div_1_Template_ngb_pagination_pageChange_1_listener($event) {\n      _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵrestoreView\"](_r5);\n      const ctx_r6 = _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵnextContext\"]();\n      return ctx_r6.onPageChanged($event);\n    });\n    _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵtemplate\"](2, PaginationComponent_div_1_ng_template_2_Template, 1, 0, \"ng-template\", 4);\n    _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵtemplate\"](3, PaginationComponent_div_1_ng_template_3_Template, 1, 0, \"ng-template\", 5);\n    _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵelementEnd\"]()();\n  }\n\n  if (rf & 2) {\n    const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵnextContext\"]();\n    _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵclassProp\"](\"isGrupoA\", ctx_r0.user.group === \"A\")(\"isGrupoB\", ctx_r0.user.group === \"B\");\n    _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵadvance\"](1);\n    _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵproperty\"](\"collectionSize\", ctx_r0.collections.length)(\"page\", ctx_r0.pageIndex)(\"pageSize\", ctx_r0.pageSize)(\"ellipses\", false)(\"rotate\", true)(\"boundaryLinks\", true)(\"maxSize\", 2)(\"size\", \"sm\");\n  }\n}\n\nfunction PaginationComponent_div_2_ng_template_2_Template(rf, ctx) {\n  if (rf & 1) {\n    _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵtext\"](0, \"Anterior\");\n  }\n}\n\nfunction PaginationComponent_div_2_ng_template_3_Template(rf, ctx) {\n  if (rf & 1) {\n    _angular_core__WEBPACK_IMPORTED_MODULE_2__[\"ɵɵtext\"](0, \"Pr\\u00F3ximo\");\n  }\n}\n\nfunction PaginationComponent_div_2_4_ng_template_0_Template(rf, ctx) {\n  if (rf & 1) {\n    _angular_core__WEBPACK_IMPO"
+}

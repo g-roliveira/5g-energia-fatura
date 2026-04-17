@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/assets/images/logo-aneel.svg",
+  "path": "/assets/images/logo-aneel.svg",
+  "query": {},
+  "request_headers": {
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "cache-control": "max-age=750048",
+    "content-encoding": "gzip",
+    "etag": "\"69b9c341-cd99\"",
+    "x-content-type-options": "nosniff",
+    "accept-ranges": "bytes",
+    "content-length": "19729",
+    "x-xss-protection": "1; mode=block",
+    "date": "Fri, 17 Apr 2026 01:17:49 GMT",
+    "content-type": "image/svg+xml",
+    "last-modified": "Tue, 17 Mar 2026 21:10:25 GMT",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "response_body": "<svg width=\"439\" height=\"47\" viewBox=\"0 0 439 47\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M98.8792 39.2805L97.4819 46.9153H101.352L101.481 46.2174H98.4919L99.0297 43.2779H101.136L101.263 42.5799H99.1583L99.6346 39.9784H102.486L102.614 39.2805H98.8792Z\" fill=\"#005172\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M104.445 40.8072L103.327 46.9148H104.034L105.007 41.6023H105.024L106.079 46.9148H106.84L107.958 40.8072H107.252L106.428 45.3068H106.411L105.55 40.8072H104.445Z\" fill=\"#005172\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M109.912 40.8072L108.794 46.9148H111.891L111.994 46.3565H109.603L110.033 44.004H111.718L111.82 43.4457H110.136L110.516 41.3656H112.799L112.9 40.8072H109.912Z\" fill=\"#005172\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M115.386 41.3658H116.002C117.016 41.3658 117.273 41.7381 117.147 42.4223C117.023 43.1079 116.628 43.4801 115.614 43.4801H114.999L115.386 41.3658ZM113.664 46.915H114.37L114.893 44.0549L115.822 44.0221L116.344 46.915H117.087L116.535 43.8866C117.303 43.6498 117.736 43.0751 117.86 42.3895C118.045 41.3823 117.407 40.8075 116.357 40.8075H114.782L113.664 46.915Z\" fill=\"#005172\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M123.238 42.6852C123.327 41.704 123.072 40.7228 121.868 40.7228C120.718 40.7228 119.841 41.5521 119.418 43.8607C118.997 46.1707 119.569 47 120.718 47C121.252 47 121.671 46.7961 122.005 46.4581L122.012 46.9152H122.463L122.987 44.055H121.393L121.292 44.6147H122.179L122.021 45.4769C121.906 46.1023 121.482 46.4417 120.821 46.4417C120.033 46.4417 119.774 45.7807 120.126 43.8607C120.476 41.9407 120.978 41.2811 121.765 41.2811C122.481 41.2811 122.623 41.8901 122.532 42.6852H123.238Z\" fill=\"#005172\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M125.591 40.8072L124.473 46.9148H125.179L126.297 40.8072H125.591Z\" fill=\"#005172\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M129.715 41.2643H129.732L129.857 44.5459H128.39L129.715 41.2643ZM129.318 40.8072L126.761 46.9148H127.466L128.187 45.1043H129.854L129.912 46.9148H130.618L130.296 40.8072H129.318Z\" fill=\"#005172\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M136.548 39.2805L135.151 46.9153H139.021L139.15 46.2174H136.161L136.7 43.2779H138.805L138.932 42.5799H136.828L137.304 39.9784H140.156L140.283 39.2805H136.548Z\" fill=\"#005172\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M142.206 40.8072L141.088 46.9148H143.912L144.015 46.3565H141.896L142.912 40.8072H142.206Z\" fill=\"#005172\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M149.393 39.3183H148.687L147.587 40.4857H148.039L149.393 39.3183ZM146.577 40.8072L145.459 46.9148H148.556L148.657 46.3565H146.266L146.697 44.004H148.382L148.483 43.4471H146.8L147.181 41.3656H149.462L149.564 40.8072H146.577Z\" fill=\"#005172\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M6.9224 39.8325H6.94566L7.09893 43.9352H5.26653L6.9224 39.8325ZM6.42701 39.2619L3.23022 46.8953H4.1129L5.01336 44.6332H7.09619L7.16872 46.8953H8.0514L7.64906 39.2619H6.42701Z\" fill=\"#005172\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M13.9964 42.6663C14.0853 41.6851 13.8308 40.7039 12.6265 40.7039C11.4756 40.7039 10.5998 41.5332 10.1783 43.8418C9.75542 46.1518 10.3274 46.9797 11.477 46.9797C12.0121 46.9797 12.4294 46.7772 12.762 46.4392L12.7702 46.8963H13.2218L13.7459 44.0361H12.1516L12.0504 44.5945H12.9371L12.7798 45.458C12.6648 46.0834 12.2406 46.4214 11.5796 46.4214C10.7914 46.4214 10.5327 45.7618 10.8844 43.8418C11.2348 41.9218 11.737 41.2622 12.5239 41.2622C13.2396 41.2622 13.3819 41.8712 13.2902 42.6663H13.9964Z\" fill=\"#005172\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M16.5875 40.4669H17.1664L17.9683 39.6047L18.4528 40.4669H19.0316L18.331 39.2995H17.7151L16.5875 40.4669ZM16.2837 40.7884L15.1656 46.896H18.2625L18.3652 46.3377H15.9744L16.4055 43.9866H18.0887L18.1914 43.4269H16.5068L16.8886 41.3468H19.1698L19.2725 40.7884H16.2837Z\" fill=\"#005172\"/>\n<path fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M21.0494 40."
+}

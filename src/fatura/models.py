@@ -31,6 +31,7 @@ class Cliente(BaseModel):
     nome: str = ""
     classificacao: str | None = None
     tensao_nominal: str | None = None
+    limites_tensao: str | None = None
     endereco: str | None = None
 
 
@@ -39,6 +40,9 @@ class Consumo(BaseModel):
     constante: str | None = None
     leitura_anterior: str | None = None
     leitura_atual: str | None = None
+    leitura_anterior_data: str | None = None
+    leitura_data: str | None = None
+    leitura_proxima_data: str | None = None
 
 
 class HistoricoConsumo(BaseModel):
@@ -112,6 +116,10 @@ class ContaDistribuidora(BaseModel):
     numero_dias: int | None = None
     codigo_barras: str | None = None
     nota_fiscal: NotaFiscal | None = None
+    emissao_data: str | None = None
+    controle_n: str | None = None
+    aviso: str | None = None
+    informacoes_gerais: str | None = None
     cliente: Cliente = Cliente()
     consumo: Consumo | None = None
     historico_energia: list[HistoricoConsumo] = []
@@ -125,3 +133,95 @@ class ContaDistribuidora(BaseModel):
     def parse_valor(cls, v: str | Decimal) -> Decimal:
         result = normalizar_decimal_br(v)
         return result if result is not None else Decimal("0")
+
+
+def formatar_decimal_br(valor: Decimal | None) -> str:
+    if valor is None:
+        return ""
+    quantizado = valor.quantize(Decimal("0.01"))
+    inteiro, frac = f"{quantizado:.2f}".split(".")
+    inteiro = f"{int(inteiro):,}".replace(",", ".")
+    return f"{inteiro},{frac}"
+
+
+def formatar_data_br(valor: date | str | None) -> str:
+    if valor is None:
+        return ""
+    if isinstance(valor, date):
+        return valor.strftime("%d/%m/%Y")
+    return str(valor)
+
+
+def conta_para_ocr_payload(conta: ContaDistribuidora) -> dict:
+    composicao = conta.composicao
+    return {
+        "mes": conta.mes,
+        "ano": conta.ano,
+        "valor": f"R$ {formatar_decimal_br(conta.valor)}",
+        "normalizado_valor": float(conta.valor),
+        "vencimento": formatar_data_br(conta.vencimento),
+        "leitura_anterior_data": conta.consumo.leitura_anterior_data if conta.consumo else "",
+        "leitura_data": conta.consumo.leitura_data if conta.consumo else "",
+        "leitura_proxima_data": conta.consumo.leitura_proxima_data if conta.consumo else "",
+        "emissao_data": conta.emissao_data or "",
+        "controle_n": conta.controle_n or "",
+        "numero_dias": conta.numero_dias,
+        "codigo_barras": conta.codigo_barras or "",
+        "aviso": conta.aviso or "",
+        "nota_fiscal": {
+            "numero_serie": conta.nota_fiscal.numero_serie if conta.nota_fiscal else "",
+            "apresentacao_data": conta.nota_fiscal.apresentacao_data if conta.nota_fiscal else "",
+        },
+        "cliente": {
+            "codigo": conta.cliente.codigo or "",
+            "cpf": conta.cliente.cpf or "",
+            "cnpj": conta.cliente.cnpj or "",
+            "nome": conta.cliente.nome or "",
+            "classificacao": conta.cliente.classificacao or "",
+            "tensao_nominal": conta.cliente.tensao_nominal or "",
+            "limites_tensao": conta.cliente.limites_tensao or "",
+            "endereco": conta.cliente.endereco or "",
+        },
+        "consumo": {
+            "medidor": conta.consumo.medidor if conta.consumo else "",
+            "constante": conta.consumo.constante if conta.consumo else "",
+            "leitura_anterior": conta.consumo.leitura_anterior if conta.consumo else "",
+            "leitura_atual": conta.consumo.leitura_atual if conta.consumo else "",
+        },
+        "energia": {
+            "historico_consumo": [
+                {"periodo": item.periodo, "kwh": str(item.kwh)} for item in conta.historico_energia
+            ]
+        },
+        "composicao_fornecimento": {
+            "energia": f"R$ {formatar_decimal_br(composicao.energia)}" if composicao else "",
+            "normalizado_energia": float(composicao.energia) if composicao else None,
+            "encargos": f"R$ {formatar_decimal_br(composicao.encargos)}" if composicao else "",
+            "normalizado_encargos": float(composicao.encargos) if composicao else None,
+            "distribuicao": f"R$ {formatar_decimal_br(composicao.distribuicao)}" if composicao else "",
+            "normalizado_distribuicao": float(composicao.distribuicao) if composicao else None,
+            "tributos": f"R$ {formatar_decimal_br(composicao.tributos)}" if composicao else "",
+            "normalizado_tributos": float(composicao.tributos) if composicao else None,
+            "transmissao": f"R$ {formatar_decimal_br(composicao.transmissao)}" if composicao else "",
+            "normalizado_transmissao": float(composicao.transmissao) if composicao else None,
+            "perdas": f"R$ {formatar_decimal_br(composicao.perdas)}" if composicao else "",
+            "normalizado_perdas": float(composicao.perdas) if composicao else None,
+        },
+        "informacoes_gerais": conta.informacoes_gerais or "",
+        "itens_fatura": [
+            {
+                "codigo": item.codigo or "",
+                "descricao": item.descricao or "",
+                "quantidade": formatar_decimal_br(item.quantidade) if item.quantidade is not None else "",
+                "quantidade_residual": formatar_decimal_br(item.quantidade_residual) if item.quantidade_residual is not None else "",
+                "quantidade_faturada": formatar_decimal_br(item.quantidade_faturada) if item.quantidade_faturada is not None else "",
+                "tarifa": formatar_decimal_br(item.tarifa) if item.tarifa is not None else "",
+                "valor": formatar_decimal_br(item.valor) if item.valor is not None else "",
+                "base_icms": formatar_decimal_br(item.base_icms) if item.base_icms is not None else "",
+                "aliq_icms": item.aliq_icms or "",
+                "icms": formatar_decimal_br(item.icms) if item.icms is not None else "",
+                "valor_total": formatar_decimal_br(item.valor_total) if item.valor_total is not None else "",
+            }
+            for item in conta.itens_fatura
+        ],
+    }

@@ -1,0 +1,51 @@
+{
+  "method": "POST",
+  "url": "https://avapineanl.neoenergia.com/areanaologada/2.0.0/autentica",
+  "path": "/areanaologada/2.0.0/autentica",
+  "query": {},
+  "request_headers": {
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "accept-language": "pt-BR",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "accept": "application/json, text/plain, */*",
+    "content-type": "application/json"
+  },
+  "request_body": {
+    "usuario": "*******7586",
+    "senha": "<redacted>",
+    "canalSolicitante": "AGU",
+    "recaptcha": "<redacted>"
+  },
+  "status_code": 200,
+  "response_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "transactionid": "9e37e963-c46c-41f9-a835-db24ce09565e",
+    "access-control-expose-headers": "",
+    "content-encoding": "gzip",
+    "access-control-allow-methods": "POST, PUT, GET",
+    "x-content-type-options": "nosniff",
+    "expires": "Fri, 17 Apr 2026 01:17:59 GMT",
+    "date": "Fri, 17 Apr 2026 01:17:59 GMT",
+    "content-type": "application/json; charset=UTF-8",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "DENY",
+    "access-control-allow-headers": "Origin,X-Requested-With,Content-Type,Accept,Authorization",
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "cache-control": "max-age=0, no-cache, no-store",
+    "pragma": "no-cache",
+    "access-control-allow-origin": "*",
+    "content-length": "1342"
+  },
+  "response_body": {
+    "token": "<redacted>",
+    "retorno": {
+      "tipo": "WSO2",
+      "id": "200",
+      "numero": "200_OK",
+      "mensagem": "Sucesso"
+    }
+  }
+}

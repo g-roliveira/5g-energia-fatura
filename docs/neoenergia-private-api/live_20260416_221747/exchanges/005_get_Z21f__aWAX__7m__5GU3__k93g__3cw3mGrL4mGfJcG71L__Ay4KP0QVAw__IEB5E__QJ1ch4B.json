@@ -1,0 +1,30 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/Z21f/aWAX/7m/5GU3/k93g/3cw3mGrL4mGfJcG71L/Ay4KP0QVAw/IEB5E/QJ1ch4B",
+  "path": "/Z21f/aWAX/7m/5GU3/k93g/3cw3mGrL4mGfJcG71L/Ay4KP0QVAw/IEB5E/QJ1ch4B",
+  "query": {},
+  "request_headers": {
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "cache-control": "max-age=21600",
+    "content-encoding": "br",
+    "etag": "\"8f607b49885971e50331815cb37bc2500206904125a0d951153e594e0413d58e\"",
+    "content-length": "168486",
+    "date": "Fri, 17 Apr 2026 01:17:48 GMT",
+    "stored-attribute-sha-checksum": "a5d6ea3f7f936a495fa298322ceeec12b8201d015719f2dc7559c451599b6555",
+    "last-modified": "Fri, 10 Apr 2026 16:39:58 GMT",
+    "content-type": "application/javascript",
+    "vary": "Accept-Encoding",
+    "time-to-live-seconds": "1903131"
+  },
+  "response_body": "(function(){if(typeof Array.prototype.entries!=='function'){Object.defineProperty(Array.prototype,'entries',{value:function(){var index=0;const array=this;return {next:function(){if(index<array.length){return {value:[index,array[index++]],done:false};}else{return {done:true};}},[Symbol.iterator]:function(){return this;}};},writable:true,configurable:true});}}());(function(){X6();Acv();dTv();var Kn=function(){return wx.apply(this,[Sg,arguments]);};var Qj=function(XG){return +XG;};var O9=function(UX){return -UX;};var rj=function(nc,VP){return nc-VP;};var I3=function(zg,Kx){return zg|Kx;};function dTv(){Vh=fp+fp*Ov+XM*Ov*Ov+Ov*Ov*Ov,FU=XM+r1*Ov+gF*Ov*Ov+Ov*Ov*Ov,Hd=rd+MD*Ov+Ov*Ov,U3=rt+MD*Ov+Ov*Ov+Ov*Ov*Ov,t6=ZD+rt*Ov,Qh=r1+rt*Ov+Ov*Ov+Ov*Ov*Ov,d7=rd+XM*Ov+fp*Ov*Ov+Ov*Ov*Ov,NC=ZD+MD*Ov+Ov*Ov,Il=MD+rt*Ov+ZD*Ov*Ov,k7=rd+xf*Ov+fp*Ov*Ov+Ov*Ov*Ov,q=ZD+Ov+gF*Ov*Ov,pY=MD+gF*Ov+r1*Ov*Ov,NB=rt+rd*Ov+MD*Ov*Ov+Ov*Ov*Ov,kx=r1+XM*Ov+r1*Ov*Ov,B3=fp+xf*Ov+ZD*Ov*Ov+Ov*Ov*Ov,vh=gF+xf*Ov+fp*Ov*Ov+Ov*Ov*Ov,Hg=ZD+MD*Ov+Ov*Ov+Ov*Ov*Ov,LY=MD+rd*Ov,fT=N6+rd*Ov+fp*Ov*Ov+Ov*Ov*Ov,FT=ZD+Ov+MD*Ov*Ov+Ov*Ov*Ov,FS=ZD+gF*Ov+rd*Ov*Ov+Ov*Ov*Ov,qt=rd+MD*Ov+gF*Ov*Ov,rf=r1+xf*Ov+MD*Ov*Ov,kg=gF+rt*Ov+ZD*Ov*Ov+Ov*Ov*Ov,LB=r1+xf*Ov+XM*Ov*Ov+Ov*Ov*Ov,mS=xf+fp*Ov+fp*Ov*Ov+Ov*Ov*Ov,xv=r1+rd*Ov+Ov*Ov+Ov*Ov*Ov,GG=rt+MD*Ov+XM*Ov*Ov+Ov*Ov*Ov,Oj=N6+Ov+Ov*Ov+Ov*Ov*Ov,j2=XM+xf*Ov+MD*Ov*Ov+Ov*Ov*Ov,Or=ZD+Ov+fp*Ov*Ov,NU=MD+fp*Ov+rd*Ov*Ov,GC=rd+rt*Ov+ZD*Ov*Ov+r1*Ov*Ov*Ov+r1*Ov*Ov*Ov*Ov,KU=fp+rd*Ov+fp*Ov*Ov+Ov*Ov*Ov,O=rt+ZD*Ov+fp*Ov*Ov,lf=xf+rd*Ov+ZD*Ov*Ov,BU=fp+r1*Ov+r1*Ov*Ov+Ov*Ov*Ov,ZB=fp+Ov+XM*Ov*Ov+Ov*Ov*Ov,Ct=N6+r1*Ov+Ov*Ov,U8=XM+MD*Ov+ZD*Ov*Ov,B1=N6+xf*Ov+rd*Ov*Ov,kf=gF+Ov+Ov*Ov,rh=xf+Ov+gF*Ov*Ov+Ov*Ov*Ov,E9=gF+Ov+fp*Ov*Ov+Ov*Ov*Ov,Qx=rd+ZD*Ov+XM*Ov*Ov+Ov*Ov*Ov,Vr=XM+fp*Ov+gF*Ov*Ov,wP=MD+gF*Ov,Rd=ZD+gF*Ov+Ov*Ov,G3=MD+ZD*Ov+fp*Ov*Ov+Ov*Ov*Ov,Hx=XM+XM*Ov+Ov*Ov+Ov*Ov*Ov,sb=rt+rd*Ov+gF*Ov*Ov+Ov*Ov*Ov,lX=XM+gF*Ov+MD*Ov*Ov+Ov*Ov*Ov,Lc=ZD+gF*Ov+gF*Ov*Ov,V6=xf+XM*Ov+Ov*Ov,R9=fp+Ov+r1*Ov*Ov+Ov*Ov*Ov,bd=N6+xf*Ov+gF*Ov*Ov,bY=gF+fp*Ov,Bj=gF+Ov+rd*Ov*Ov+Ov*Ov*Ov,z7=r1+Ov+gF*Ov*Ov+Ov*Ov*Ov,qc=fp+XM*Ov+fp*Ov*Ov+Ov*Ov*Ov,mn=rd+MD*Ov+MD*Ov*Ov+Ov*Ov*Ov,dM=N6+Ov+ZD*Ov*Ov,zf=gF+rd*Ov+xf*Ov*Ov,YP=XM+MD*Ov+gF*Ov*Ov+Ov*Ov*Ov,DB=fp+MD*Ov+ZD*Ov*Ov+Ov*Ov*Ov,b8=ZD+Ov+ZD*Ov*Ov,JB=gF+gF*Ov+ZD*Ov*Ov+Ov*Ov*Ov,Nv=gF+xf*Ov+Ov*Ov,jS=XM+fp*Ov+fp*Ov*Ov,Nl=rt+rt*Ov+gF*Ov*Ov+Ov*Ov*Ov,Z=xf+ZD*Ov,BP=N6+MD*Ov+XM*Ov*Ov+Ov*Ov*Ov,zb=rt+r1*Ov+ZD*Ov*Ov+Ov*Ov*Ov,WF=gF+Ov+gF*Ov*Ov,YU=N6+XM*Ov+XM*Ov*Ov+Ov*Ov*Ov,Vd=XM+rd*Ov,ID=rd+r1*Ov+Ov*Ov,D3=XM+XM*Ov+MD*Ov*Ov+Ov*Ov*Ov,Vf=N6+rd*Ov+rd*Ov*Ov,B6=rd+Ov+ZD*Ov*Ov,XX=N6+fp*Ov+gF*Ov*Ov+Ov*Ov*Ov,PG=xf+xf*Ov+ZD*Ov*Ov+Ov*Ov*Ov,D=r1+fp*Ov+ZD*Ov*Ov,ZG=xf+rd*Ov+ZD*Ov*Ov+Ov*Ov*Ov,Hl=N6+Ov+ZD*Ov*Ov+Ov*Ov*Ov,j9=xf+gF*Ov+gF*Ov*Ov+Ov*Ov*Ov,Wg=r1+xf*Ov+Ov*Ov,DX=fp+rt*Ov+ZD*Ov*Ov+Ov*Ov*Ov,Bx=r1+gF*Ov+fp*Ov*Ov+Ov*Ov*Ov,jf=N6+rt*Ov+gF*Ov*Ov,pn=N6+fp*Ov+r1*Ov*Ov+Ov*Ov*Ov,Xt=gF+gF*Ov+xf*Ov*Ov,IB=MD+ZD*Ov+gF*Ov*Ov+Ov*Ov*Ov,nb=ZD+Ov+Ov*Ov+Ov*Ov*Ov,nX=fp+ZD*Ov+ZD*Ov*Ov+Ov*Ov*Ov,Y2=rt+XM*Ov+MD*Ov*Ov,mj=MD+MD*Ov+rd*Ov*Ov+Ov*Ov*Ov,Ub=ZD+xf*Ov+XM*Ov*Ov+Ov*Ov*Ov,mb=xf+xf*Ov+Ov*Ov+Ov*Ov*Ov,cX=rd+ZD*Ov+MD*Ov*Ov+Ov*Ov*Ov,l3=XM+XM*Ov+gF*Ov*Ov+Ov*Ov*Ov,lc=fp+MD*Ov+gF*Ov*Ov,pS=ZD+r1*Ov+r1*Ov*Ov,zT=fp+ZD*Ov+r1*Ov*Ov+Ov*Ov*Ov,PS=rt+xf*Ov+gF*Ov*Ov,UB=xf+rt*Ov+ZD*Ov*Ov,NX=fp+Ov+ZD*Ov*Ov,tU=N6+rt*Ov+Ov*Ov+Ov*Ov*Ov,K6=rt+rt*Ov+r1*Ov*Ov,L9=gF+rd*Ov+MD*Ov*Ov+Ov*Ov*Ov,dU=ZD+xf*Ov+Ov*Ov+Ov*Ov*Ov,kX=rd+rd*Ov+Ov*Ov+Ov*Ov*Ov,sf=N6+fp*Ov+Ov*Ov,ND=rt+r1*Ov+ZD*Ov*Ov,kl=gF+MD*Ov+Ov*Ov+Ov*Ov*Ov,hG=ZD+ZD*Ov+ZD*Ov*Ov+Ov*Ov*Ov,Kb=xf+xf*Ov+fp*Ov*Ov+Ov*Ov*Ov,vC=ZD+ZD*Ov+MD*Ov*Ov,F7=ZD+XM*Ov+Ov*Ov+Ov*Ov*Ov,fP=r1+xf*Ov+ZD*Ov*Ov+Ov*Ov*Ov,Gt=gF+gF*Ov,lR=xf+Ov+r1*Ov*Ov+Ov*Ov*Ov,xn=r1+gF*Ov+ZD*Ov*Ov+Ov*Ov*Ov,UM=MD+fp*Ov+r1*Ov*Ov,ff=XM+MD*Ov,kj=xf+Ov+Ov*Ov+Ov*Ov*Ov,f8=fp+rd*Ov+ZD*Ov*Ov,Xf=XM+r1*Ov+Ov*Ov,nx=MD+XM*Ov+XM*Ov*Ov+Ov*Ov*Ov,K2=xf+gF*Ov+MD*Ov*Ov,XB=gF+rd*Ov+rd*Ov*Ov+Ov*Ov*Ov,wl=ZD+rd*Ov+gF*Ov*Ov,Bt=ZD+gF*Ov+fp*Ov*Ov,gr=MD+Ov+gF*Ov*Ov,Yl=XM+ZD*Ov+ZD*Ov*Ov+Ov*Ov*Ov,Jj=rt+rd*Ov+r1*Ov*Ov+Ov*Ov*Ov,gl=xf+r1*Ov+Ov*Ov+Ov*Ov*Ov,p8=N6+Ov+rd*"
+}

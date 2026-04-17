@@ -1,0 +1,685 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "5G Energia Fatura API",
+    "summary": "API interna para captura assíncrona de faturas Neoenergia/Coelba.",
+    "description": "API HTTP para criar jobs assíncronos de captura de faturas, consultar o andamento e recuperar o resultado detalhado por unidade consumidora.\n\nAutenticação: envie `X-API-Key` quando `service.api_key` estiver configurado.\n\nFluxo recomendado:\n1. `POST /jobs/faturas` para criar o job.\n2. `GET /jobs/{job_id}` para acompanhar status.\n3. `GET /jobs/{job_id}/result` para ler o resultado final por UC.\n",
+    "version": "0.1.0"
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": [
+          "Infra"
+        ],
+        "summary": "Health check do serviço",
+        "description": "Confirma que a API está ativa e informa quantos jobs pendentes foram resetados no startup.",
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/faturas": {
+      "post": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Cria um job assíncrono de captura de faturas",
+        "description": "Cria um job em background para autenticar no portal Neoenergia, navegar pelas UCs informadas e baixar/processar a fatura desejada.",
+        "operationId": "create_fatura_job_jobs_faturas_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FaturaJobRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Job criado com sucesso.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobStatusResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "X-API-Key inválido."
+          },
+          "422": {
+            "description": "Payload inválido."
+          }
+        },
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ]
+      }
+    },
+    "/jobs": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Lista jobs recentes",
+        "description": "Retorna os jobs mais recentes, ordenados do mais novo para o mais antigo.",
+        "operationId": "list_jobs_jobs_get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/JobStatusResponse"
+                  },
+                  "title": "Response List Jobs Jobs Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{job_id}": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Consulta status de um job",
+        "description": "Retorna o progresso consolidado do job, incluindo timestamps e resumo por status.",
+        "operationId": "get_job_jobs__job_id__get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobStatusResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Job não encontrado."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/jobs/{job_id}/result": {
+      "get": {
+        "tags": [
+          "Jobs"
+        ],
+        "summary": "Consulta o resultado detalhado de um job",
+        "description": "Retorna o resultado por UC, incluindo caminhos de PDF e evidências de erro quando disponíveis.",
+        "operationId": "get_job_result_jobs__job_id__result_get",
+        "security": [
+          {
+            "APIKeyHeader": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "job_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Job Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JobResultResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Job não encontrado."
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "FaturaJobRequest": {
+        "properties": {
+          "cpf_cnpj": {
+            "type": "string",
+            "title": "Cpf Cnpj",
+            "description": "CPF ou CNPJ do titular usado no login do portal."
+          },
+          "senha_portal": {
+            "type": "string",
+            "title": "Senha Portal",
+            "description": "Senha da Agência Virtual Neoenergia."
+          },
+          "uf": {
+            "type": "string",
+            "title": "Uf",
+            "description": "UF da distribuidora dentro do portal.",
+            "default": "BA"
+          },
+          "tipo_acesso": {
+            "$ref": "#/components/schemas/TipoAcesso",
+            "description": "Perfil de acesso no portal. Ex.: normal, imobiliaria.",
+            "default": "normal"
+          },
+          "ucs": {
+            "items": {
+              "$ref": "#/components/schemas/JobTargetRequest"
+            },
+            "type": "array",
+            "minItems": 1,
+            "title": "Ucs",
+            "description": "Lista de unidades consumidoras a processar dentro do mesmo login."
+          },
+          "mes_ano": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mes Ano",
+            "description": "Competência no formato MMAAAA. Se omitido, usa a mais recente disponível."
+          },
+          "force": {
+            "type": "boolean",
+            "title": "Force",
+            "description": "Quando true, reprocessa mesmo que a fatura já exista no banco.",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "cpf_cnpj",
+          "senha_portal",
+          "ucs"
+        ],
+        "title": "FaturaJobRequest",
+        "example": {
+          "cpf_cnpj": "12345678901",
+          "force": false,
+          "mes_ano": "122024",
+          "senha_portal": "minha_senha_portal",
+          "tipo_acesso": "normal",
+          "ucs": [
+            {
+              "nome": "Paula Fernandes",
+              "uc": "007085489032"
+            },
+            {
+              "nome": "UC Reserva",
+              "uc": "001234567890"
+            }
+          ],
+          "uf": "BA"
+        }
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HealthResponse": {
+        "properties": {
+          "status": {
+            "type": "string",
+            "title": "Status"
+          },
+          "reset_jobs": {
+            "type": "integer",
+            "title": "Reset Jobs",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "status"
+        ],
+        "title": "HealthResponse"
+      },
+      "JobItemResponse": {
+        "properties": {
+          "uc": {
+            "type": "string",
+            "title": "Uc",
+            "description": "Código da unidade consumidora."
+          },
+          "nome": {
+            "type": "string",
+            "title": "Nome",
+            "description": "Nome amigável da UC.",
+            "default": ""
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Status do item: sucesso, erro_download, erro_login etc."
+          },
+          "mensagem": {
+            "type": "string",
+            "title": "Mensagem",
+            "description": "Mensagem final do processamento do item.",
+            "default": ""
+          },
+          "erro_tipo": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Erro Tipo",
+            "description": "Classe/tipo de erro persistido."
+          },
+          "pdf_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Pdf Path",
+            "description": "Caminho do PDF salvo localmente."
+          },
+          "screenshot_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Screenshot Path",
+            "description": "Screenshot de evidência em caso de erro."
+          },
+          "html_path": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Html Path",
+            "description": "HTML de evidência em caso de erro."
+          },
+          "mes": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mes",
+            "description": "Mês da fatura obtida."
+          },
+          "ano": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Ano",
+            "description": "Ano da fatura obtida."
+          },
+          "valor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Valor",
+            "description": "Valor textual extraído da fatura."
+          },
+          "attempts": {
+            "type": "integer",
+            "title": "Attempts",
+            "description": "Quantidade de tentativas executadas para a UC.",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "required": [
+          "uc",
+          "status"
+        ],
+        "title": "JobItemResponse"
+      },
+      "JobResultResponse": {
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "title": "Job Id",
+            "description": "Identificador único do job."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Status consolidado do job."
+          },
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/JobItemResponse"
+            },
+            "type": "array",
+            "title": "Items",
+            "description": "Resultado detalhado por UC."
+          }
+        },
+        "type": "object",
+        "required": [
+          "job_id",
+          "status",
+          "items"
+        ],
+        "title": "JobResultResponse"
+      },
+      "JobStatusResponse": {
+        "properties": {
+          "job_id": {
+            "type": "string",
+            "title": "Job Id",
+            "description": "Identificador único do job."
+          },
+          "status": {
+            "type": "string",
+            "title": "Status",
+            "description": "Estado do job: queued, running, succeeded, partial_failure, failed."
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At",
+            "description": "Data/hora de criação do job."
+          },
+          "started_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Started At",
+            "description": "Data/hora de início do processamento."
+          },
+          "finished_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Finished At",
+            "description": "Data/hora de conclusão do processamento."
+          },
+          "progress_total": {
+            "type": "integer",
+            "title": "Progress Total",
+            "description": "Total de itens/UCs no job."
+          },
+          "progress_done": {
+            "type": "integer",
+            "title": "Progress Done",
+            "description": "Quantidade já finalizada."
+          },
+          "summary": {
+            "$ref": "#/components/schemas/JobSummary",
+            "description": "Resumo consolidado do job."
+          }
+        },
+        "type": "object",
+        "required": [
+          "job_id",
+          "status",
+          "created_at",
+          "progress_total",
+          "progress_done",
+          "summary"
+        ],
+        "title": "JobStatusResponse"
+      },
+      "JobSummary": {
+        "properties": {
+          "total": {
+            "type": "integer",
+            "title": "Total",
+            "description": "Quantidade total de UCs no job.",
+            "default": 0
+          },
+          "completed": {
+            "type": "integer",
+            "title": "Completed",
+            "description": "Quantidade já finalizada.",
+            "default": 0
+          },
+          "success": {
+            "type": "integer",
+            "title": "Success",
+            "description": "Quantidade concluída com sucesso.",
+            "default": 0
+          },
+          "error": {
+            "type": "integer",
+            "title": "Error",
+            "description": "Quantidade concluída com erro.",
+            "default": 0
+          }
+        },
+        "type": "object",
+        "title": "JobSummary"
+      },
+      "JobTargetRequest": {
+        "properties": {
+          "uc": {
+            "type": "string",
+            "title": "Uc",
+            "description": "Código da unidade consumidora."
+          },
+          "nome": {
+            "type": "string",
+            "title": "Nome",
+            "description": "Nome amigável da UC para rastreamento.",
+            "default": ""
+          }
+        },
+        "type": "object",
+        "required": [
+          "uc"
+        ],
+        "title": "JobTargetRequest",
+        "example": {
+          "nome": "Paula Fernandes",
+          "uc": "007085489032"
+        }
+      },
+      "TipoAcesso": {
+        "type": "string",
+        "enum": [
+          "normal",
+          "imobiliaria"
+        ],
+        "title": "TipoAcesso"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "ctx": {
+            "type": "object",
+            "title": "Context"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "APIKeyHeader": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Infra",
+      "description": "Saúde do serviço e metadata operacional."
+    },
+    {
+      "name": "Jobs",
+      "description": "Criação, consulta e resultado dos jobs de captura de fatura."
+    }
+  ]
+}

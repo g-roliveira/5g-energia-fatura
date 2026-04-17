@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/7618.38f40eb2d1cd74df.js",
+  "path": "/7618.38f40eb2d1cd74df.js",
+  "query": {},
+  "request_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "cache-control": "max-age=380795",
+    "content-encoding": "gzip",
+    "etag": "W/\"69ced885-50e8a\"",
+    "x-content-type-options": "nosniff",
+    "content-length": "66419",
+    "x-xss-protection": "1; mode=block",
+    "date": "Fri, 17 Apr 2026 01:17:59 GMT",
+    "content-type": "application/javascript",
+    "last-modified": "Thu, 02 Apr 2026 20:58:45 GMT",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "response_body": "\"use strict\";\n(self[\"webpackChunkneoenergia_web\"] = self[\"webpackChunkneoenergia_web\"] || []).push([[7618],{\n\n/***/ 45120:\n/*!******************************************************!*\\\n  !*** ./src/app/core/models/flex-pag/flex-pag-dto.ts ***!\n  \\******************************************************/\n/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {\n\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"ClienteDTO\": () => (/* binding */ ClienteDTO),\n/* harmony export */   \"Debts\": () => (/* binding */ Debts),\n/* harmony export */   \"Endereco\": () => (/* binding */ Endereco),\n/* harmony export */   \"FlexPagRequest\": () => (/* binding */ FlexPagRequest),\n/* harmony export */   \"FlexPagResponse\": () => (/* binding */ FlexPagResponse),\n/* harmony export */   \"FlexPagTipificacao\": () => (/* binding */ FlexPagTipificacao),\n/* harmony export */   \"InvoiceDTO\": () => (/* binding */ InvoiceDTO),\n/* harmony export */   \"Order\": () => (/* binding */ Order),\n/* harmony export */   \"Principal\": () => (/* binding */ Principal),\n/* harmony export */   \"UC\": () => (/* binding */ UC)\n/* harmony export */ });\n/* harmony import */ var app_core_enums_regiao__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! app/core/enums/regiao */ 35343);\n\nvar FlexPagTipificacao = /*#__PURE__*/(() => {\n  (function (FlexPagTipificacao) {\n    FlexPagTipificacao[\"tipificacao\"] = \"1010810\";\n  })(FlexPagTipificacao || (FlexPagTipificacao = {}));\n\n  return FlexPagTipificacao;\n})();\nclass FlexPagResponse {\n  constructor() {\n    this.url = \"\";\n  }\n\n}\nclass FlexPagRequest {\n  constructor() {\n    this.tipoPerfil = 1;\n    this.is_authenticated = \"true\"; // valor fixo\n\n    this.is_principal_hide = \"true\"; // valor fixo\n\n    this.payment_module = \"INVOICES_CREATE\";\n    this.origin = 'NEOENERGIA_AGENCIA';\n    this.canalSolicitante = 'AGC';\n    this.usuario = 'UCSCOMM';\n    this.regiao = app_core_enums_regiao__WEBPACK_IMPORTED_MODULE_0__.Regiao.NE;\n    this.distribuidora = 'COELBA';\n    this.protocolo = '';\n    this.tipificacao = FlexPagTipificacao.tipificacao;\n    this.numeroFatura = '';\n    this.recaptchaAnl = false;\n    this.recaptcha = '';\n    this.order = new Order();\n    this.codigo = '';\n    this.dataFimVencFat = \"\";\n  }\n\n}\nclass Order {\n  constructor() {\n    this.id = '';\n    this.principal = new Principal();\n    this.debts = [];\n  }\n\n}\nclass Principal {\n  constructor() {\n    this.debt_source = 'COELBA';\n    this.document = '';\n    this.contract_account = '';\n  }\n\n}\nclass Debts {\n  constructor() {\n    this.invoice_id = '';\n    this.amount = '';\n    this.due_date = '';\n    this.barcode = '';\n  }\n\n}\nclass ClienteDTO {\n  constructor() {\n    this.nome = \"\";\n    this.tipoDocumento = \"\";\n    this.ni = \"\";\n    this.email = \"\";\n    this.telefone = \"\";\n    this.dataNascimento = \"\";\n    this.endereco = new Endereco();\n  }\n\n}\nclass Endereco {\n  constructor() {\n    this.bairro = \"\";\n    this.cep = \"\";\n    this.complemento = \"\";\n    this.logradouro = \"\";\n    this.municipio = \"\";\n    this.numero = \"\";\n    this.uf = \"\";\n  }\n\n}\nclass UC {\n  constructor() {\n    this.uc = \"\";\n    this.invoices = [];\n  }\n\n}\nclass InvoiceDTO {\n  constructor() {\n    this.amount = 0;\n    this.dueDate = \"\";\n    this.invoiceId = \"\";\n    this.barCodeOne = \"\";\n    this.barCodeTwo = \"\";\n  }\n\n}\n\n/***/ }),\n\n/***/ 29593:\n/*!******************************************************************!*\\\n  !*** ./src/app/core/models/multilogin/request/multilogin-dto.ts ***!\n  \\******************************************************************/\n/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {\n\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"AlterarOptinNotificacoesRequest\": () => (/* binding */ AlterarOptinNotificacoesRequest),\n/* harmony export */   \"AnexosDTORequest\": () => (/* binding */ AnexosDTOR"
+}

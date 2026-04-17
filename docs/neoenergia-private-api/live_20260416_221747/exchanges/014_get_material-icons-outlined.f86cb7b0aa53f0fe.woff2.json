@@ -1,0 +1,32 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/material-icons-outlined.f86cb7b0aa53f0fe.woff2",
+  "path": "/material-icons-outlined.f86cb7b0aa53f0fe.woff2",
+  "query": {},
+  "request_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/styles.b8f530f2278fd96d.css",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "cache-control": "max-age=1873131",
+    "etag": "\"69ced884-25e8c\"",
+    "x-content-type-options": "nosniff",
+    "accept-ranges": "bytes",
+    "content-length": "155276",
+    "x-xss-protection": "1; mode=block",
+    "date": "Fri, 17 Apr 2026 01:17:49 GMT",
+    "content-type": "font/woff2",
+    "last-modified": "Thu, 02 Apr 2026 20:58:44 GMT",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "response_body": "<unreadable: 'utf-8' codec can't decode byte 0x8c in position 11: invalid start byte>"
+}

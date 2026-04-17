@@ -17,6 +17,7 @@ class FaturaJobRuntime:
         self._config = config
         self._repo = repo or SqliteFaturaRepository(config.database.url)
         self._semaphore = asyncio.Semaphore(max(1, config.service.max_concurrent_jobs))
+        self._request_cache: dict[str, FaturaJobRequest] = {}
 
     @property
     def repo(self) -> SqliteFaturaRepository:
@@ -30,7 +31,9 @@ class FaturaJobRuntime:
         return 0
 
     def create_job(self, request: FaturaJobRequest) -> str:
-        return self._repo.criar_job(request)
+        job_id = self._repo.criar_job(request)
+        self._request_cache[job_id] = request
+        return job_id
 
     def get_status(self, job_id: str) -> JobStatusResponse | None:
         return self._repo.obter_status_job(job_id)
@@ -45,11 +48,13 @@ class FaturaJobRuntime:
         async with self._semaphore:
             log = logger.bind(job_id=job_id)
             log.info("job_worker_iniciado")
+            request = self._request_cache.get(job_id)
             try:
                 await executar_job_persistido(
                     config=self._config,
                     job_id=job_id,
                     repo=self._repo,
+                    request=request,
                 )
             except Exception as exc:  # pragma: no cover - proteção final do worker
                 log.exception("job_worker_falhou", erro=str(exc))
@@ -57,3 +62,5 @@ class FaturaJobRuntime:
                 self._repo.finalizar_job(job_id, "failed")
             else:
                 log.info("job_worker_concluido")
+            finally:
+                self._request_cache.pop(job_id, None)

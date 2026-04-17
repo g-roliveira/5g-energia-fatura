@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/main.12d1bbaf63a33bd2.js",
+  "path": "/main.12d1bbaf63a33bd2.js",
+  "query": {},
+  "request_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "cache-control": "max-age=465739",
+    "content-encoding": "gzip",
+    "etag": "W/\"69ced884-910963\"",
+    "x-content-type-options": "nosniff",
+    "content-length": "2291411",
+    "x-xss-protection": "1; mode=block",
+    "date": "Fri, 17 Apr 2026 01:20:22 GMT",
+    "content-type": "application/javascript",
+    "last-modified": "Thu, 02 Apr 2026 20:58:44 GMT",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "response_body": "(self[\"webpackChunkneoenergia_web\"] = self[\"webpackChunkneoenergia_web\"] || []).push([[179],{\n\n/***/ 20721:\n/*!**********************************!*\\\n  !*** ./src/app/app.component.ts ***!\n  \\**********************************/\n/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {\n\n\"use strict\";\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"AppComponent\": () => (/* binding */ AppComponent)\n/* harmony export */ });\n/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/router */ 74202);\n/* harmony import */ var _environments_environment__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @environments/environment */ 24766);\n/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/core */ 5000);\n/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/platform-browser */ 22313);\n/* harmony import */ var _core_services_customsweetalert_loading_service__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./core/services/customsweetalert/loading.service */ 74139);\n/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @angular/common */ 69808);\n/* harmony import */ var _shared_components_spinner_spinner_component__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./shared/components/spinner/spinner.component */ 77477);\n/* harmony import */ var _core_header_header_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./core/header/header.component */ 6885);\n/* harmony import */ var _core_footer_footer_component__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./core/footer/footer.component */ 61594);\n\n\n\n\n\n\n\n\n\n\n\nfunction AppComponent_app_spinner_0_Template(rf, ctx) {\n  if (rf & 1) {\n    _angular_core__WEBPACK_IMPORTED_MODULE_5__[\"ɵɵelement\"](0, \"app-spinner\", 1);\n  }\n\n  if (rf & 2) {\n    const ctx_r0 = _angular_core__WEBPACK_IMPORTED_MODULE_5__[\"ɵɵnextContext\"]();\n    _angular_core__WEBPACK_IMPORTED_MODULE_5__[\"ɵɵproperty\"](\"mensagem\", ctx_r0.loading.textLabel);\n  }\n}\n\nlet AppComponent = /*#__PURE__*/(() => {\n  class AppComponent {\n    constructor(_router, activatedRoute, titleService, cd, loading) {\n      this._router = _router;\n      this.activatedRoute = activatedRoute;\n      this.titleService = titleService;\n      this.cd = cd;\n      this.loading = loading;\n      this.loadingDataImg = false;\n      this.title = 'Agência Virtual';\n      this.activatedRoute = this.activatedRoute;\n      this.titleService = this.titleService;\n      const script = document.createElement('script');\n      script.async = true;\n      script.src = 'https://www.googletagmanager.com/gtag/js?id=' + _environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.gtag;\n      document.head.prepend(script);\n      gtag('config', _environments_environment__WEBPACK_IMPORTED_MODULE_0__.environment.gtag); // const navigation = this._router.events.pipe(\n      //     filter((e): e is NavigationEnd => e instanceof NavigationEnd)\n      // );\n      // navigation.subscribe((e: NavigationEnd) => {\n      //     const lastSegment = e.urlAfterRedirects.split('/').pop();\n      //     gtag('config', environment.gtag, { 'page_path': lastSegment });\n      // });\n    }\n\n    ngAfterContentChecked() {\n      this.cd.detectChanges();\n    }\n\n    getTitle(state, parent) {\n      var data = [];\n\n      if (parent && parent.snapshot.data && parent.snapshot.data.title) {\n        data.push(parent.snapshot.data.title);\n      }\n\n      if (state && parent) {\n        data.push(...this.getTitle(state, state.firstChild(parent)));\n      }\n\n      return data;\n    }\n\n    navigationInterceptor(event) {\n      if (event instanceof _angular_router__WEBPACK_IMPORTED_MODULE_6__.NavigationStart) {\n        this.loadingDataImg = true;\n      }\n\n      if (event instanceof _angular_rou"
+}

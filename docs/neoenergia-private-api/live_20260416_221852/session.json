@@ -1,0 +1,103 @@
+{
+  "token_ne_se": {
+    "ne": "eyJ4NXQiOiJaV001TkRrME1tVTRNR1V6Wm1ZeU1UY3lZalJsTm1FeFlXSXdaamRqTURReFltRTFOV00zTVRnMVpURm1NemMzWm1WbE5ERXdObU00WlRCalpXUXdZdyIsImtpZCI6IlpXTTVORGswTW1VNE1HVXpabVl5TVRjeVlqUmxObUV4WVdJd1pqZGpNRFF4WW1FMU5XTTNNVGcxWlRGbU16YzNabVZsTkRFd05tTTRaVEJqWldRd1l3X1JTMjU2IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiIwMzAyMTkzNzU4NiIsImF1dCI6IkFQUExJQ0FUSU9OX1VTRVIiLCJhdWQiOiJYZ2x2UUpmSEVXc1FDSzhsaTJ1ckdsd2ZfRUVhIiwibmJmIjoxNzc2Mzg4NzQzLCJ1c3VhcmlvQWNlc3NvIjoiUGF1bGEiLCJhenAiOiJYZ2x2UUpmSEVXc1FDSzhsaTJ1ckdsd2ZfRUVhIiwic2NvcGUiOiJvcGVuaWQiLCJpc3MiOiJodHRwczpcL1wvc3Nhd3NvMmFtLmliZXJkcm9sYS5sb2NhbDo0NDNcL29hdXRoMlwvdG9rZW4iLCJub21lIjoiUGF1bGEgUGVyZWlyYSBmZXJuYW5kZXMiLCJleHAiOjE3NzYzOTIzNDMsImlhdCI6MTc3NjM4ODc0MywianRpIjoiYzQ0NWVkODEtYWMwNC00MjJiLWE2Y2YtZWZlNjFmMjYyMTlmIn0.enIscTSLp3sH4bKMLqRV2YNgqDcbV1T5M5sxy1kcUfgYq8UaypDsjfmr1nECQz_CdW99vlw--MCvR3xw9jbpxuH7tjvVRJAEBe6NGdLLDteOyxUae42J5yjQA3JHEvet8F2_YsOAUaQmwd8845LK852PxH0KGxbNwe9IC-fSrPpd7JEjOInE7VXgbNoRRdUTTjTIxz2AQwtkRvJMfwQ_3-_HKwlCVygDaojQuCH64gNQ-pLi0oyABQAmP4d_a7ZSEApVAMGruaXkstQb04ojjVTQ8zAjqNM1vRIqRPAoFm77rHO8v05Vn7MgQZOJw9gu0QQmO01m1x5Wi-QvUbyPUg",
+    "se": "eyJ4NXQiOiJaV001TkRrME1tVTRNR1V6Wm1ZeU1UY3lZalJsTm1FeFlXSXdaamRqTURReFltRTFOV00zTVRnMVpURm1NemMzWm1WbE5ERXdObU00WlRCalpXUXdZdyIsImtpZCI6IlpXTTVORGswTW1VNE1HVXpabVl5TVRjeVlqUmxObUV4WVdJd1pqZGpNRFF4WW1FMU5XTTNNVGcxWlRGbU16YzNabVZsTkRFd05tTTRaVEJqWldRd1l3X1JTMjU2IiwiYWxnIjoiUlMyNTYifQ.eyJzdWIiOiIwMzAyMTkzNzU4NiIsImF1dCI6IkFQUExJQ0FUSU9OX1VTRVIiLCJhdWQiOiJyZzhJNVF0U1J1YUpsTWZJWkttT3BFOVc3cllhIiwibmJmIjoxNzc2Mzg4NzQzLCJ1c3VhcmlvQWNlc3NvIjoiUGF1bGEiLCJhenAiOiJyZzhJNVF0U1J1YUpsTWZJWkttT3BFOVc3cllhIiwic2NvcGUiOiJvcGVuaWQiLCJpc3MiOiJodHRwczpcL1wvY21wd3NvMmFtLmFtZXIuaWJlcmRyb2xhLmxvY2FsOjQ0M1wvb2F1dGgyXC90b2tlbiIsIm5vbWUiOiJQYXVsYSBQZXJlaXJhIGZlcm5hbmRlcyIsImV4cCI6MTc3NjM5MjM0MywiaWF0IjoxNzc2Mzg4NzQzLCJqdGkiOiJhZjAwZGFmNi0wOTMxLTRjMWMtYTZiNS1lNGI5ZWNmYzllNDYifQ.OuIu06sT4qwA_bIOJP_l73z7Qk3Figsq8nT-8PZvljvf0pLA0IjNm1gPF9gKOXo9c0iPf_COwmot5KwH9BFZ_hCWwl5JOqgVTk__cla0-Y6TJZdq4by1xVYEN2i1ZCxG6p1huzjgJSVm_AU3rpxRTrBHEucQ-h56JMUaCrXWXtuUmETHdeTUmhS-22RyEeJmL4QX0DbBOq61hiRqbH5YR-abWFjrpJPfG1A1rbB3ZaMnu_DDCmIqdJEambtydMw55llQUcj9NWPXa0ouPiCa4dkkCEqfDONyQnSpSOaSo8LXJdX8RqS44gxWyFJbeuHgsyCxFqdGzsjUscGSOzsnhw"
+  },
+  "local_storage": {
+    "_grecaptcha": "09AKhCRwivY0Bc83REjM6qrr75MBpg452iWhO64pub5TmFEsBMFIyPw5cI18OpZILvVmxpLPF2247OsQhY8uQ4gRkM0jVB3TRfVhg5cYUuiRxe5OCrCFUhzS2Xlxlp6xz6",
+    "token": "<redacted>",
+    "tokenNeSe": "<redacted>"
+  },
+  "cookies": [
+    {
+      "name": "_GRECAPTCHA",
+      "value": "09AKhCRwh6-npMVhI9Kbu1-DbjgZuNLG5l20OtYVXKe8UGKRcz___VpQnYUICxKwjfepVQ3ug4fofi_F29f3dVT74",
+      "domain": "www.google.com",
+      "path": "/recaptcha",
+      "expires": 1791940743.128891,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "569954ed7e318751b2326cf932f2ba11",
+      "value": "128a8f110c2d6ad81f5a5663f7f4d57b",
+      "domain": "agenciavirtual.neoenergia.com",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": true,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "bm_sz",
+      "value": "E9C02759F28BC1EB770AC0DA2FB2BF16~YAAQktcTAnj482SdAQAAtPkEmR+njNnoeU/mBucUezcq1G8qcHaQYu6fwxDgDJU5S2dLfo4sXYux5TpDKxwweELfRHj9Rr2TF7evf4FxMUDagf7/a58Cv19zY8BYiOmL7KDQcqER0DR4QfovNf10HgNYGjvoEEoZ+gAozX1PrRpI3b08slPYM+dg4vJiwrr1ht5qayATjV1EinhephcW14A8e6Eyd2dEcb7/I5klzpG92A5E6DM3PKbhbPR3+pbj7mH4Y1KdXVEsPdbVpd1kWvH2Ek+A2zkWUgx05lA/8BOmh78Pk2v5BKkpJIZeIQMeSnRaPC045SuSudibwmBb59xcwjfh02pimQUsBff2e5dcfB5S1MJRSzOmX2twC342EeDdu5WdRtD4j77772zXscA=~3486520~4536389",
+      "domain": ".neoenergia.com",
+      "path": "/",
+      "expires": 1776403133.370645,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "bm_sv",
+      "value": "33415B78C3114A0E8D09466B57AA3570~YAAQktcTAsD682SdAQAA6v8EmR8wiTkS7pfY2X1/n1Pve2hFJxW94CO12obv+lLVYAFgbmzzfQmQ3LoTbqNKCTkTdPinQr/KEAoaaBwIaKIMBuC8EP8tJENYx5yd8Px1yNP53TeeUd6ormEwc5Lh7JMGLyX9/AtUqZfk6uWpzLxf4iiAWULLG3ULDewYbKKlVdOz+7cMskufvXENx9J1U+4X6ZLVD5OKMgI07dAhKf7DH1oeBDS8TdVUhAizTR+ZwpJ1Ew==~1",
+      "domain": ".neoenergia.com",
+      "path": "/",
+      "expires": 1776395934.960432,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_ga",
+      "value": "GA1.1.1932399081.1776388735",
+      "domain": ".neoenergia.com",
+      "path": "/",
+      "expires": 1810948735.409897,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "ak_bmsc",
+      "value": "A3FCA6539D3534F3CD15BC587F8020FD~000000000000000000000000000000~YAAQktcTAsz882SdAQAAkwUFmR8KsOxYadSfqeXBO0GU/pJwmMBDzTvqP304C9/GWHzYjO0jVP851qBUwcblBSyLayYsYsPeKTAWiSsmVuUQV8jRUKNhTNCzOt2oyDw4zrXi8+iSTWo7LBrTwttwlnfc7xmEsoRV4URa7aoStaNPMZ0zuB7mVgJnR1g9UKruUH+8lAW/7ymaWgapJ0I4xBmULHut+zrDSVxRgFOXEdH2t0rWlReBK0EF3SjIwcNgZRu/5YsS2leJZHNG1Tsp2QbfVF0hPT4GcPObdnf7hNmfXCZP+tpRmVyiBhFFrp04eEcPYZmJNdnIcUEIoMg2KYQKo3prTOGgUUdtN0HjW/cbm5qbRBvrF+eXy7Mte1Wr4h4BezD0MhaOwaO7E2Vuae2lFJleLGFOAXn11bcju4Zpua6aCZh1UY6YMFTBVPL7wkQm39qT4iEyu+qoT93VzwUHxns/A+QGmc8=",
+      "domain": ".neoenergia.com",
+      "path": "/",
+      "expires": 1776395933.408598,
+      "httpOnly": true,
+      "secure": true,
+      "sameSite": "None"
+    },
+    {
+      "name": "_ga_YR5VNMEM28",
+      "value": "GS2.1.s1776388734$o1$g0$t1776388742$j52$l0$h0",
+      "domain": ".neoenergia.com",
+      "path": "/",
+      "expires": 1810948742.300807,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_ga_JV40LRKQRC",
+      "value": "GS2.1.s1776388735$o1$g0$t1776388742$j53$l0$h0",
+      "domain": ".neoenergia.com",
+      "path": "/",
+      "expires": 1810948742.318497,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    },
+    {
+      "name": "_abck",
+      "value": "9CC29A8BB8E896F4F7747897776D5ED8~-1~YAAQktcTAg8J9GSdAQAAWSgFmQ+rtDcW65xZOpbyWnsOSTx1BuFbBCZD/nicyXcJbNm+P2wp4MVtCk3TRDCuWvwP9HEvgYpiYel9CGzraPItWI0+JJqr9ghq5tqZPNDZf0l0DeOlVIxMAS/TNzXM3d8vsZs6fruwCNHveTyL5UKB4ZO92uD0mu8DOY/ytvUjVSVfenM7DQCaEblFj0FOZFKl3YbCI93NWHchXnj/CTCfyyr9iEV2/yxF7LOhOP+gFzqFABLzDdv852N/tVCKcD58UGGBdRmwkcvjpQaqC7HtPxH6MLU3n5ee0IZQRnolUvPqX8PMF0LjCByKhgRNFG+mhIWDEGJbU7zagbc/ZoQoFCtIsLgWj17ZkDoH3JAqCn/2EpOYpJ3G0ItcEljh7hpc7/jp/1pXWk6DY0fp4paY/Y2u7RrLHEPmbbyLzfL7SjaWS1SgBvw/o99coXk9W/xXfH7A1Gbb1W7W3hDUd69T2/2sp+xHjd0PwaNo5fkhYlFdyOqNB/e8IqxD2Ic0F2fT4uHz4D8JpaciEva9Tq2SM0tEoPJSyawkNLuLXxbRiXhEqaQkrJbWuwGYsdC8M6o+WmaNaB5fs7/z020pHfPnyPXow2lz~-1~-1~-1~AAQAAAAF%2f%2f%2f%2f%2f1qoSS9MQQadqcOvUzSXBNpVsjWH%2fTUUijmZ+h4RHQl0OeI0cqKs7eTU6nBfr+2or874GPw2kTDDcjko1Uczbu4FAfxEFG%2fQ1ya0~-1",
+      "domain": ".neoenergia.com",
+      "path": "/",
+      "expires": 1807924745.326151,
+      "httpOnly": false,
+      "secure": true,
+      "sameSite": "None"
+    }
+  ]
+}

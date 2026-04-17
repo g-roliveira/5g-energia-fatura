@@ -1,0 +1,53 @@
+{
+  "method": "GET",
+  "url": "https://apineprd.neoenergia.com/multilogin/2.0.0/servicos/minha-conta?canalSolicitante=AGC&distribuidora=COELBA&usuario=03021937586&tipoPerfil=1&documentoSolicitante=03021937586",
+  "path": "/multilogin/2.0.0/servicos/minha-conta",
+  "query": {
+    "canalSolicitante": "AGC",
+    "distribuidora": "COELBA",
+    "usuario": "*******7586",
+    "tipoPerfil": "1",
+    "documentoSolicitante": "*******7586"
+  },
+  "request_headers": {
+    "sec-ch-ua-platform": "\"Linux\"",
+    "authorization": "<redacted>",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "accept-language": "pt-BR",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "accept": "application/json"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "transactionid": "f20f6db6-3b3d-400d-8057-47661c63ed34",
+    "access-control-expose-headers": "",
+    "cache-control": "max-age=0, no-cache, no-store",
+    "pragma": "no-cache",
+    "access-control-allow-methods": "DELETE, POST, PUT, PATCH, GET",
+    "expires": "Fri, 17 Apr 2026 01:19:06 GMT",
+    "access-control-allow-origin": "*",
+    "content-length": "259",
+    "date": "Fri, 17 Apr 2026 01:19:06 GMT",
+    "content-type": "application/json; charset=UTF-8",
+    "activityid": "75cdeda2-2520-4e52-9ffa-eb51687d459e",
+    "access-control-allow-headers": "authorization,Access-Control-Allow-Origin,Content-Type,SOAPAction,Authorization"
+  },
+  "response_body": {
+    "nome": "Paula Pereira fernandes",
+    "usuarioAcesso": "Paula",
+    "email": "paulinha_fernandes7@hotmail.com",
+    "celular": "(74) 98135-0825",
+    "dtUltimaAtualizacao": "2026-04-15T23:42:19.601-03:00",
+    "retorno": {
+      "tipo": "WSO2",
+      "id": "200",
+      "numero": "200_OK",
+      "mensagem": "Sucesso!"
+    }
+  }
+}

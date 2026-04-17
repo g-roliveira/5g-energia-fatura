@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/8970.44651cd0a12bb43c.js",
+  "path": "/8970.44651cd0a12bb43c.js",
+  "query": {},
+  "request_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "cache-control": "max-age=380605",
+    "content-encoding": "gzip",
+    "etag": "W/\"69ced884-3541b\"",
+    "x-content-type-options": "nosniff",
+    "content-length": "41116",
+    "x-xss-protection": "1; mode=block",
+    "date": "Fri, 17 Apr 2026 01:20:22 GMT",
+    "content-type": "application/javascript",
+    "last-modified": "Thu, 02 Apr 2026 20:58:44 GMT",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "response_body": "\"use strict\";\n(self[\"webpackChunkneoenergia_web\"] = self[\"webpackChunkneoenergia_web\"] || []).push([[8970],{\n\n/***/ 59169:\n/*!**********************************************************************!*\\\n  !*** ./src/app/core/components/guia-dialog/guia-dialog.component.ts ***!\n  \\**********************************************************************/\n/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {\n\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"GuiaDialogComponent\": () => (/* binding */ GuiaDialogComponent)\n/* harmony export */ });\n/* harmony import */ var _angular_material_stepper__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/material/stepper */ 55615);\n/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ 5000);\n/* harmony import */ var _angular_material_dialog__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/material/dialog */ 48966);\n/* harmony import */ var _angular_material_button__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/material/button */ 47423);\n/* harmony import */ var _angular_material_icon__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/material/icon */ 25245);\n/* harmony import */ var _shared_components_neo_button_neo_button_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../../shared/components/neo-button/neo-button.component */ 56864);\n\n\n\n\n\n\n\nlet GuiaDialogComponent = /*#__PURE__*/(() => {\n  class GuiaDialogComponent {\n    constructor(dialogRef) {\n      this.dialogRef = dialogRef;\n      this.step = 1;\n      this.total = 4;\n    }\n\n    next() {\n      this.stepper.next();\n      this.step++;\n    }\n\n    previous() {\n      this.stepper.previous();\n      this.step--;\n    }\n\n    close(querCadastrar, terminouTutorial) {\n      this.dialogRef.close({\n        querCadastrar,\n        terminouTutorial\n      });\n    }\n\n  }\n\n  GuiaDialogComponent.ɵfac = function GuiaDialogComponent_Factory(t) {\n    return new (t || GuiaDialogComponent)(_angular_core__WEBPACK_IMPORTED_MODULE_1__[\"ɵɵdirectiveInject\"](_angular_material_dialog__WEBPACK_IMPORTED_MODULE_2__.MatDialogRef));\n  };\n\n  GuiaDialogComponent.ɵcmp = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_1__[\"ɵɵdefineComponent\"]({\n    type: GuiaDialogComponent,\n    selectors: [[\"app-guia-dialog\"]],\n    viewQuery: function GuiaDialogComponent_Query(rf, ctx) {\n      if (rf & 1) {\n        _angular_core__WEBPACK_IMPORTED_MODULE_1__[\"ɵɵviewQuery\"](_angular_material_stepper__WEBPACK_IMPORTED_MODULE_3__.MatStepper, 5);\n      }\n\n      if (rf & 2) {\n        let _t;\n\n        _angular_core__WEBPACK_IMPORTED_MODULE_1__[\"ɵɵqueryRefresh\"](_t = _angular_core__WEBPACK_IMPORTED_MODULE_1__[\"ɵɵloadQuery\"]()) && (ctx.stepper = _t.first);\n      }\n    },\n    decls: 76,\n    vars: 23,\n    consts: [[3, \"linear\"], [\"stepper\", \"\"], [\"1\", \"\"], [1, \"guia-dialog-header\"], [1, \"guia-dialog-stepper\"], [\"type\", \"button\", \"mat-icon-button\", \"\", \"aria-label\", \"Fechar\", \"title\", \"Fechar\", 1, \"\", 3, \"click\"], [1, \"guia-dialog-content\"], [\"width\", \"250\", \"height\", \"250\", \"src\", \"/assets/images/pagina-inicial-1.png\", \"alt\", \"\"], [1, \"guia-dialog-footer\"], [3, \"classes\", \"titleText\", \"click\"], [\"2\", \"\"], [\"width\", \"200\", \"height\", \"200\", \"src\", \"/assets/images/pagina-inicial-2.png\", \"alt\", \"\"], [1, \"guia-dialog-link\"], [3, \"click\"], [\"3\", \"\"], [\"width\", \"250\", \"height\", \"250\", \"src\", \"/assets/images/pagina-inicial-3.png\", \"alt\", \"\"], [\"4\", \"\"], [\"width\", \"505\", \"height\", \"205\", \"src\", \"/assets/images/pagina-inicial-4.png\", \"alt\", \"\"]],\n    template: function GuiaDialogComponent_Template(rf, ctx) {\n      if (rf & 1) {\n        _angular_core__WEBPACK_IMPORTED_MODULE_1__[\"ɵɵelementStart\"](0, \"mat-stepper\", 0, 1)(2, \"mat-step\", null, 2)(4, \"div\", 3)(5, \"div\", 4)(6, \"p\");\n        _angular_core__WEBPACK_IMPORTED_MODULE_1__[\"ɵɵtext\"](7);\n        _angular_core__WEBPACK_"
+}

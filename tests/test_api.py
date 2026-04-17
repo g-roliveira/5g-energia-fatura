@@ -1,6 +1,8 @@
+import json
 from pathlib import Path
 
 from fastapi.testclient import TestClient
+from sqlalchemy import text
 
 from fatura.api import create_app
 from fatura.config import AppConfig, DatabaseConfig, PortalConfig, ServiceConfig
@@ -24,7 +26,7 @@ def test_api_creates_job_and_exposes_status_and_result(tmp_path: Path):
     app.state.runtime._repo = repo
 
     async def fake_run_job(job_id: str) -> None:
-        request = repo.carregar_job_request(job_id)
+        request = app.state.runtime._request_cache[job_id]
         repo.marcar_job_em_execucao(job_id)
         for target in request.ucs:
             repo.marcar_item_em_execucao(job_id, target.uc, attempts=1)
@@ -73,6 +75,13 @@ def test_api_creates_job_and_exposes_status_and_result(tmp_path: Path):
         assert body["status"] == "succeeded"
         assert body["items"][0]["uc"] == "1001"
         assert body["items"][0]["status"] == "sucesso"
+        assert body["items"][0]["ocr"] is None
+
+    with repo._get_session() as session:
+        stored_request = session.execute(text("SELECT request_json FROM jobs")).scalar_one()
+    request_json = json.loads(stored_request)
+    assert request_json["cpf_cnpj"] == "***"
+    assert request_json["senha_portal"] == "***"
 
 
 def test_api_requires_key_when_configured(tmp_path: Path):
@@ -81,3 +90,53 @@ def test_api_requires_key_when_configured(tmp_path: Path):
     with TestClient(app) as client:
         response = client.get("/jobs")
         assert response.status_code == 401
+
+
+def test_api_exposes_openapi_and_swagger(tmp_path: Path):
+    app = create_app(config=build_config(tmp_path))
+
+    with TestClient(app) as client:
+        docs_response = client.get("/docs")
+        assert docs_response.status_code == 200
+        assert "Swagger UI" in docs_response.text
+
+        openapi_response = client.get("/openapi.json")
+        assert openapi_response.status_code == 200
+        body = openapi_response.json()
+        assert body["info"]["title"] == "5G Energia Fatura API"
+        assert "/jobs/faturas" in body["paths"]
+        request_example = body["components"]["schemas"]["FaturaJobRequest"]["example"]
+        assert request_example["ucs"][0]["uc"] == "007085489032"
+
+
+def test_api_returns_validation_error_for_invalid_mes_ano(tmp_path: Path):
+    app = create_app(config=build_config(tmp_path))
+
+    with TestClient(app) as client:
+        response = client.post(
+            "/jobs/faturas",
+            headers={"X-API-Key": "secret"},
+            json={
+                "cpf_cnpj": "12345678901",
+                "senha_portal": "senha",
+                "uf": "BA",
+                "tipo_acesso": "normal",
+                "mes_ano": "1224",
+                "ucs": [{"uc": "1001", "nome": "UC API"}],
+            },
+        )
+        assert response.status_code == 422
+        assert "MMAAAA" in str(response.json())
+
+
+def test_api_returns_404_for_unknown_job(tmp_path: Path):
+    app = create_app(config=build_config(tmp_path))
+
+    with TestClient(app) as client:
+        status_response = client.get("/jobs/inexistente", headers={"X-API-Key": "secret"})
+        result_response = client.get(
+            "/jobs/inexistente/result",
+            headers={"X-API-Key": "secret"},
+        )
+        assert status_response.status_code == 404
+        assert result_response.status_code == 404

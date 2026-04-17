@@ -1,0 +1,35 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/",
+  "path": "/",
+  "query": {},
+  "request_headers": {
+    "accept-language": "pt-BR",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "sec-ch-ua-platform": "\"Linux\""
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "cache-control": "max-age=0, no-cache, no-store",
+    "content-encoding": "gzip",
+    "content-length": "1165",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "content-type": "text/html",
+    "date": "Fri, 17 Apr 2026 01:17:48 GMT",
+    "etag": "W/\"69ced885-71e\"",
+    "expires": "Fri, 17 Apr 2026 01:17:48 GMT",
+    "last-modified": "Thu, 02 Apr 2026 20:58:45 GMT",
+    "pragma": "no-cache",
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "vary": "Accept-Encoding",
+    "x-akamai-transformed": "0 - 0 -",
+    "x-content-type-options": "nosniff",
+    "x-frame-options": "SAMEORIGIN",
+    "x-xss-protection": "1; mode=block"
+  },
+  "response_body": "<!DOCTYPE html>\n<html lang=\"pt-br\">\n    <head>\n        <meta charset=\"utf-8\"/>\n        <title>Neoenergia - Agência Virtual</title>\n        <base href=\"/\"/>\n\n        <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0\"/>\n        <meta http-equiv=\"x-ua-compatible\" content=\"IE=edge\"/>\n        <link rel=\"icon\" type=\"image/x-icon\" href=\"assets/images/favicon.ico\"/>\n        <link rel=\"stylesheet\" type=\"text/css\" href=\"https://use.fontawesome.com/releases/v5.8.2/css/all.css\"/>\n\n        <!-- Google Tag Manager -->\n        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\n            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\n            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);\n            })(window,document,'script','dataLayer','GTM-WQJP4MTG');\n        </script>\n        <!-- End Google Tag Manager -->\n\n        <script>\n            window.dataLayer = window.dataLayer || [];\n            function gtag() { dataLayer.push(arguments); }\n            gtag('js', new Date());\n        </script>\n\n    <link rel=\"stylesheet\" href=\"styles.b8f530f2278fd96d.css\"><script >bazadebezolkohpepadr=\"843664393\"</script><script type=\"text/javascript\" src=\"https://agenciavirtual.neoenergia.com/akam/13/32494caf\"  defer></script></head>\n\n    <body>\n        <!-- Google Tag Manager (noscript) -->\n        <noscript><iframe src=\"https://www.googletagmanager.com/ns.html?id=GTM-WQJP4MTG\"\n        height=\"0\" width=\"0\" style=\"display:none;visibility:hidden\"></iframe></noscript>\n        <!-- End Google Tag Manager (noscript) -->\n\n        <app-root></app-root>\n    <script src=\"runtime.a71dfaecea5c5d9f.js\" type=\"module\"></script><script src=\"polyfills.b50b1d0ce818639d.js\" type=\"module\"></script><script src=\"main.12d1bbaf63a33bd2.js\" type=\"module\"></script><script type=\"text/javascript\"  src=\"/Z21f/aWAX/7m/5GU3/k93g/3cw3mGrL4mGfJcG71L/Ay4KP0QVAw/IEB5E/QJ1ch4B\"></script><noscript><img src=\"https://agenciavirtual.neoenergia.com/akam/13/pixel_32494caf?a=dD0xY2EyNzMyMmE0NTM1ZmE1NWM1NTljMjcxNTZhNTQ5NmIxYmZiZTczJmpzPW9mZg==\" style=\"visibility: hidden; position: absolute; left: -999px; top: -999px;\" /></noscript></body>\n\n</html>\n"
+}

@@ -1,0 +1,146 @@
+{
+  "method": "GET",
+  "url": "https://apineprd.neoenergia.com/multilogin/2.0.0/servicos/imoveis/ucs/007098175908?usuario=WSO2_CONEXAO&canalSolicitante=AGC&distribuidora=COELBA&protocolo=123&tipoPerfil=1&opcaoSSOS=N",
+  "path": "/multilogin/2.0.0/servicos/imoveis/ucs/007098175908",
+  "query": {
+    "usuario": "***",
+    "canalSolicitante": "AGC",
+    "distribuidora": "COELBA",
+    "protocolo": "123",
+    "tipoPerfil": "1",
+    "opcaoSSOS": "N"
+  },
+  "request_headers": {
+    "host": "apineprd.neoenergia.com",
+    "accept-encoding": "gzip, deflate",
+    "connection": "keep-alive",
+    "accept": "application/json",
+    "accept-language": "pt-BR",
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "authorization": "<redacted>",
+    "cookie": "<redacted>"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "activityid": "70c8e16e-f623-400d-86c0-7b0b9f2e353b",
+    "access-control-expose-headers": "",
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "DELETE, POST, PUT, PATCH, GET",
+    "access-control-allow-headers": "authorization,Access-Control-Allow-Origin,Content-Type,SOAPAction,Authorization",
+    "transactionid": "a4f54861-3d87-4d5c-a8c6-b9f62de1ba59",
+    "content-type": "application/json; charset=UTF-8",
+    "vary": "Accept-Encoding",
+    "content-encoding": "gzip",
+    "expires": "Fri, 17 Apr 2026 01:19:13 GMT",
+    "cache-control": "max-age=0, no-cache, no-store",
+    "pragma": "no-cache",
+    "date": "Fri, 17 Apr 2026 01:19:13 GMT",
+    "content-length": "785",
+    "connection": "keep-alive",
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "set-cookie": "<redacted>"
+  },
+  "response_body": {
+    "codigo": "007098175908",
+    "instalacao": "0009043917",
+    "medidor": "000000001204300816",
+    "fase": "MONOFASE",
+    "local": {
+      "endereco": "RUA BAHIA 130",
+      "bairro": "CENTRO-LAPAO",
+      "codLocalidade": "100000011936",
+      "localidade": "LAPAO",
+      "codMunicipio": "100000006161",
+      "municipio": "LAPAO",
+      "cep": "44905-000",
+      "localizacao": {
+        "sigla": "URBANO",
+        "codigo": null,
+        "descricao": null
+      },
+      "uf": "BA",
+      "tipoLogradouro": "RU",
+      "nomeLogradouro": "RUA BAHIA",
+      "numero": "130",
+      "complementoEndereco": null
+    },
+    "enderecoEntrega": {
+      "endereco": "RUA BAHIA 130",
+      "bairro": "CENTRO-LAPAO",
+      "municipio": "LAPAO",
+      "cep": "44905-000",
+      "uf": "BA"
+    },
+    "situacao": {
+      "codigo": "LG",
+      "descricao": "LIGADA",
+      "dataSituacaoUC": "20260220",
+      "cargaInstalada": "470.0000000"
+    },
+    "dataLigacao": "20260220",
+    "cliente": {
+      "codigo": "1014945628",
+      "nome": "PAULA PEREIRA FERNANDES",
+      "dataAtualizacao": "20240731",
+      "documento": {
+        "tipo": {
+          "codigo": "CPF",
+          "descricao": "CADASTRO DE PESSOA FISICA"
+        },
+        "numero": "03021937586"
+      },
+      "segundoDocumento": {
+        "uf": "BA",
+        "orgaoExpedidor": {
+          "codigo": "SSP",
+          "descricao": "Carteira identidade"
+        },
+        "tipo": {
+          "codigo": "Z_RG",
+          "descricao": "Carteira identidade"
+        },
+        "numero": "1386263591"
+      },
+      "contato": {
+        "email": "paulinha_fernandes7@hotmail.com",
+        "celular": {
+          "ddd": null,
+          "numero": null
+        },
+        "telefone": {
+          "ddd": null,
+          "numero": "74-981350825"
+        }
+      },
+      "dataNascimento": "19940626"
+    },
+    "servicos": {
+      "baixaRenda": null,
+      "faturaEmail": null,
+      "dataCerta": "X",
+      "debitoAutomatico": null,
+      "faturaBraile": null,
+      "entregaAlternativa": null,
+      "debitosVencidos": null,
+      "contaMinima": "X",
+      "parcelamentoAbertoUc": null
+    },
+    "caracteristicas": {
+      "grandeCliente": null,
+      "irrigacao": null,
+      "fotovoltaico": null,
+      "vip7": null,
+      "espelho": null,
+      "microMiniGeracaoD": null,
+      "tarifaBranca": null
+    },
+    "mini_micro": null,
+    "utd": null,
+    "carga": null,
+    "e_resultado": "X"
+  }
+}

@@ -43,6 +43,7 @@ class ContaDB(Base):
     consumo_json: Mapped[str | None]
     energia_json: Mapped[str | None]
     nota_fiscal_json: Mapped[str | None]
+    ocr_json: Mapped[str | None]
     created_at: Mapped[datetime] = mapped_column(default=datetime.now)
 
     cliente: Mapped[ClienteDB | None] = relationship(back_populates="contas")

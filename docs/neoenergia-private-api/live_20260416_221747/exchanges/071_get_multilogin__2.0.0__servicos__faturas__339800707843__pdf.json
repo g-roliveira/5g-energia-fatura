@@ -1,0 +1,66 @@
+{
+  "method": "GET",
+  "url": "https://apineprd.neoenergia.com/multilogin/2.0.0/servicos/faturas/339800707843/pdf?codigo=007098175908&protocolo=20260416280227135&tipificacao=1031602&usuario=WSO2_CONEXAO&canalSolicitante=AGC&motivo=02&distribuidora=COELBA&regiao=NE&tipoPerfil=1&documento=03021937586&documentoSolicitante=03021937586&byPassActiv=",
+  "path": "/multilogin/2.0.0/servicos/faturas/339800707843/pdf",
+  "query": {
+    "codigo": "007098175908",
+    "protocolo": "20260416280227135",
+    "tipificacao": "1031602",
+    "usuario": "***",
+    "canalSolicitante": "AGC",
+    "motivo": "02",
+    "distribuidora": "COELBA",
+    "regiao": "NE",
+    "tipoPerfil": "1",
+    "documento": "*******7586",
+    "documentoSolicitante": "*******7586",
+    "byPassActiv": ""
+  },
+  "request_headers": {
+    "host": "apineprd.neoenergia.com",
+    "accept-encoding": "gzip, deflate",
+    "connection": "keep-alive",
+    "accept": "application/json",
+    "accept-language": "pt-BR",
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "authorization": "<redacted>",
+    "cookie": "<redacted>"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "activityid": "261d051d-14e1-4f0e-8fbd-602c26f60f05",
+    "access-control-expose-headers": "",
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "DELETE, POST, PUT, PATCH, GET",
+    "access-control-allow-headers": "authorization,Access-Control-Allow-Origin,Content-Type,SOAPAction,Authorization",
+    "transactionid": "1715bcb0-7d64-4afd-ba04-4a2105700c24",
+    "content-type": "application/json; charset=UTF-8",
+    "vary": "Accept-Encoding",
+    "content-encoding": "gzip",
+    "expires": "Fri, 17 Apr 2026 01:18:18 GMT",
+    "cache-control": "max-age=0, no-cache, no-store",
+    "pragma": "no-cache",
+    "date": "Fri, 17 Apr 2026 01:18:18 GMT",
+    "content-length": "27819",
+    "connection": "keep-alive",
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "set-cookie": "<redacted>"
+  },
+  "response_body": {
+    "fileName": "007098175908",
+    "fileSize": "62657 ",
+    "fileData": "<base64:83544 chars>",
+    "fileExtension": ".pdf",
+    "retorno": {
+      "tipo": "S",
+      "id": "ZATCWS",
+      "numero": "066",
+      "mensagem": "Documento gerado com sucesso.",
+      "e_resultado": "X"
+    }
+  }
+}

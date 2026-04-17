@@ -1,0 +1,57 @@
+{
+  "method": "GET",
+  "url": "https://apineprd.neoenergia.com/bandeira-tarifaria/1.0.0/bandeira-tarifaria?canalSolicitante=AGC&usuario=WSO2_CONEXAO&distribuidora=COELBA",
+  "path": "/bandeira-tarifaria/1.0.0/bandeira-tarifaria",
+  "query": {
+    "canalSolicitante": "AGC",
+    "usuario": "***",
+    "distribuidora": "COELBA"
+  },
+  "request_headers": {
+    "sec-ch-ua-platform": "\"Linux\"",
+    "authorization": "<redacted>",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "accept-language": "pt-BR",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "accept": "application/json"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "transactionid": "urn:uuid:01f5183a-44eb-4c6c-b177-46eeaaaf45ae",
+    "access-control-expose-headers": "",
+    "cache-control": "max-age=0, no-cache, no-store",
+    "pragma": "no-cache",
+    "uber-trace-id": "b7f779f5339e3418%3Aea0c4c5b8dd63f8%3Abea4a618757ada1c%3A1",
+    "access-control-allow-methods": "GET",
+    "expires": "Fri, 17 Apr 2026 01:18:01 GMT",
+    "access-control-allow-origin": "*",
+    "content-length": "255",
+    "date": "Fri, 17 Apr 2026 01:18:01 GMT",
+    "content-type": "application/json; charset=UTF-8",
+    "activityid": "17936342-1a7d-4fd8-b3f6-375a9dffdaf5",
+    "access-control-allow-headers": "authorization,Access-Control-Allow-Origin,Content-Type,SOAPAction,Authorization"
+  },
+  "response_body": {
+    "bandeiraTarifaria": [
+      {
+        "bandeira": "VD",
+        "descricao": "Bandeira Verde",
+        "mesReferencia": "01/2026",
+        "dataInclusao": "01/01/2026",
+        "validoAte": "31/12/9999"
+      }
+    ],
+    "e_resultado": "X",
+    "retorno": {
+      "tipo": "S",
+      "id": "ZATCWS",
+      "numero": "029",
+      "mensagem": "Executado com sucesso."
+    }
+  }
+}

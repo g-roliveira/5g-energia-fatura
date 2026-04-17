@@ -1,0 +1,17 @@
+{
+  "nomeTitular": "PAULA PEREIRA FERNANDES",
+  "clienteDocumentoSecundario": {
+    "tipoDocumentoSecundario": "Z_RG",
+    "documentoSecundario": "1386263591"
+  },
+  "dtNascimento": "1994-06-26",
+  "emailCadastro": "paulinha_fernandes7@hotmail.com",
+  "telefoneContato": "74-981350825",
+  "e_resultado": "X",
+  "retorno": {
+    "tipo": "S",
+    "id": "ZATCWS",
+    "numero": "029",
+    "mensagem": "Executado com sucesso."
+  }
+}

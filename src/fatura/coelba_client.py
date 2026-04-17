@@ -92,7 +92,11 @@ class CoelbaClient:
         self._playwright = await async_playwright().start()
         launch_kwargs = {
             "headless": self._config.headless,
-            "args": ["--disable-blink-features=AutomationControlled"],
+            "args": [
+                "--disable-blink-features=AutomationControlled",
+                "--disable-dev-shm-usage",
+                "--no-sandbox",
+            ],
         }
         if self._config.browser_channel:
             launch_kwargs["channel"] = self._config.browser_channel
@@ -132,6 +136,12 @@ class CoelbaClient:
         if not self._page:
             raise RuntimeError("CoelbaClient não inicializado. Use 'async with'.")
         return self._page
+
+    @property
+    def context(self) -> BrowserContext:
+        if not self._context:
+            raise RuntimeError("CoelbaClient não inicializado. Use 'async with'.")
+        return self._context
 
     @property
     def last_error_context(self) -> dict[str, str | None]:

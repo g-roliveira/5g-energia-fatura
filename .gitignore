@@ -16,10 +16,13 @@ docs/*.xlsx
 *.db
 
 config.yaml
+.env
 
 .ruff_cache/
 .pytest_cache/
 .mypy_cache/
 .firecrawl/
+output/
+artifacts/
 
 *.log

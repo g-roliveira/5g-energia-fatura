@@ -51,6 +51,15 @@ class DatabaseConfig(BaseModel):
     url: str = "sqlite:///data/faturas.db"
 
 
+class ParserConfig(BaseModel):
+    engine: str = "pymupdf"
+    enable_mistral_fallback: bool = True
+    validate_new_pdfs_with_mistral: bool = False
+    mistral_api_key: str = ""
+    mistral_model: str = "mistral-ocr-latest"
+    mistral_timeout_ms: int = 45_000
+
+
 class ServiceConfig(BaseModel):
     host: str = "127.0.0.1"
     port: int = 8000
@@ -63,12 +72,28 @@ class ServiceConfig(BaseModel):
 class AppConfig(BaseModel):
     portal: PortalConfig = PortalConfig()
     database: DatabaseConfig = DatabaseConfig()
+    parser: ParserConfig = ParserConfig()
     service: ServiceConfig = ServiceConfig()
     clientes: list[ClienteConfig] = []
 
 
+def _load_dotenv_if_present(path: str | Path = ".env") -> None:
+    dotenv_path = Path(path)
+    if not dotenv_path.exists():
+        return
+    for raw_line in dotenv_path.read_text(encoding="utf-8").splitlines():
+        line = raw_line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        value = value.strip().strip('"').strip("'")
+        os.environ.setdefault(key, value)
+
+
 def load_config(path: str | Path = "config.yaml") -> AppConfig:
     """Lê o arquivo YAML de configuração e retorna AppConfig validado."""
+    _load_dotenv_if_present()
     config_path = Path(path)
     if not config_path.exists():
         raise ConfigError(f"Arquivo de configuração não encontrado: {config_path}")
@@ -89,5 +114,7 @@ def load_config(path: str | Path = "config.yaml") -> AppConfig:
 
     if not config.service.api_key:
         config.service.api_key = os.getenv("FATURA_API_KEY", "")
+    if not config.parser.mistral_api_key:
+        config.parser.mistral_api_key = os.getenv("MISTRAL_API_KEY", "")
 
     return config

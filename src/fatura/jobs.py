@@ -19,6 +19,7 @@ from fatura.exceptions import (
 )
 from fatura.parser_pdf import CoelbaPdfParser
 from fatura.repository import SqliteFaturaRepository
+from fatura.models import conta_para_ocr_payload, formatar_data_br
 from fatura.service_models import (
     BatchItemResult,
     BatchRunResult,
@@ -45,6 +46,16 @@ class ProcessamentoResult:
     erro: int = 0
     pulado: int = 0
     detalhes: list[DetalheProcessamento] = field(default_factory=list)
+
+
+def _somente_digitos(valor: str | None) -> str:
+    return "".join(ch for ch in (valor or "") if ch.isdigit())
+
+
+def _ucs_equivalentes(uc_a: str | None, uc_b: str | None) -> bool:
+    digitos_a = _somente_digitos(uc_a).lstrip("0") or "0"
+    digitos_b = _somente_digitos(uc_b).lstrip("0") or "0"
+    return digitos_a == digitos_b
 
 
 def _resolver_mes_ano(mes_ano: str | None) -> tuple[int | None, int | None, str | None]:
@@ -77,7 +88,7 @@ class BatchProcessor:
     ) -> None:
         self._config = config
         self._repo = repo or SqliteFaturaRepository(config.database.url)
-        self._parser = parser or CoelbaPdfParser()
+        self._parser = parser or CoelbaPdfParser(config=config.parser)
         self._client_factory = client_factory
 
     async def run_batch(self, spec: BatchSpec, job_id: str | None = None) -> BatchRunResult:
@@ -177,6 +188,8 @@ class BatchProcessor:
 
             if not conta.uc:
                 conta.uc = target.uc
+            elif _ucs_equivalentes(conta.uc, target.uc):
+                conta.uc = target.uc
             if mes and ano:
                 conta.mes = mes
                 conta.ano = ano
@@ -195,6 +208,7 @@ class BatchProcessor:
 
             conta_id = self._repo.salvar_conta(conta)
             self._repo.registrar_log(conta.uc, conta.mes, conta.ano, "sucesso")
+            ocr_data = conta_para_ocr_payload(conta)
 
             return BatchItemResult(
                 uc=target.uc,
@@ -205,6 +219,9 @@ class BatchProcessor:
                 mes=conta.mes,
                 ano=conta.ano,
                 valor=conta.valor,
+                data_vencimento=formatar_data_br(conta.vencimento),
+                normalizado_valor=float(conta.valor),
+                ocr_data=ocr_data,
                 conta_id=conta_id,
                 attempts=1,
             )
@@ -258,9 +275,10 @@ async def executar_job_persistido(
     job_id: str,
     repo: SqliteFaturaRepository | None = None,
     client_factory: type[CoelbaClient] = CoelbaClient,
+    request: FaturaJobRequest | None = None,
 ) -> BatchRunResult:
     repo = repo or SqliteFaturaRepository(config.database.url)
-    request = repo.carregar_job_request(job_id)
+    request = request or repo.carregar_job_request(job_id)
     spec = BatchSpec(
         cpf_cnpj=request.cpf_cnpj,
         senha_portal=request.senha_portal,

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://5g-energia-fatura.local/contracts/extractor-response.schema.json",
+  "title": "ExtractorResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "job_id", "status", "fields", "source_map", "confidence_map"],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0"
+    },
+    "job_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ok", "partial", "error"]
+    },
+    "fields": {
+      "type": "object"
+    },
+    "source_map": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "enum": ["api", "pymupdf", "mistral", "manual", "unknown"]
+      }
+    },
+    "confidence_map": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "number",
+        "minimum": 0,
+        "maximum": 1
+      }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "debug_json_path": {
+          "type": ["string", "null"]
+        },
+        "rendered_pages_dir": {
+          "type": ["string", "null"]
+        }
+      }
+    }
+  }
+}

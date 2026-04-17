@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/assets/images/logo-conexao-digital.svg",
+  "path": "/assets/images/logo-conexao-digital.svg",
+  "query": {},
+  "request_headers": {
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "cache-control": "max-age=2465531",
+    "content-encoding": "gzip",
+    "etag": "\"69ced885-3d9c\"",
+    "x-content-type-options": "nosniff",
+    "accept-ranges": "bytes",
+    "content-length": "5912",
+    "x-xss-protection": "1; mode=block",
+    "date": "Fri, 17 Apr 2026 01:18:54 GMT",
+    "content-type": "image/svg+xml",
+    "last-modified": "Thu, 02 Apr 2026 20:58:45 GMT",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "response_body": "<svg width=\"198\" height=\"68\" viewBox=\"0 0 198 68\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M160.344 15.5331C157.139 15.5331 154.767 13.2042 154.767 9.82836C154.767 6.47391 157.139 4.14502 160.344 4.14502C163.548 4.14502 165.92 6.47391 165.92 9.82836C165.92 13.2042 163.548 15.5331 160.344 15.5331ZM160.344 13.4178C162.16 13.4178 163.506 12.0932 163.506 9.82836C163.506 7.58494 162.16 6.28161 160.344 6.28161C158.527 6.28161 157.203 7.58494 157.203 9.82836C157.203 12.0932 158.527 13.4178 160.344 13.4178Z\" fill=\"#00A552\"/>\n<path d=\"M147.391 1.83747C147.006 1.83747 146.75 2.17933 146.75 2.8203H144.827C144.827 1.02556 146.024 0 147.241 0C148.716 0 149.079 1.0683 149.763 1.0683C150.147 1.0683 150.382 0.726442 150.382 0.10683H152.326C152.326 1.90157 151.109 2.90577 149.912 2.90577C148.438 2.90577 148.075 1.83747 147.391 1.83747ZM148.31 4.14499C150.831 4.14499 153.117 5.46968 153.117 8.46091V15.298H150.895V14.2297C150.233 15.0844 149.079 15.533 147.583 15.533C145.126 15.533 143.31 14.2938 143.31 12.1572C143.31 10.042 145.169 8.76004 147.733 8.76004C149.079 8.76004 150.126 9.14462 150.767 9.82833V8.69594C150.767 6.98666 149.698 6.26022 148.224 6.26022C146.9 6.26022 145.981 6.98666 145.596 8.16179L143.609 7.37125C144.272 5.14919 146.13 4.14499 148.31 4.14499ZM148.288 13.7597C149.763 13.7597 150.81 13.1828 150.81 12.1359C150.81 11.0676 149.763 10.4907 148.288 10.4907C146.835 10.4907 145.746 11.0462 145.746 12.1359C145.746 13.2042 146.835 13.7597 148.288 13.7597Z\" fill=\"#00A552\"/>\n<path d=\"M140.42 4.38H143.176L139.159 9.72149L143.326 15.298H140.505L137.749 11.6017L134.972 15.298H132.215L136.382 9.76422L132.365 4.38H135.185L137.792 7.88402L140.42 4.38Z\" fill=\"#00A552\"/>\n<path d=\"M132.351 9.76426C132.351 9.95655 132.351 10.1702 132.33 10.3625H124.382C124.553 12.4777 125.706 13.4819 127.288 13.4819C128.655 13.4819 129.702 12.8837 130.321 11.2812L132.33 12.0504C131.411 14.5075 129.488 15.5331 127.33 15.5331C124.211 15.5331 121.989 13.2469 121.989 9.82836C121.989 6.40981 124.189 4.14502 127.266 4.14502C130.236 4.14502 132.351 6.40981 132.351 9.76426ZM127.245 6.11069C125.771 6.11069 124.766 6.98669 124.467 8.6746H129.916C129.616 6.92259 128.612 6.11069 127.245 6.11069Z\" fill=\"#00A552\"/>\n<path d=\"M116.391 4.14502C118.677 4.14502 120.344 5.81156 120.344 8.35411V15.298H117.972V8.7387C117.972 7.17898 117.053 6.23888 115.771 6.23888C114.297 6.23888 113.25 7.22171 113.25 8.84553V15.298H110.878V4.38004H113.25V5.91839C113.934 4.6578 115.109 4.14502 116.391 4.14502Z\" fill=\"#00A552\"/>\n<path d=\"M103.57 15.5331C100.365 15.5331 97.9932 13.2042 97.9932 9.82836C97.9932 6.47391 100.365 4.14502 103.57 4.14502C106.775 4.14502 109.146 6.47391 109.146 9.82836C109.146 13.2042 106.775 15.5331 103.57 15.5331ZM103.57 13.4178C105.386 13.4178 106.732 12.0932 106.732 9.82836C106.732 7.58494 105.386 6.28161 103.57 6.28161C101.754 6.28161 100.429 7.58494 100.429 9.82836C100.429 12.0932 101.754 13.4178 103.57 13.4178Z\" fill=\"#00A552\"/>\n<path d=\"M90.4284 15.533C86.0697 15.533 82.9717 12.4136 82.9717 7.81992C82.9717 3.22624 86.0697 0.106812 90.4284 0.106812C93.6119 0.106812 96.069 1.79472 97.0732 4.76459L94.7657 5.64059C94.0606 3.63219 92.4795 2.41433 90.4284 2.41433C87.6295 2.41433 85.5783 4.4441 85.5783 7.81992C85.5783 11.1957 87.6295 13.2255 90.4284 13.2255C92.4795 13.2255 94.0606 12.0076 94.7657 9.99924L97.0732 10.8752C96.069 13.8451 93.6119 15.533 90.4284 15.533Z\" fill=\"#00A552\"/>\n<path d=\"M39.0265 20.2067L42.1577 23.3379V42.0342L39.0265 45.1654H11.0273V32.686L17.2443 26.469V38.903H39.0265L35.9407 35.8172V26.469H11.0273V20.2067H39.0265Z\" fill=\"#F59A26\"/>\n<path d=\"M51.5058 20.2974H45.2888V45.2107H51.5058V20.2974Z\" fill=\"#F59A26\"/>\n<path d=\"M54.637 42.0795V20.2974H82.6361L85.7673 23.3832V26.5144H60.854V38.9937H79.5503V35.8625H63.9398V29.6455H85.7673V45.2107H57.7228L54.637 42.0795Z\" fill=\"#F59A26\"/>\n<path d=\"M95.1154 20.2974H88.8984V45.2107H95.1154V20.2974Z\" fill=\"#F59A26\"/>\n<path d=\"M110.681 26.5144H98.2012V20.2974H129.377V26.5144H116.898V45.2107H110.681V26.51"
+}

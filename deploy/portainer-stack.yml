@@ -1,0 +1,74 @@
+services:
+  backend:
+    image: ${BACKEND_IMAGE}
+    environment:
+      BACKEND_HOST: "0.0.0.0"
+      BACKEND_PORT: "8080"
+      EXTRACTOR_BASE_URL: "http://doc-extractor:8090"
+      BACKEND_DATABASE_URL: "file:/data/backend-go.db"
+      ARTIFACTS_DIR: "/data/artifacts"
+      BACKEND_ENCRYPTION_KEY: ${BACKEND_ENCRYPTION_KEY}
+      BOOTSTRAP_PYTHON_BIN: "python"
+      BOOTSTRAP_SCRIPT_PATH: "/app/scripts/bootstrap_neoenergia_token.py"
+      NEOENERGIA_API_BASE_URL: "https://apineprd.neoenergia.com"
+    volumes:
+      - backend_data:/data
+    networks:
+      - network_public
+      - internal
+    deploy:
+      replicas: 1
+      update_config:
+        order: start-first
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+      labels:
+        - traefik.enable=true
+        - traefik.docker.network=network_public
+        - traefik.http.routers.energia-fatura-api.rule=Host(`${API_HOST}`)
+        - traefik.http.routers.energia-fatura-api.entrypoints=websecure
+        - traefik.http.routers.energia-fatura-api.tls=true
+        - traefik.http.routers.energia-fatura-api.tls.certresolver=le-prod-tls
+        - traefik.http.services.energia-fatura-api.loadbalancer.server.port=8080
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/healthz').read()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  doc-extractor:
+    image: ${DOC_EXTRACTOR_IMAGE}
+    environment:
+      DOC_EXTRACTOR_HOST: "0.0.0.0"
+      DOC_EXTRACTOR_PORT: "8090"
+      MISTRAL_API_KEY: ${MISTRAL_API_KEY}
+      MISTRAL_MODEL: ${MISTRAL_MODEL}
+    networks:
+      - internal
+    deploy:
+      replicas: 1
+      update_config:
+        order: start-first
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8090/healthz').read()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  backend_data:
+
+networks:
+  network_public:
+    external: true
+  internal:
+    driver: overlay
+    attachable: true

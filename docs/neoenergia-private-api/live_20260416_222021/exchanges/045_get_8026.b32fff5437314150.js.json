@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/8026.b32fff5437314150.js",
+  "path": "/8026.b32fff5437314150.js",
+  "query": {},
+  "request_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "cache-control": "max-age=167502",
+    "content-encoding": "gzip",
+    "etag": "W/\"69ced884-12a1\"",
+    "x-content-type-options": "nosniff",
+    "content-length": "1124",
+    "x-xss-protection": "1; mode=block",
+    "date": "Fri, 17 Apr 2026 01:20:32 GMT",
+    "content-type": "application/javascript",
+    "last-modified": "Thu, 02 Apr 2026 20:58:44 GMT",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "response_body": "\"use strict\";\n(self[\"webpackChunkneoenergia_web\"] = self[\"webpackChunkneoenergia_web\"] || []).push([[8026],{\n\n/***/ 90806:\n/*!*************************************************************************************!*\\\n  !*** ./src/app/core/routes/login-route/login-child-routes/selecao-estado.routes.ts ***!\n  \\*************************************************************************************/\n/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {\n\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"selecaoEstadoRoutes\": () => (/* binding */ selecaoEstadoRoutes)\n/* harmony export */ });\n/* harmony import */ var app_modules_selecionar_estado_selecionar_estado_component__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! app/modules/selecionar-estado/selecionar-estado.component */ 42002);\n\nconst selecaoEstadoRoutes = [{\n  path: '',\n  component: app_modules_selecionar_estado_selecionar_estado_component__WEBPACK_IMPORTED_MODULE_0__.SelecionarEstadoComponent\n}];\n\n/***/ }),\n\n/***/ 58026:\n/*!***********************************************************************!*\\\n  !*** ./src/app/modules/selecionar-estado/selecionar-estado.module.ts ***!\n  \\***********************************************************************/\n/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {\n\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"SelecionarEstadoModule\": () => (/* binding */ SelecionarEstadoModule)\n/* harmony export */ });\n/* harmony import */ var app_shared_components_protocolo_informativo_protocolo_informativo_module__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! app/shared/components/protocolo-informativo/protocolo-informativo.module */ 42027);\n/* harmony import */ var _angular_common__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/common */ 69808);\n/* harmony import */ var _angular_material_card__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @angular/material/card */ 9224);\n/* harmony import */ var _selecionar_estado_component__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./selecionar-estado.component */ 42002);\n/* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/router */ 74202);\n/* harmony import */ var app_core_routes_login_route_login_child_routes_selecao_estado_routes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! app/core/routes/login-route/login-child-routes/selecao-estado.routes */ 90806);\n/* harmony import */ var _angular_material_icon__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @angular/material/icon */ 25245);\n/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/core */ 5000);\n\n\n\n\n\n\n\n\n\nlet SelecionarEstadoModule = /*#__PURE__*/(() => {\n  class SelecionarEstadoModule {}\n\n  SelecionarEstadoModule.ɵfac = function SelecionarEstadoModule_Factory(t) {\n    return new (t || SelecionarEstadoModule)();\n  };\n\n  SelecionarEstadoModule.ɵmod = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__[\"ɵɵdefineNgModule\"]({\n    type: SelecionarEstadoModule\n  });\n  SelecionarEstadoModule.ɵinj = /*@__PURE__*/_angular_core__WEBPACK_IMPORTED_MODULE_3__[\"ɵɵdefineInjector\"]({\n    imports: [[_angular_common__WEBPACK_IMPORTED_MODULE_4__.CommonModule, _angular_material_card__WEBPACK_IMPORTED_MODULE_5__.MatCardModule, _angular_material_icon__WEBPACK_IMPORTED_MODULE_6__.MatIconModule, _angular_router__WEBPACK_IMPORTED_MODULE_7__.RouterModule.forChild(app_core_routes_login_route_login_child_routes_selecao_estado_routes__WEBPACK_IMPORTED_MODULE_2__.selecaoEstadoRoutes), app_shared_components_protocolo_informativo_protocolo_informativo_module__WEBPACK_IMPORTED_MODULE_0__.ProtocoloInformativoComponentModule]]\n  });\n  return SelecionarEstadoModule;\n})();\n\n(function () {\n  (typeof ngJitMode ="
+}

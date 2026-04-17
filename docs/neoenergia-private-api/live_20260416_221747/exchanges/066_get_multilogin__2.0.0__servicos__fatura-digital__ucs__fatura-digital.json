@@ -1,0 +1,60 @@
+{
+  "method": "GET",
+  "url": "https://apineprd.neoenergia.com/multilogin/2.0.0/servicos/fatura-digital/ucs/fatura-digital?codigo=007098175908&canalSolicitante=AGC&usuario=WSO2_CONEXAO&distribuidora=COELBA&tipoPerfil=1",
+  "path": "/multilogin/2.0.0/servicos/fatura-digital/ucs/fatura-digital",
+  "query": {
+    "codigo": "007098175908",
+    "canalSolicitante": "AGC",
+    "usuario": "***",
+    "distribuidora": "COELBA",
+    "tipoPerfil": "1"
+  },
+  "request_headers": {
+    "host": "apineprd.neoenergia.com",
+    "accept-encoding": "gzip, deflate",
+    "connection": "keep-alive",
+    "accept": "application/json",
+    "accept-language": "pt-BR",
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "authorization": "<redacted>",
+    "cookie": "<redacted>"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "activityid": "522c6b6e-9e88-455b-9f07-d570c92d4eb8",
+    "access-control-expose-headers": "",
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "DELETE, POST, PUT, PATCH, GET",
+    "access-control-allow-headers": "authorization,Access-Control-Allow-Origin,Content-Type,SOAPAction,Authorization",
+    "transactionid": "29deb001-4b5a-4c1f-a9aa-72f978822d67",
+    "content-type": "application/json; charset=UTF-8",
+    "content-length": "296",
+    "expires": "Fri, 17 Apr 2026 01:18:11 GMT",
+    "cache-control": "max-age=0, no-cache, no-store",
+    "pragma": "no-cache",
+    "date": "Fri, 17 Apr 2026 01:18:11 GMT",
+    "connection": "keep-alive",
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "set-cookie": "<redacted>"
+  },
+  "response_body": {
+    "e_resultado": "X",
+    "PossuiFaturaDigital": null,
+    "emailFatura": null,
+    "emailCadastro": "paulinha_fernandes7@hotmail.com",
+    "dominioWhatsapp": null,
+    "dominioSMS": null,
+    "faturaBraile": null,
+    "faturaEntregaAlternativa": null,
+    "retorno": {
+      "tipo": "S",
+      "id": "ZATCWS",
+      "numero": "029",
+      "mensagem": "Executado com sucesso."
+    }
+  }
+}

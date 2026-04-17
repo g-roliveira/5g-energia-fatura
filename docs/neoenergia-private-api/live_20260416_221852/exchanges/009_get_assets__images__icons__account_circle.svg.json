@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/assets/images/icons/account_circle.svg",
+  "path": "/assets/images/icons/account_circle.svg",
+  "query": {},
+  "request_headers": {
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "cache-control": "max-age=2288014",
+    "content-encoding": "gzip",
+    "etag": "\"69ced885-96c\"",
+    "x-content-type-options": "nosniff",
+    "accept-ranges": "bytes",
+    "content-length": "937",
+    "x-xss-protection": "1; mode=block",
+    "date": "Fri, 17 Apr 2026 01:18:54 GMT",
+    "content-type": "image/svg+xml",
+    "last-modified": "Thu, 02 Apr 2026 20:58:45 GMT",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "response_body": "<svg width=\"20\" height=\"21\" viewBox=\"0 0 20 21\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<path d=\"M3.85 15.1117C4.7 14.4617 5.65 13.9492 6.7 13.5742C7.75 13.1992 8.85 13.0117 10 13.0117C11.15 13.0117 12.25 13.1992 13.3 13.5742C14.35 13.9492 15.3 14.4617 16.15 15.1117C16.7333 14.4284 17.1875 13.6534 17.5125 12.7867C17.8375 11.9201 18 10.9951 18 10.0117C18 7.79505 17.2208 5.90755 15.6625 4.34922C14.1042 2.79089 12.2167 2.01172 10 2.01172C7.78333 2.01172 5.89583 2.79089 4.3375 4.34922C2.77917 5.90755 2 7.79505 2 10.0117C2 10.9951 2.1625 11.9201 2.4875 12.7867C2.8125 13.6534 3.26667 14.4284 3.85 15.1117ZM10 11.0117C9.01667 11.0117 8.1875 10.6742 7.5125 9.99922C6.8375 9.32422 6.5 8.49505 6.5 7.51172C6.5 6.52839 6.8375 5.69922 7.5125 5.02422C8.1875 4.34922 9.01667 4.01172 10 4.01172C10.9833 4.01172 11.8125 4.34922 12.4875 5.02422C13.1625 5.69922 13.5 6.52839 13.5 7.51172C13.5 8.49505 13.1625 9.32422 12.4875 9.99922C11.8125 10.6742 10.9833 11.0117 10 11.0117ZM10 20.0117C8.61667 20.0117 7.31667 19.7492 6.1 19.2242C4.88333 18.6992 3.825 17.9867 2.925 17.0867C2.025 16.1867 1.3125 15.1284 0.7875 13.9117C0.2625 12.6951 0 11.3951 0 10.0117C0 8.62839 0.2625 7.32839 0.7875 6.11172C1.3125 4.89505 2.025 3.83672 2.925 2.93672C3.825 2.03672 4.88333 1.32422 6.1 0.799219C7.31667 0.274219 8.61667 0.0117188 10 0.0117188C11.3833 0.0117188 12.6833 0.274219 13.9 0.799219C15.1167 1.32422 16.175 2.03672 17.075 2.93672C17.975 3.83672 18.6875 4.89505 19.2125 6.11172C19.7375 7.32839 20 8.62839 20 10.0117C20 11.3951 19.7375 12.6951 19.2125 13.9117C18.6875 15.1284 17.975 16.1867 17.075 17.0867C16.175 17.9867 15.1167 18.6992 13.9 19.2242C12.6833 19.7492 11.3833 20.0117 10 20.0117ZM10 18.0117C10.8833 18.0117 11.7167 17.8826 12.5 17.6242C13.2833 17.3659 14 16.9951 14.65 16.5117C14 16.0284 13.2833 15.6576 12.5 15.3992C11.7167 15.1409 10.8833 15.0117 10 15.0117C9.11667 15.0117 8.28333 15.1409 7.5 15.3992C6.71667 15.6576 6 16.0284 5.35 16.5117C6 16.9951 6.71667 17.3659 7.5 17.6242C8.28333 17.8826 9.11667 18.0117 10 18.0117ZM10 9.01172C10.4333 9.01172 10.7917 8.87005 11.075 8.58672C11.3583 8.30338 11.5 7.94505 11.5 7.51172C11.5 7.07839 11.3583 6.72005 11.075 6.43672C10.7917 6.15339 10.4333 6.01172 10 6.01172C9.56667 6.01172 9.20833 6.15339 8.925 6.43672C8.64167 6.72005 8.5 7.07839 8.5 7.51172C8.5 7.94505 8.64167 8.30338 8.925 8.58672C9.20833 8.87005 9.56667 9.01172 10 9.01172Z\" fill=\"#00402A\"/>\n</svg>\n"
+}

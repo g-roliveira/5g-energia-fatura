@@ -1,0 +1,199 @@
+{
+  "method": "GET",
+  "url": "https://apineprd.neoenergia.com/multilogin/2.0.0/agv/cliente/03021937586/COELBA/grupo-de-cliente?tipoPerfil=0",
+  "path": "/multilogin/2.0.0/agv/cliente/03021937586/COELBA/grupo-de-cliente",
+  "query": {
+    "tipoPerfil": "0"
+  },
+  "request_headers": {
+    "host": "apineprd.neoenergia.com",
+    "accept-encoding": "gzip, deflate",
+    "connection": "keep-alive",
+    "accept": "application/json",
+    "accept-language": "pt-BR",
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "authorization": "<redacted>"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "GET",
+    "x-content-type-options": "nosniff",
+    "access-control-allow-headers": "authorization,Access-Control-Allow-Origin,Content-Type,SOAPAction,Authorization",
+    "transactionid": "b41f0b79-c664-47c9-ace5-1bf2dbf1cd50",
+    "x-frame-options": "DENY",
+    "activityid": "24ecd767-86d0-46f4-b9ec-39ad1a1792d2",
+    "access-control-expose-headers": "",
+    "cachekey": "3539-44-56-70-1093292341003321628-6828",
+    "messagetype": "application/json",
+    "access-control-allow-credentials": "true",
+    "x-xss-protection": "1; mode=block",
+    "content-type": "application/json; charset=UTF-8",
+    "vary": "Accept-Encoding",
+    "content-encoding": "gzip",
+    "expires": "Fri, 17 Apr 2026 01:18:06 GMT",
+    "cache-control": "max-age=0, no-cache, no-store",
+    "pragma": "no-cache",
+    "date": "Fri, 17 Apr 2026 01:18:06 GMT",
+    "content-length": "272",
+    "connection": "keep-alive",
+    "set-cookie": "<redacted>",
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains"
+  },
+  "response_body": {
+    "dados": [
+      {
+        "funcionalidades": [
+          {
+            "codigo": "F035"
+          },
+          {
+            "codigo": "F000"
+          },
+          {
+            "codigo": "F041"
+          },
+          {
+            "codigo": "F069"
+          },
+          {
+            "codigo": "F023"
+          },
+          {
+            "codigo": "F013"
+          },
+          {
+            "codigo": "F088"
+          },
+          {
+            "codigo": "F003"
+          },
+          {
+            "codigo": "F066"
+          },
+          {
+            "codigo": "F009"
+          },
+          {
+            "codigo": "F060"
+          },
+          {
+            "codigo": "F089"
+          },
+          {
+            "codigo": "F021"
+          },
+          {
+            "codigo": "F062"
+          },
+          {
+            "codigo": "F087"
+          },
+          {
+            "codigo": "F027"
+          },
+          {
+            "codigo": "F005"
+          },
+          {
+            "codigo": "F059"
+          },
+          {
+            "codigo": "F065"
+          },
+          {
+            "codigo": "F075"
+          },
+          {
+            "codigo": "F067"
+          },
+          {
+            "codigo": "F015"
+          },
+          {
+            "codigo": "F011"
+          },
+          {
+            "codigo": "F007"
+          },
+          {
+            "codigo": "F063"
+          },
+          {
+            "codigo": "F076"
+          },
+          {
+            "codigo": "F057"
+          },
+          {
+            "codigo": "F081"
+          },
+          {
+            "codigo": "F086"
+          },
+          {
+            "codigo": "F072"
+          },
+          {
+            "codigo": "F022"
+          },
+          {
+            "codigo": "F002"
+          },
+          {
+            "codigo": "F080"
+          },
+          {
+            "codigo": "F058"
+          },
+          {
+            "codigo": "F056"
+          },
+          {
+            "codigo": "F061"
+          },
+          {
+            "codigo": "F085"
+          },
+          {
+            "codigo": "F068"
+          },
+          {
+            "codigo": "F004"
+          },
+          {
+            "codigo": "F064"
+          },
+          {
+            "codigo": "F012"
+          },
+          {
+            "codigo": "F006"
+          },
+          {
+            "codigo": "F008"
+          },
+          {
+            "codigo": "F001"
+          },
+          {
+            "codigo": "F055"
+          }
+        ],
+        "codigo": 1,
+        "nome": "Comum",
+        "ativo": true
+      }
+    ],
+    "retorno": {
+      "tipo": "Backoffice MultiLogin",
+      "id": 200,
+      "numero": "200_OK",
+      "mensagem": "Sucesso"
+    }
+  }
+}

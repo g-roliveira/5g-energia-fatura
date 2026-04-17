@@ -1,0 +1,59 @@
+{
+  "method": "GET",
+  "url": "https://apineprd.neoenergia.com/multilogin/2.0.0/servicos/minha-conta/minha-conta-legado?canalSolicitante=AGC&usuario=03021937586&usuarioSap=WSO2_CONEXAO&usuarioSonda=WSO2_CONEXAO&distribuidora=COELBA&tipoPerfil=1&documentoSolicitante=03021937586",
+  "path": "/multilogin/2.0.0/servicos/minha-conta/minha-conta-legado",
+  "query": {
+    "canalSolicitante": "AGC",
+    "usuario": "*******7586",
+    "usuarioSap": "WSO2_CONEXAO",
+    "usuarioSonda": "WSO2_CONEXAO",
+    "distribuidora": "COELBA",
+    "tipoPerfil": "1",
+    "documentoSolicitante": "*******7586"
+  },
+  "request_headers": {
+    "sec-ch-ua-platform": "\"Linux\"",
+    "authorization": "<redacted>",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "accept-language": "pt-BR",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "accept": "application/json"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "transactionid": "b6cc77c3-2157-4ea1-b23a-ff45bb401a82",
+    "access-control-expose-headers": "",
+    "cache-control": "max-age=0, no-cache, no-store",
+    "pragma": "no-cache",
+    "access-control-allow-methods": "DELETE, POST, PUT, PATCH, GET",
+    "expires": "Fri, 17 Apr 2026 01:18:02 GMT",
+    "access-control-allow-origin": "*",
+    "content-length": "357",
+    "date": "Fri, 17 Apr 2026 01:18:02 GMT",
+    "content-type": "application/json; charset=UTF-8",
+    "activityid": "29ff41bc-b07c-4870-adf7-ff5f228330cb",
+    "access-control-allow-headers": "authorization,Access-Control-Allow-Origin,Content-Type,SOAPAction,Authorization"
+  },
+  "response_body": {
+    "nomeTitular": "PAULA PEREIRA FERNANDES",
+    "clienteDocumentoSecundario": {
+      "tipoDocumentoSecundario": "Z_RG",
+      "documentoSecundario": "1386263591"
+    },
+    "dtNascimento": "1994-06-26",
+    "emailCadastro": "paulinha_fernandes7@hotmail.com",
+    "telefoneContato": "74-981350825",
+    "e_resultado": "X",
+    "retorno": {
+      "tipo": "S",
+      "id": "ZATCWS",
+      "numero": "029",
+      "mensagem": "Executado com sucesso."
+    }
+  }
+}

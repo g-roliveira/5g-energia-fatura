@@ -1,0 +1,33 @@
+{
+  "method": "POST",
+  "url": "https://agenciavirtual.neoenergia.com/Z21f/aWAX/7m/5GU3/k93g/3cw3mGrL4mGfJcG71L/Ay4KP0QVAw/IEB5E/QJ1ch4B",
+  "path": "/Z21f/aWAX/7m/5GU3/k93g/3cw3mGrL4mGfJcG71L/Ay4KP0QVAw/IEB5E/QJ1ch4B",
+  "query": {},
+  "request_headers": {
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "content-type": "text/plain;charset=UTF-8",
+    "sec-ch-ua-mobile": "?0",
+    "accept-language": "pt-BR"
+  },
+  "request_body": {
+    "sensor_data": "3;0;1;0;4601154;NyJXj5Lf2IfFNoPTQ3BFP1cOpq5ZCU/xzpFhQHiwGRw=;12,111,0,0,2,2125;?\"3pi\"?\"s=To)={i<g_` 2q7\"@\".p&\"`_.`T4WL\"&^\"dk$|a@b\"Lh5\"l\"7M{Fs-@md:dKi9:Z~@sCuJ5{!-b 9#VTZy7Gc6V)j/=>w\"X-Z\"Q] \"L.Mdk\"V8{b\"Z\";24-S;paypw[Zw$s^I{,ZO]b:j\"0\"BI7\"y\"UdI/IH*=yI4fJ\"}6=\"oj(\"dT;:yzSSn\"cc\"n)6j(m/*W\"YzDW\"_g%gB?,wrn\"G~M\"^\"h/7vLXh`+&aNK[MI\"H\"HJL\"iubJuWJmOUi\"Y.{L\"]\"zUf({QQoa*cl0&<<5=1{tu`$e~TA*yhY|}E601h(vlb]3/ZDW g}RWS2|&df^tZy}j1]]*Z-,i#|EB_Z7/2_KFxJq`DJ6\"$\"Tb<s\"*\"#+~+2Xq)<A:>p\"N\"(o`F\"RXJE(ioGXbCauY\"o;_\"O\"DN92U\"!\"8H]L\"frX+pH5\"BE!4`AyTOxK8BOv0?cJYUOu#CQs>^PBR6za(8=5c^$r3\"%\"_*x\"% 07SLoe\"F.K\"#`ds:\"|@s\"2<SA0WXY+\"0R^qC\"r}]W\"Qnjq*XkvO{Il}g49gt.>N]#;d6Y~jUCqV{u0<j?}99ffw:;+d,zhIX ?n[ l/ytYUut@WX + wAx.t{yN-,sCOs15]:9n[+^2D4n(\"-$V\"_Q4\"ek=\"iI)\"1\"*!e99sB^y_J4<7Y9s&\"$\"qz~\"_;:q1eL\"</P!\"3\"UWu@hb?/tqY=n\"L\"2j/\",Ez&x-Rk|58\"ewI\"c\"4(|vVN~\"r\"_[|/\"/p2$O5[\"{I=\"dt]9&]vJ\"15c\"0\"1/BW\"V\"YhE2\"K\"\"T\"^t^\"Z\"v}3:MZFyPL `rR1_RE3%S2\"Sf_+\":\"6,91=lz+8f*%r_}3&y`H7I,m@]ZC|l&]dsk$,-:65}m){5dmDu%sy]A5t9?NhIA9?[e|:p#sgi`XeKKN55%7>#kX+Ln,\"2:\"/~\"w\"D\"7=e\"KU8\" \"e[bOZHHvTUkN!\"ge>\"`?Zt\"mD1>LrZK\":#6\"z\"{a7mF\"HXQ\"mASvN\"% g4W[\"bsvq\"_\"\"TW3\"(1!\";\"|Y57u-B}4lbk2Keemq>~}HHV57I<`RSSH+l|N_C?CIM0P?+11IIs?UbsS}>RI9CulE+VAnBsPKEk,L:KOk(I^}%/OQ%HO;&Dm5uP5\")\"DW[%\"P\"VS2\"m\")+S\"m\"\"OXs\"O!}\"_zNj-\"qA\"Q\"[g?O\"7\"b-m\"~\"\"M\"q])\"$\"j_~GS!P*co|BDP%Ht\"79r\"1\"E@hA#rs-*m=bk\"v\"UA~8[-p\"DNr\"p>+\"z\"\"X\"qrzU\"n\"VhN:\"A\"~rB.\"=](4Fnez\"K| Q\"ujC9n6Tk\",:O)\"SH_\"X0c\"P>vDK\"Y>0\"U\"A+_V;Y_rt:nu[Fz*O~]_Rwp0>f6/#7glWSY:^$tp3+i5t6W((d0%=1\"M\"8-{\"S\"R\"P\"`Fwu\"7N7jb?K-*L7S(*m>^\"}&5\"p|i\"JV.V\"h\"\"~?m\"F}{\"q0R\";r\"Z\"\"G;o\"pS\"5W1A@[3u\"P+\"bU(|C\"wq\"S\"  zG]z3./\"$\"BR0\"r\"cN\"X\"/ExK\"r\"x%!\"1Yc\"}@2Fv\";\" P\"2\"$VM[\"W\"Un\"_K9\"QV%O\"N\"[\"Ch6sEvVE.S-\"5{ \"x)@`n*\">W*Bm6Y\"k\"x*I\"L\"[?7VUl-PZ@(7+<xs@c7p\"g\"3WRF\"0\"\"RXm\"yDF\"1\"6UvpWC1`u$tR~TC~lY0`m^dH5!n[@sW(74*q~}I_Ts`}k\"Kza\"|Q@\"o\";\"x5L\"fI`\" w`/<\"2,H\":BP-1| \"0Fp}\"g\"qb{OYG,:&5O\"v\"0VM+^+T\"%Z$49Gg=ZyOw\"<GOt\"21U\"Fy%\"xBsEo\"zF@\"n\"t^sgU\"KiqtY:Oc\"MGw\"=?hm)\"H\"5 (fXweTs>XluP[GQ;#P_{bVFr+(]*EeAcFV+z8d}Yi^-uQn5%7MFm+*S}l;oKA$\"-FH\"G*u\"]\"g\"EkP\"gwZ\"]\"LLHGB{`$D@\"Gh0\"P,,\"s\"&\"GK<\"}b<\"_jSrP\"2mFe\")\"|-`L9.*JB%i*,J7aL@D_ycld7:Sq8<7+ozPvUWe0eKw4V\".lU\"F5`\"=004#\"r$ \"H\"te^a\"O\"qQ24\"vIM8LU`w \"2-p[\"n\"FgdHbR[VLA0eCF]6#wa)!Tm1:NJP0c}-j?8 A\"5\"xxm\"I\"oS76:bl2Uq|DFH0 ,<%]ZPqk()51$eDPqgGTNz)ZqS]5&5{p2@1ryl}5\"E\"9L*\"`\"cK^n5S*F#5Zv{mi&B/o*(@Fvw<@:.t:ZXW\"i\"?lK\"p\"]:=%SwtW\"#\">YyF@UB\")\"\"-\"@y\"R|^%]|,-*I|}lz%>V(\"=Xt\"-\"\"$\",U4i\"*m.^>ssO$VTIRg`9xá`c+1]D+7ã^0W%4!LaZíIGG?\")\"!W*S\"K\"\"R\"1sO\"%xY\"i`M\"7wAc\"gD0\"POmLeq\"Y,^c\"P*,(sE<\"J.644\"[y|\"@AY\"h\"lM~\"euN\"1.D`\"lL90|~KKu\"O]\"fl!|S;uH,^Be(7}[(TuNN1>#+ga3K4XJWf,CqI#(\"_\"HP*\"*\"dG}z\"o\";5:\"#\"\"N\"WRN\"2b\"%|E\")YL\"->\"^wv&\".Hi\"}Qqqm\"~\"\"~\"A)|\"^\"^pq>h\"TkR\"^ih\"0\"^AIRwF*)},pL\"~\"q[ho\"q$7\"2VDlk\"4\"[*?5a*/ilKXLJ\"n?g\"]K`qY\"G[Ux{\"obJ\"X\"K;<<I2U{g]U\"z\"-S1:!GS\"Lez\"bhB\"frJ\"ZGI\".st\"G,R\"O+^\"Srx\"}\"n]WQC$R)2qiXk\"E\"=,<uKj|\"x\"\";T{\"Xk5\"s\"Jl%uI15f9HJeb,f%akWFW}QdD_:M#J+gS(!,bpkDMCj;%3t!I;V4eR2LClGy8XodW1DF;*0TZ`(?Hj74R,!)RJ%C4RAw\"n\"g,V%\"j\"<$>u:\"y\"p{K&\"+\"[1fD\"Q*T\".$/\"T\"Kcs\"F\"-n$;\"Ad*v>\"bGu\"oO|4_?a\":i\"](4\"qDnH\"Oc\"})\"h4[8\"J5 K\"KQ\"EF#.\"V\"\"e\"Sz:\"BAr=T^VpY1;|*\"9\"*CN\"jyn\"5\":~\"|Ka\"jR5\"2c0wG[0\"gK*\"F\"Wa~$UmlpwIZsOvY9(KMV\"&\"c`qQ\"(\"w\"}x \"f!b\"e\"((fu(ux-\"V\"zIgZVIM\"?Lwf[\"xZ|s\"n:4gECyd\"t! \".{{Xd%oPR\" t!)\"d\"\"]\"ztO\"%\"|n\"#\"Ej]{\"2$-\"U J\"h\"SC$wcf>H$d2UT[.YQ=SL\"`\"YyM\"K\"{*O%pNJA\"t#`\"q:;\"S\"yb\"q@6\"@eBIu\";;e%b#~q|qyQUv\"CK,o\",\"Jt}LHf`k6/\"4vC\"#})\"O\"$Is\"Y\"@/9>\"q\"Bu\"1<0\"C^x\"]Q?\"8HMW\"yI2\"D!^\"Fd$G\" Qv{\"kUn2dSD\"G=`qu|-\"zR<\"[bzF\"g\"ZFd!4tYO}0|/~\"c\"*^af\"=+\"PQx7v\"$u\"YOc{\""
+  },
+  "status_code": 201,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "access-control-allow-credentials": "true",
+    "x_req_id": "31488dc1-0bbf-45cb-bd24-24a59fa0f6ab",
+    "x-akamai-transformed": "0 - 0 -",
+    "access-control-allow-origin": "https://agenciavirtual.neoenergia.com",
+    "date": "Fri, 17 Apr 2026 01:20:31 GMT",
+    "content-type": "application/json",
+    "vary": "Origin",
+    "access-control-allow-headers": "Content-Type"
+  },
+  "response_body": {
+    "success": true
+  }
+}

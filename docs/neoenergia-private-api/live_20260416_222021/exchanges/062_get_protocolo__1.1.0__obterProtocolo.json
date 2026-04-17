@@ -1,0 +1,55 @@
+{
+  "method": "GET",
+  "url": "https://apineprd.neoenergia.com/protocolo/1.1.0/obterProtocolo?distribuidora=COEL&canalSolicitante=AGC&documento=03021937586&codCliente=007098175908&recaptchaAnl=false&regiao=NE",
+  "path": "/protocolo/1.1.0/obterProtocolo",
+  "query": {
+    "distribuidora": "COEL",
+    "canalSolicitante": "AGC",
+    "documento": "*******7586",
+    "codCliente": "007098175908",
+    "recaptchaAnl": "<redacted>",
+    "regiao": "NE"
+  },
+  "request_headers": {
+    "host": "apineprd.neoenergia.com",
+    "accept-encoding": "gzip, deflate",
+    "connection": "keep-alive",
+    "accept": "application/json",
+    "accept-language": "pt-BR",
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "authorization": "<redacted>",
+    "cookie": "<redacted>"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "activityid": "1052acf7-cb40-478c-a19a-5db576add564",
+    "access-control-expose-headers": "",
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "GET",
+    "uber-trace-id": "c0e59f097b900932%3A40f380061be0fdd8%3Ae60ab8261d3b60b8%3A1",
+    "access-control-allow-headers": "authorization,Access-Control-Allow-Origin,Content-Type,SOAPAction,Authorization",
+    "transactionid": "c34d692d-bd5a-46ca-8f37-5f3da25ba1ee",
+    "content-type": "application/json; charset=UTF-8",
+    "content-length": "204",
+    "expires": "Fri, 17 Apr 2026 01:20:42 GMT",
+    "cache-control": "max-age=0, no-cache, no-store",
+    "pragma": "no-cache",
+    "date": "Fri, 17 Apr 2026 01:20:42 GMT",
+    "connection": "keep-alive",
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "set-cookie": "<redacted>"
+  },
+  "response_body": {
+    "protocoloSalesforce": 20260416280227695,
+    "protocoloSalesforceStr": "20260416280227695",
+    "protocoloLegado": 20260416280227695,
+    "protocoloLegadoStr": "20260416280227695",
+    "retorno": {
+      "e_resultado": "X"
+    }
+  }
+}

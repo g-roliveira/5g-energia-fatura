@@ -1,0 +1,73 @@
+{
+  "ucs": [
+    {
+      "status": "LIGADA",
+      "uc": "007098175908",
+      "nomeCliente": "PAULA PEREIRA FERNANDES",
+      "instalacao": "0009043917",
+      "local": {
+        "endereco": "RUA BAHIA, 130",
+        "bairro": "CENTRO-LAPAO",
+        "municipio": "LAPAO",
+        "cep": "44905-000",
+        "uf": "BA"
+      },
+      "enderecoEntrega": {
+        "endereco": "RUA BAHIA 130",
+        "bairro": "CENTRO-LAPAO",
+        "municipio": "LAPAO",
+        "cep": "44905-000",
+        "uf": "BA"
+      },
+      "isGrupo": null,
+      "nomeGrupo": null,
+      "grupoTensao": "B",
+      "bOptante": null,
+      "contrato": "0023513361",
+      "dt_inicio": "2026-02-20",
+      "dt_fim": "9999-12-31",
+      "medidor": null,
+      "indMaisUcs": null,
+      "ucColetiva": null,
+      "indCCColetiva": null
+    },
+    {
+      "status": "DESLIGADA",
+      "uc": "007085489032",
+      "nomeCliente": "PAULA PEREIRA FERNANDES",
+      "instalacao": "0009043917",
+      "local": {
+        "endereco": "RUA BAHIA, 130",
+        "bairro": "CENTRO-LAPAO",
+        "municipio": "LAPAO",
+        "cep": "44905-000",
+        "uf": "BA"
+      },
+      "enderecoEntrega": {
+        "endereco": "RUA BAHIA 130",
+        "bairro": "CENTRO-LAPAO",
+        "municipio": "LAPAO",
+        "cep": "44905-000",
+        "uf": "BA"
+      },
+      "isGrupo": null,
+      "nomeGrupo": null,
+      "grupoTensao": "B",
+      "bOptante": null,
+      "contrato": "0022215892",
+      "dt_inicio": "2024-07-31",
+      "dt_fim": "2024-12-19",
+      "medidor": null,
+      "indMaisUcs": null,
+      "ucColetiva": null,
+      "indCCColetiva": null
+    }
+  ],
+  "e_resultado": "X",
+  "retorno": {
+    "id": "ZATCWS",
+    "tipo": "S",
+    "numero": "029",
+    "mensagem": "Executado com sucesso."
+  }
+}

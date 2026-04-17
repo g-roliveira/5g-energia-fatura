@@ -1,96 +1,173 @@
-"""Parser de faturas PDF da Coelba/Neoenergia.
+"""Parser de faturas PDF da Coelba/Neoenergia usando PyMuPDF.
 
-Estrutura real do PDF (confirmada com pdfplumber):
-  - Página 0 contém 3 tabelas:
-    * Tabela 0 (2 linhas): CÓDIGO DA INSTALAÇÃO e CÓDIGO DO CLIENTE (= UC)
-    * Tabela 1 (grande): cabeçalho da fatura, itens, histórico, medidor
-    * Tabela 2 (boleto): PAGADOR, CÓDIGO DO CLIENTE, VENCIMENTO, VALOR DO DOCUMENTO
-
-Layout da Tabela 1 (buscas por conteúdo, não por índice):
-  - Linha com "REF:MÊS/ANO": mês/ano ref, TOTAL A PAGAR, vencimento
-  - Linha com "CLASSIFICAÇÃO:": classificação tarifária
-  - Linha com "DATAS DE LEITURAS": leitura anterior/atual, N° DE DIAS
-  - Linha com "ITENS DA FATURA": cabeçalho de itens (próxima linha = dados)
-  - Linha com "CONSUMO FATURADO": histórico de consumo kWh
-  - Linha com "TOTAL" (célula [0]): total da fatura (soma de itens)
-  - Linha com medidor (10 dígitos): dados do medidor
-
-Células com múltiplos itens usam '\\n' como separador dentro da mesma célula.
+Estratégia:
+1. PyMuPDF (`fitz`) é a engine primária e obrigatória.
+2. Mistral OCR entra apenas como fallback/validação quando o parse local estiver
+   incompleto ou quando a validação opcional estiver habilitada para um PDF ainda
+   não visto neste processo.
 """
 
+from __future__ import annotations
+
+import hashlib
 import re
+import time
+from dataclasses import dataclass
 from datetime import date, datetime
 from decimal import Decimal
 from pathlib import Path
+from typing import Any
 
-import pdfplumber
+import fitz
 import structlog
 
+from fatura.config import ParserConfig
 from fatura.exceptions import FieldNotFoundError, ParserError
+from fatura.mistral_ocr import MistralOCRClient, OCRClientProtocol
 from fatura.models import (
     Cliente,
+    ComposicaoFornecimento,
     Consumo,
     ContaDistribuidora,
     HistoricoConsumo,
     ItemFatura,
+    NotaFiscal,
     normalizar_decimal_br,
 )
 
 logger = structlog.get_logger()
 
 MIN_TEXT_LENGTH = 100
+_MESES_ABREV = {"JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"}
 
-# Meses em português usados no histórico de consumo ("DEZ24", "NOV24", etc.)
-_MESES_ABREV = {"JAN", "FEV", "MAR", "ABR", "MAI", "JUN",
-                "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"}
+
+@dataclass
+class PageSnapshot:
+    text: str
+    words: list[dict[str, Any]]
+    tables: list[list[list[Any]]]
+    blocks: list[dict[str, Any]]
 
 
 class CoelbaPdfParser:
+    def __init__(
+        self,
+        config: ParserConfig | None = None,
+        ocr_client: OCRClientProtocol | None = None,
+    ) -> None:
+        self._config = config or ParserConfig()
+        self._ocr_client = ocr_client
+        if self._ocr_client is None and self._config.mistral_api_key:
+            self._ocr_client = MistralOCRClient(self._config)
+        self._validated_fingerprints: set[str] = set()
 
     def parse(self, pdf_path: Path | str) -> ContaDistribuidora:
         pdf_path = Path(pdf_path)
         if not pdf_path.exists():
             raise ParserError(f"Arquivo PDF não encontrado: {pdf_path}")
 
-        try:
-            with pdfplumber.open(pdf_path) as pdf:
-                page = pdf.pages[0]
-                tables = page.extract_tables()
-                text = page.extract_text() or ""
-        except Exception as e:
-            raise ParserError(f"Erro ao abrir PDF: {e}") from e
-
-        if len(text) < MIN_TEXT_LENGTH and not tables:
+        started_at = time.perf_counter()
+        snapshots = self._carregar_snapshot(pdf_path)
+        first_page = snapshots[0]
+        if len(first_page.text) < MIN_TEXT_LENGTH and not first_page.tables:
             raise ParserError(
-                f"PDF sem texto extraível ({len(text)} chars) e sem tabelas. "
-                "Pode ser necessário OCR. Instale com: pip install '5g-energia-fatura[ocr]'"
+                f"PDF sem texto extraível ({len(first_page.text)} chars) e sem tabelas. "
+                "Configure Mistral OCR para fallback semântico."
             )
 
-        logger.debug(
-            "pdf_carregado",
-            tabelas=len(tables),
-            chars_texto=len(text),
+        conta = self._parse_with_pymupdf(pdf_path, snapshots)
+        missing_fields = self._missing_fields(conta, first_page)
+        logger.info(
+            "pdf_parse_pymupdf_concluido",
             path=str(pdf_path),
+            tabelas_primeira_pagina=len(first_page.tables),
+            missing_fields=missing_fields,
+            duration_ms=round((time.perf_counter() - started_at) * 1000, 2),
         )
 
+        fingerprint = self._fingerprint(pdf_path)
+        should_validate = (
+            self._config.validate_new_pdfs_with_mistral
+            and fingerprint not in self._validated_fingerprints
+        )
+        should_fallback = bool(missing_fields) and self._config.enable_mistral_fallback
+
+        if should_validate or should_fallback:
+            conta = self._maybe_enrich_with_ocr(
+                pdf_path=pdf_path,
+                conta=conta,
+                missing_fields=missing_fields,
+                validate_only=should_validate,
+            )
+            if should_validate:
+                self._validated_fingerprints.add(fingerprint)
+
+        return conta
+
+    def _carregar_snapshot(self, pdf_path: Path) -> list[PageSnapshot]:
         try:
-            uc = self._extrair_uc(tables, text)
-        except FieldNotFoundError:
-            raise
-        except Exception as e:
-            raise FieldNotFoundError("uc", str(e)) from e
+            doc = fitz.open(pdf_path)
+        except Exception as exc:
+            raise ParserError(f"Erro ao abrir PDF com PyMuPDF: {exc}") from exc
 
-        header = self._extrair_header(tables, text)
-        total_itens = self._extrair_total_itens(tables)
-        cliente = self._extrair_cliente(tables, text)
-        consumo = self._extrair_consumo(tables)
-        historico = self._extrair_historico(tables)
-        itens = self._extrair_itens(tables)
+        snapshots: list[PageSnapshot] = []
+        try:
+            for page in doc:
+                tables = []
+                try:
+                    tables = [table.extract() for table in page.find_tables().tables]
+                except Exception:
+                    tables = []
 
-        # "valor" = total dos itens (valor real do consumo antes da compensação solar)
-        # "TOTAL A PAGAR" pode ser 0 quando os créditos solares cobrem tudo
+                words = [
+                    {
+                        "x0": word[0],
+                        "y0": word[1],
+                        "x1": word[2],
+                        "y1": word[3],
+                        "text": word[4],
+                        "block_no": word[5],
+                        "line_no": word[6],
+                        "word_no": word[7],
+                    }
+                    for word in page.get_text("words")
+                ]
+                page_dict = page.get_text("dict")
+                snapshots.append(
+                    PageSnapshot(
+                        text=page.get_text("text") or "",
+                        words=words,
+                        tables=tables,
+                        blocks=page_dict.get("blocks", []),
+                    )
+                )
+        finally:
+            doc.close()
+        return snapshots
+
+    def _parse_with_pymupdf(
+        self,
+        pdf_path: Path,
+        snapshots: list[PageSnapshot],
+    ) -> ContaDistribuidora:
+        first_page = snapshots[0]
+        full_text = "\n".join(snapshot.text for snapshot in snapshots if snapshot.text)
+
+        uc = self._extrair_uc(first_page.tables, first_page.text)
+        header = self._extrair_header(first_page.tables, full_text)
+        total_itens = self._extrair_total_itens(first_page.tables)
+        cliente = self._extrair_cliente(first_page.tables, full_text, uc)
+        consumo = self._extrair_consumo(first_page.tables)
+        historico = self._extrair_historico(first_page.tables)
+        itens = self._extrair_itens(first_page.tables)
+        nota_fiscal = self._extrair_nota_fiscal(first_page.words, full_text)
+        emissao_data = self._extrair_emissao_data(full_text, first_page.words)
+        aviso = self._extrair_aviso(full_text)
+        informacoes_gerais = self._extrair_informacoes_gerais(full_text)
+        codigo_barras = self._extrair_codigo_barras(full_text)
+        composicao = self._extrair_composicao(full_text)
+
         valor = total_itens or header.get("valor_a_pagar") or Decimal("0")
-
         return ContaDistribuidora(
             uc=uc,
             mes=header["mes"],
@@ -98,153 +175,313 @@ class CoelbaPdfParser:
             valor=valor,
             vencimento=header["vencimento"],
             numero_dias=header.get("numero_dias"),
-            codigo_barras=None,  # boleto gerado online, não extraível do PDF
-            nota_fiscal=None,
+            codigo_barras=codigo_barras,
+            nota_fiscal=nota_fiscal,
+            emissao_data=emissao_data,
+            controle_n=self._extrair_controle_n(full_text),
+            aviso=aviso,
+            informacoes_gerais=informacoes_gerais,
             cliente=cliente,
             consumo=consumo,
             historico_energia=historico,
-            composicao=None,
+            composicao=composicao,
             itens_fatura=itens,
             pdf_path=str(pdf_path),
             parsed_at=datetime.now(),
         )
 
-    # -------------------------------------------------------------------------
-    # Extração de UC
-    # -------------------------------------------------------------------------
+    def _maybe_enrich_with_ocr(
+        self,
+        pdf_path: Path,
+        conta: ContaDistribuidora,
+        missing_fields: list[str],
+        validate_only: bool,
+    ) -> ContaDistribuidora:
+        if not (validate_only or self._config.enable_mistral_fallback):
+            return conta
+        if self._ocr_client is None:
+            logger.warning(
+                "pdf_parse_ocr_nao_configurado",
+                path=str(pdf_path),
+                missing_fields=missing_fields,
+                validate_only=validate_only,
+            )
+            return conta
+
+        ocr_started_at = time.perf_counter()
+        logger.info(
+            "pdf_parse_ocr_iniciado",
+            path=str(pdf_path),
+            missing_fields=missing_fields,
+            validate_only=validate_only,
+        )
+        try:
+            ocr_payload = self._ocr_client.extract_with_mistral(pdf_path)
+        except Exception as exc:
+            logger.warning("pdf_parse_ocr_falhou", path=str(pdf_path), error=str(exc))
+            return conta
+
+        conta_enriquecida, preenchidos = self._reconcile_with_ocr(conta, ocr_payload)
+        logger.info(
+            "pdf_parse_ocr_concluido",
+            path=str(pdf_path),
+            preenchidos=preenchidos,
+            duration_ms=round((time.perf_counter() - ocr_started_at) * 1000, 2),
+        )
+        return conta_enriquecida
+
+    def _missing_fields(self, conta: ContaDistribuidora, first_page: PageSnapshot) -> list[str]:
+        missing: list[str] = []
+        checks = {
+            "uc": conta.uc,
+            "mes": conta.mes,
+            "ano": conta.ano,
+            "valor": conta.valor,
+            "vencimento": conta.vencimento,
+            "emissao_data": conta.emissao_data,
+            "cliente.nome": conta.cliente.nome,
+            "cliente.codigo": conta.cliente.codigo,
+            "consumo.medidor": conta.consumo.medidor if conta.consumo else None,
+            "historico_energia": conta.historico_energia,
+            "itens_fatura": conta.itens_fatura,
+            "codigo_barras": conta.codigo_barras,
+            "composicao_fornecimento": conta.composicao,
+        }
+        for field_name, value in checks.items():
+            if value in (None, "", [], {}):
+                missing.append(field_name)
+        if len(first_page.tables) < 2:
+            missing.append("tabelas_insuficientes")
+        return missing
+
+    def _reconcile_with_ocr(
+        self,
+        conta: ContaDistribuidora,
+        payload: dict[str, Any],
+    ) -> tuple[ContaDistribuidora, list[str]]:
+        filled: list[str] = []
+
+        def fill_if_missing(path: str, has_value: bool, setter) -> None:
+            if has_value:
+                return
+            setter()
+            filled.append(path)
+
+        cliente_payload = payload.get("cliente") or {}
+        consumo_payload = payload.get("consumo") or {}
+        nota_fiscal_payload = payload.get("nota_fiscal") or {}
+        composicao_payload = payload.get("composicao_fornecimento") or {}
+        energia_payload = payload.get("energia") or {}
+
+        fill_if_missing("codigo_barras", bool(conta.codigo_barras), lambda: setattr(conta, "codigo_barras", payload.get("codigo_barras")))
+        fill_if_missing("emissao_data", bool(conta.emissao_data), lambda: setattr(conta, "emissao_data", payload.get("emissao_data")))
+        fill_if_missing("controle_n", bool(conta.controle_n), lambda: setattr(conta, "controle_n", payload.get("controle_n")))
+        fill_if_missing("aviso", bool(conta.aviso), lambda: setattr(conta, "aviso", payload.get("aviso")))
+        fill_if_missing("informacoes_gerais", bool(conta.informacoes_gerais), lambda: setattr(conta, "informacoes_gerais", payload.get("informacoes_gerais")))
+
+        if not conta.nota_fiscal and nota_fiscal_payload:
+            conta.nota_fiscal = NotaFiscal(
+                numero_serie=nota_fiscal_payload.get("numero_serie"),
+                apresentacao_data=nota_fiscal_payload.get("apresentacao_data"),
+            )
+            filled.append("nota_fiscal")
+        elif conta.nota_fiscal:
+            if not conta.nota_fiscal.numero_serie and nota_fiscal_payload.get("numero_serie"):
+                conta.nota_fiscal.numero_serie = nota_fiscal_payload["numero_serie"]
+                filled.append("nota_fiscal.numero_serie")
+            if not conta.nota_fiscal.apresentacao_data and nota_fiscal_payload.get("apresentacao_data"):
+                conta.nota_fiscal.apresentacao_data = nota_fiscal_payload["apresentacao_data"]
+                filled.append("nota_fiscal.apresentacao_data")
+
+        if cliente_payload:
+            if not conta.cliente.codigo and cliente_payload.get("codigo"):
+                conta.cliente.codigo = cliente_payload["codigo"]
+                filled.append("cliente.codigo")
+            if not conta.cliente.nome and cliente_payload.get("nome"):
+                conta.cliente.nome = cliente_payload["nome"]
+                filled.append("cliente.nome")
+            if not conta.cliente.cpf and cliente_payload.get("cpf"):
+                conta.cliente.cpf = cliente_payload["cpf"]
+                filled.append("cliente.cpf")
+            if not conta.cliente.cnpj and cliente_payload.get("cnpj"):
+                conta.cliente.cnpj = cliente_payload["cnpj"]
+                filled.append("cliente.cnpj")
+            if not conta.cliente.classificacao and cliente_payload.get("classificacao"):
+                conta.cliente.classificacao = cliente_payload["classificacao"]
+                filled.append("cliente.classificacao")
+            if not conta.cliente.tensao_nominal and cliente_payload.get("tensao_nominal"):
+                conta.cliente.tensao_nominal = cliente_payload["tensao_nominal"]
+                filled.append("cliente.tensao_nominal")
+            if not conta.cliente.limites_tensao and cliente_payload.get("limites_tensao"):
+                conta.cliente.limites_tensao = cliente_payload["limites_tensao"]
+                filled.append("cliente.limites_tensao")
+            if not conta.cliente.endereco and cliente_payload.get("endereco"):
+                conta.cliente.endereco = cliente_payload["endereco"]
+                filled.append("cliente.endereco")
+
+        if consumo_payload:
+            if conta.consumo is None:
+                conta.consumo = Consumo()
+                filled.append("consumo")
+            if conta.consumo and not conta.consumo.medidor and consumo_payload.get("medidor"):
+                conta.consumo.medidor = consumo_payload["medidor"]
+                filled.append("consumo.medidor")
+            if conta.consumo and not conta.consumo.constante and consumo_payload.get("constante"):
+                conta.consumo.constante = consumo_payload["constante"]
+                filled.append("consumo.constante")
+            if conta.consumo and not conta.consumo.leitura_anterior and consumo_payload.get("leitura_anterior"):
+                conta.consumo.leitura_anterior = consumo_payload["leitura_anterior"]
+                filled.append("consumo.leitura_anterior")
+            if conta.consumo and not conta.consumo.leitura_atual and consumo_payload.get("leitura_atual"):
+                conta.consumo.leitura_atual = consumo_payload["leitura_atual"]
+                filled.append("consumo.leitura_atual")
+            if conta.consumo and not conta.consumo.leitura_anterior_data and consumo_payload.get("leitura_anterior_data"):
+                conta.consumo.leitura_anterior_data = consumo_payload["leitura_anterior_data"]
+                filled.append("consumo.leitura_anterior_data")
+            if conta.consumo and not conta.consumo.leitura_data and consumo_payload.get("leitura_data"):
+                conta.consumo.leitura_data = consumo_payload["leitura_data"]
+                filled.append("consumo.leitura_data")
+            if conta.consumo and not conta.consumo.leitura_proxima_data and consumo_payload.get("leitura_proxima_data"):
+                conta.consumo.leitura_proxima_data = consumo_payload["leitura_proxima_data"]
+                filled.append("consumo.leitura_proxima_data")
+
+        if not conta.composicao and composicao_payload:
+            conta.composicao = ComposicaoFornecimento(
+                energia=composicao_payload.get("energia"),
+                encargos=composicao_payload.get("encargos"),
+                distribuicao=composicao_payload.get("distribuicao"),
+                tributos=composicao_payload.get("tributos"),
+                transmissao=composicao_payload.get("transmissao"),
+                perdas=composicao_payload.get("perdas"),
+            )
+            filled.append("composicao_fornecimento")
+
+        historico_payload = energia_payload.get("historico_consumo") or []
+        if not conta.historico_energia and historico_payload:
+            conta.historico_energia = [
+                HistoricoConsumo(periodo=item["periodo"], kwh=item["kwh"])
+                for item in historico_payload
+                if item.get("periodo") and item.get("kwh")
+            ]
+            if conta.historico_energia:
+                filled.append("energia.historico_consumo")
+
+        if not conta.itens_fatura and payload.get("itens_fatura"):
+            conta.itens_fatura = [
+                ItemFatura.model_validate(item)
+                for item in payload["itens_fatura"]
+                if item.get("descricao")
+            ]
+            if conta.itens_fatura:
+                filled.append("itens_fatura")
+
+        if payload.get("normalizado_valor") is not None and (conta.valor is None or conta.valor == Decimal("0")):
+            conta.valor = Decimal(str(payload["normalizado_valor"]))
+            filled.append("valor")
+        if payload.get("mes") and not conta.mes:
+            conta.mes = int(payload["mes"])
+            filled.append("mes")
+        if payload.get("ano") and not conta.ano:
+            conta.ano = int(payload["ano"])
+            filled.append("ano")
+        if payload.get("numero_dias") and not conta.numero_dias:
+            conta.numero_dias = int(payload["numero_dias"])
+            filled.append("numero_dias")
+        if payload.get("vencimento") and not conta.vencimento:
+            conta.vencimento = _parse_date(payload["vencimento"])
+            filled.append("vencimento")
+
+        return conta, filled
 
     def _extrair_uc(self, tables: list, text: str) -> str:
-        """UC = CÓDIGO DO CLIENTE (tabela 0, linha 1)."""
-        # Busca na tabela 0 primeiro
         t0 = tables[0] if tables else []
         for row in t0:
             flat = self._nonnone(row)
             for cell in flat:
                 if "CÓDIGO DO CLIENTE" in cell:
-                    parts = cell.split("\n")
-                    for p in parts:
-                        p = p.strip()
-                        if p.isdigit() and 6 <= len(p) <= 12:
-                            return p
+                    for part in cell.split("\n"):
+                        cleaned = part.strip()
+                        if cleaned.isdigit() and 6 <= len(cleaned) <= 12:
+                            return cleaned
 
-        # Fallback: busca no texto (UC aparece antes de "chave de acesso")
-        m = re.search(r"(\d{10})\s+chave de acesso", text, re.I)
-        if m:
-            return m.group(1)
+        match = re.search(r"CÓDIGO DO CLIENTE\s+(\d{6,12})", text)
+        if match:
+            return match.group(1)
 
-        # Fallback: número de 10 dígitos isolado próximo de "LAPAO BA" ou similar
-        m = re.search(r"BA\s+(\d{10})", text)
-        if m:
-            return m.group(1)
-
-        # Busca na tabela 1 (último rodapé da fatura tem UC repetida)
-        t1 = tables[1] if len(tables) > 1 else []
-        for row in t1:
-            flat = self._nonnone(row)
-            for cell in flat:
-                if "CÓDIGO DO CLIENTE" in cell:
-                    parts = cell.split("\n")
-                    for p in parts:
-                        p = p.strip()
-                        if p.isdigit() and 6 <= len(p) <= 12:
-                            return p
+        match = re.search(r"(\d{10})\s+chave de acesso", text, re.I)
+        if match:
+            return match.group(1)
 
         raise FieldNotFoundError("uc", "UC (CÓDIGO DO CLIENTE) não encontrada no PDF")
 
-    # -------------------------------------------------------------------------
-    # Extração de cabeçalho (mês, ano, vencimento, valor a pagar, n° dias)
-    # -------------------------------------------------------------------------
-
-    def _extrair_header(self, tables: list, text: str) -> dict:
-        result: dict = {}
+    def _extrair_header(self, tables: list, text: str) -> dict[str, Any]:
+        result: dict[str, Any] = {}
         t1 = tables[1] if len(tables) > 1 else []
-
         for row in t1:
             flat = self._nonnone(row)
             if not flat:
                 continue
             joined = " ".join(flat)
-
-            # Linha: REF:MÊS/ANO / TOTAL A PAGAR / VENCIMENTO
             if "REF:MÊS/ANO" in joined or "MÊS/ANO" in joined:
                 for cell in flat:
-                    # Mês/Ano: "REF:MÊS/ANO\n12/2024"
-                    m = re.search(r"(\d{1,2})/(\d{4})", cell)
-                    if m and "MÊS" in cell or "REF" in cell:
-                        result["mes"] = int(m.group(1))
-                        result["ano"] = int(m.group(2))
-                    # TOTAL A PAGAR: "TOTAL A PAGAR R$\n0,00"
-                    m = re.search(r"TOTAL A PAGAR.*?([\d.,]+)$", cell, re.S)
-                    if m:
-                        result["valor_a_pagar"] = normalizar_decimal_br(m.group(1)) or Decimal("0")
-                    # Vencimento: "VENCIMENTO\n20/12/2024"
-                    m = re.search(r"VENCIMENTO\s*\n?\s*(\d{2}/\d{2}/\d{4})", cell)
-                    if m:
-                        result["vencimento"] = _parse_date(m.group(1))
+                    match = re.search(r"(\d{1,2})/(\d{4})", cell)
+                    if match and ("MÊS" in cell or "REF" in cell):
+                        result["mes"] = int(match.group(1))
+                        result["ano"] = int(match.group(2))
+                    match = re.search(r"TOTAL A PAGAR.*?([\d.,]+)$", cell, re.S)
+                    if match:
+                        result["valor_a_pagar"] = normalizar_decimal_br(match.group(1)) or Decimal("0")
+                    match = re.search(r"VENCIMENTO\s*\n?\s*(\d{2}/\d{2}/\d{4})", cell)
+                    if match:
+                        result["vencimento"] = _parse_date(match.group(1))
 
-                # Fallback para mês/ano: se alguma célula tem "MM/AAAA" sem rótulo
-                if "mes" not in result:
-                    for cell in flat:
-                        m = re.search(r"\b(\d{1,2})/(\d{4})\b", cell)
-                        if m:
-                            result["mes"] = int(m.group(1))
-                            result["ano"] = int(m.group(2))
-                            break
+            if "N° DE DIAS" in joined or "Nº DE DIAS" in joined:
+                match = re.search(r"N[°º]\s*DE\s*DIAS\s+(\d+)", joined)
+                if match:
+                    result["numero_dias"] = int(match.group(1))
+                for cell in flat:
+                    match = re.search(r"LEITURA ANTERIOR\s+(\d{2}/\d{2}/\d{4})", cell)
+                    if match:
+                        result["leitura_anterior_data"] = match.group(1)
+                    match = re.search(r"LEITURA ATUAL\s+(\d{2}/\d{2}/\d{4})", cell)
+                    if match:
+                        result["leitura_data"] = match.group(1)
+                    match = re.search(r"PR[ÓO]XIMA LEITURA\s+(\d{2}/\d{2}/\d{4})", cell)
+                    if match:
+                        result["leitura_proxima_data"] = match.group(1)
 
-            # Linha: N° DE DIAS
-            if "N° DE DIAS" in joined or "N° DE DIAS" in joined:
-                m = re.search(r"N[°º]\s*DE\s*DIAS\s+(\d+)", joined)
-                if m:
-                    result["numero_dias"] = int(m.group(1))
-
-        # Fallback: extrair vencimento do texto
         if "vencimento" not in result:
-            m = re.search(r"VENCIMENTO\s*\n?\s*(\d{2}/\d{2}/\d{4})", text)
-            if m:
-                result["vencimento"] = _parse_date(m.group(1))
-
-        # Fallback: extrair mês/ano do texto
+            match = re.search(r"VENCIMENTO\s*\n?\s*(\d{2}/\d{2}/\d{4})", text)
+            if match:
+                result["vencimento"] = _parse_date(match.group(1))
         if "mes" not in result:
-            m = re.search(r"REF:MÊS/ANO.*?(\d{1,2})/(\d{4})", text, re.S)
-            if m:
-                result["mes"] = int(m.group(1))
-                result["ano"] = int(m.group(2))
-
+            match = re.search(r"REF:MÊS/ANO.*?(\d{1,2})/(\d{4})", text, re.S)
+            if match:
+                result["mes"] = int(match.group(1))
+                result["ano"] = int(match.group(2))
         if "vencimento" not in result:
             raise FieldNotFoundError("vencimento", "Data de vencimento não encontrada")
         if "mes" not in result:
             raise FieldNotFoundError("mes", "Mês de referência não encontrado")
-
         return result
 
-    # -------------------------------------------------------------------------
-    # Extração do total de itens
-    # -------------------------------------------------------------------------
-
     def _extrair_total_itens(self, tables: list) -> Decimal | None:
-        """Linha 'TOTAL' na tabela 1 contém a soma de todos os itens."""
-        t1 = tables[1] if len(tables) > 1 else []
-        for row in t1:
-            flat = self._nonnone(row)
-            if not flat:
-                continue
-            if str(flat[0]).strip().upper() == "TOTAL" and len(flat) >= 2:
-                # O valor é o segundo elemento não-None
-                return normalizar_decimal_br(flat[-1])
+        for table in tables:
+            for row in table:
+                flat = self._nonnone(row)
+                if flat and str(flat[0]).strip().upper() == "TOTAL" and len(flat) >= 2:
+                    for cell in reversed(flat[1:]):
+                        values = re.findall(r"\d{1,3}(?:\.\d{3})*,\d{2}|\d+\.\d{2}", cell)
+                        if values:
+                            return normalizar_decimal_br(values[-1])
         return None
 
-    # -------------------------------------------------------------------------
-    # Extração de cliente
-    # -------------------------------------------------------------------------
-
-    def _extrair_cliente(self, tables: list, text: str) -> Cliente:
+    def _extrair_cliente(self, tables: list, text: str, uc: str) -> Cliente:
         nome = ""
         cpf = None
-        cnpj = None
-        classificacao = None
         endereco = None
+        classificacao = None
 
-        # Nome e CPF da tabela 2 (boleto) — linha PAGADOR
         t2 = tables[2] if len(tables) > 2 else []
         for row in t2:
             flat = self._nonnone(row)
@@ -252,189 +489,254 @@ class CoelbaPdfParser:
                 if "PAGADOR" in cell:
                     linhas = cell.split("\n")
                     if len(linhas) >= 2:
-                        # Segunda linha: "NOME CPF_MASCARADO"
                         partes = linhas[1].rsplit(" ", 1)
                         nome = partes[0].strip() if partes else linhas[1].strip()
                         if len(partes) > 1 and re.match(r"\d{3}\.\d", partes[-1]):
                             cpf = partes[-1].strip()
                     if len(linhas) >= 3:
                         endereco = linhas[2].strip()
-                    break
 
-        # Classificação da tabela 1
         t1 = tables[1] if len(tables) > 1 else []
         for row in t1:
             flat = self._nonnone(row)
             for cell in flat:
                 if "CLASSIFICAÇÃO:" in cell:
-                    m = re.search(r"CLASSIFICAÇÃO:\s*(.+?)(?:\s*-\s*|$)", cell)
-                    if m:
-                        classificacao = m.group(1).strip()
-                    break
+                    match = re.search(r"CLASSIFICAÇÃO:\s*(.+?)(?:\s*-\s*|$)", cell)
+                    if match:
+                        classificacao = match.group(1).strip()
 
-        # Fallback nome do texto
         if not nome:
-            m = re.search(r"NOME DO CLIENTE:\s*\n?\s*([A-ZÁÉÍÓÚÂÊÎÔÛÃÕÀÇ ]{5,})", text)
-            if m:
-                nome = m.group(1).strip()
+            match = re.search(r"NOME DO CLIENTE:\s*\n?\s*([A-ZÁÉÍÓÚÂÊÎÔÛÃÕÀÇ ]{5,})", text)
+            if match:
+                nome = match.group(1).strip()
+        match = re.search(
+            r"ENDEREÇO:\s*\n(.+?)\n(\d{5}-\d{3}\s+[A-Z ]+\s+[A-Z]{2})",
+            text,
+            re.S,
+        )
+        if match:
+            endereco = " ".join(
+                part.strip()
+                for part in (match.group(1) + "\n" + match.group(2)).splitlines()
+            )
 
         return Cliente(
+            codigo=uc,
             nome=nome,
             cpf=cpf,
-            cnpj=cnpj,
             classificacao=classificacao,
             endereco=endereco,
         )
 
-    # -------------------------------------------------------------------------
-    # Extração de dados do medidor
-    # -------------------------------------------------------------------------
-
     def _extrair_consumo(self, tables: list) -> Consumo | None:
-        """Linha com número do medidor (10 dígitos) na tabela 1."""
-        t1 = tables[1] if len(tables) > 1 else []
-        for row in t1:
-            flat = self._nonnone(row)
-            if not flat:
-                continue
-            # Linha do medidor: [numero_medidor, grandeza, postos, leit_ant, leit_atu, constante, consumo]
-            if re.match(r"^\d{7,12}$", str(flat[0]).strip()):
-                cells = flat
-                constante = cells[5] if len(cells) > 5 else None
-                return Consumo(
-                    medidor=cells[0].strip(),
-                    leitura_anterior=cells[3].strip() if len(cells) > 3 else None,
-                    leitura_atual=cells[4].strip() if len(cells) > 4 else None,
-                    constante=constante.strip() if constante else None,
-                )
+        leitura_anterior_data = None
+        leitura_data = None
+        leitura_proxima_data = None
+        for table in tables:
+            for row in table:
+                flat = self._nonnone(row)
+                joined = " ".join(flat)
+                if "DATAS DE LEITURAS" in joined:
+                    match = re.search(r"LEITURA ANTERIOR\s+(\d{2}/\d{2}/\d{4})", joined)
+                    if match:
+                        leitura_anterior_data = match.group(1)
+                    match = re.search(r"LEITURA ATUAL\s+(\d{2}/\d{2}/\d{4})", joined)
+                    if match:
+                        leitura_data = match.group(1)
+                    match = re.search(r"PR[ÓO]XIMA LEITURA\s+(\d{2}/\d{2}/\d{4})", joined)
+                    if match:
+                        leitura_proxima_data = match.group(1)
+                if flat and re.match(r"^\d{7,12}$", str(flat[0]).strip()):
+                    return Consumo(
+                        medidor=flat[0].strip(),
+                        leitura_anterior=flat[3].strip() if len(flat) > 3 else None,
+                        leitura_atual=flat[4].strip() if len(flat) > 4 else None,
+                        constante=flat[5].strip() if len(flat) > 5 else None,
+                        leitura_anterior_data=leitura_anterior_data,
+                        leitura_data=leitura_data,
+                        leitura_proxima_data=leitura_proxima_data,
+                    )
         return None
 
-    # -------------------------------------------------------------------------
-    # Extração do histórico de consumo
-    # -------------------------------------------------------------------------
-
     def _extrair_historico(self, tables: list) -> list[HistoricoConsumo]:
-        """Célula com 'CONSUMO FATURADO N°DIAS FAT' na tabela 1."""
-        t1 = tables[1] if len(tables) > 1 else []
-        for row in t1:
-            flat = self._nonnone(row)
-            for cell in flat:
-                if "CONSUMO FATURADO" in cell:
-                    return self._parsear_historico_cell(cell)
+        for table in tables:
+            for row in table:
+                for cell in self._nonnone(row):
+                    if "CONSUMO FATURADO" in cell:
+                        return self._parsear_historico_cell(cell)
         return []
 
     def _parsear_historico_cell(self, cell: str) -> list[HistoricoConsumo]:
         historico = []
-        # Padrão: "DEZ24 433 31" ou "DEZ24 433" (sem dias)
-        for match in re.finditer(
-            r"\b([A-Z]{3})(\d{2})\s+(\d+(?:[.,]\d+)?)\b",
-            cell
-        ):
+        for match in re.finditer(r"\b([A-Z]{3})(\d{2})\s+(\d+(?:[.,]\d+)?)\b", cell):
             mes_str = match.group(1)
             if mes_str not in _MESES_ABREV:
                 continue
-            ano_str = match.group(2)
-            kwh_str = match.group(3)
-            kwh = normalizar_decimal_br(kwh_str)
+            kwh = normalizar_decimal_br(match.group(3))
             if kwh is None or kwh <= 0:
                 continue
-            historico.append(HistoricoConsumo(
-                periodo=f"{mes_str}/{ano_str}",
-                kwh=kwh,
-            ))
+            historico.append(HistoricoConsumo(periodo=f"{mes_str}/{match.group(2)}", kwh=kwh))
         return historico
 
-    # -------------------------------------------------------------------------
-    # Extração dos itens da fatura
-    # -------------------------------------------------------------------------
-
     def _extrair_itens(self, tables: list) -> list[ItemFatura]:
-        """Linha de dados logo após o cabeçalho 'ITENS DA FATURA' na tabela 1."""
-        t1 = tables[1] if len(tables) > 1 else []
-        header_idx = None
-        for i, row in enumerate(t1):
-            flat = self._nonnone(row)
-            if flat and "ITENS DA FATURA" in str(flat[0]):
-                header_idx = i
-                break
+        for table in tables:
+            header_idx = None
+            for idx, row in enumerate(table):
+                flat = self._nonnone(row)
+                if flat and "ITENS DA FATURA" in str(flat[0]):
+                    header_idx = idx
+                    break
+            if header_idx is None:
+                continue
 
-        if header_idx is None:
-            return []
-
-        # Próxima linha de dados (ignorar linhas vazias ou com apenas uma célula)
-        data_row = None
-        for i in range(header_idx + 1, len(t1)):
-            flat = self._nonnone(t1[i])
-            if len(flat) >= 4 and re.search(r"Consumo|Ilum|Acrés|IPCA|Custo|UFER", flat[0], re.I):
-                data_row = flat
-                break
-
-        if data_row is None:
-            return []
-
-        return self._parsear_itens_row(data_row)
+            for idx in range(header_idx + 1, len(table)):
+                flat = self._nonnone(table[idx])
+                if len(flat) >= 4 and re.search(r"Consumo|Ilum|Acrés|IPCA|Custo|UFER", flat[0], re.I):
+                    return self._parsear_itens_row(flat)
+        return []
 
     def _parsear_itens_row(self, cells: list) -> list[ItemFatura]:
-        """
-        Linha de dados dos itens tem células com valores separados por '\\n'.
-        Estrutura (14 colunas não-None):
-          [0] Descrições     [1] Unidades     [2] Qtd
-          [3] Preço unit c/trib  [4] Valor R$  [5] PIS/COFINS
-          [6] Base ICMS      [7] Alíq ICMS%   [8] ICMS R$
-          [9] Tarifa unit    [10] Tributo      [11] Base tributo
-          [12] Alíq trib%    [13] Val tributo
-        """
-        def split_cell(idx: int) -> list[str]:
-            if idx >= len(cells):
+        def split_cell(index: int) -> list[str]:
+            if index >= len(cells):
                 return []
-            return [v.strip() for v in str(cells[idx]).split("\n") if v.strip()]
+            return [value.strip() for value in str(cells[index]).split("\n") if value.strip()]
 
         descricoes = split_cell(0)
         quantidades = split_cell(2)
-        valores = split_cell(4)       # VALOR (R$) = qtd × tarifa
+        valores = split_cell(4)
         base_icms_list = split_cell(6)
         aliq_icms_list = split_cell(7)
         icms_list = split_cell(8)
-        tarifas = split_cell(9)       # Tarifa limpa (sem tributos)
+        tarifas = split_cell(9)
 
-        itens = []
-        for i, descricao in enumerate(descricoes):
-            def get(lst: list, idx: int, default: str = "") -> str:
-                return lst[idx] if idx < len(lst) else default
+        itens: list[ItemFatura] = []
+        for idx, descricao in enumerate(descricoes):
+            def get(values: list[str], current_idx: int) -> str:
+                return values[current_idx] if current_idx < len(values) else ""
 
-            item = ItemFatura(
-                descricao=descricao,
-                quantidade=normalizar_decimal_br(get(quantidades, i)) if get(quantidades, i) else None,
-                tarifa=normalizar_decimal_br(get(tarifas, i)) if get(tarifas, i) else None,
-                valor=normalizar_decimal_br(get(valores, i)) if get(valores, i) else None,
-                base_icms=normalizar_decimal_br(get(base_icms_list, i)) if get(base_icms_list, i) else None,
-                aliq_icms=get(aliq_icms_list, i) or None,
-                icms=normalizar_decimal_br(get(icms_list, i)) if get(icms_list, i) else None,
+            valor = normalizar_decimal_br(get(valores, idx)) if get(valores, idx) else None
+            itens.append(
+                ItemFatura(
+                    descricao=descricao,
+                    quantidade=normalizar_decimal_br(get(quantidades, idx)) if get(quantidades, idx) else None,
+                    tarifa=normalizar_decimal_br(get(tarifas, idx)) if get(tarifas, idx) else None,
+                    valor=valor,
+                    base_icms=self._normalizar_decimal_coluna(get(base_icms_list, idx)),
+                    aliq_icms=get(aliq_icms_list, idx) or None,
+                    icms=normalizar_decimal_br(get(icms_list, idx)) if get(icms_list, idx) else None,
+                    valor_total=valor,
+                )
             )
-            itens.append(item)
         return itens
 
-    # -------------------------------------------------------------------------
-    # Utilitários
-    # -------------------------------------------------------------------------
+    @staticmethod
+    def _normalizar_decimal_coluna(value: str) -> Decimal | None:
+        if not value:
+            return None
+        matches = re.findall(r"\d{1,3}(?:\.\d{3})*,\d{2}|\d+\.\d{2}", value)
+        if matches:
+            return normalizar_decimal_br(matches[-1])
+        return normalizar_decimal_br(value)
+
+    def _extrair_emissao_data(self, text: str, words: list[dict[str, Any]]) -> str | None:
+        match = re.search(r"DATA DE EMISS[ÃA]O:\s*(\d{2}/\d{2}/\d{4})", text)
+        if match:
+            return match.group(1)
+        words_text = self._words_to_text(words)
+        match = re.search(r"DATA\s+DE\s+EMISS[ÃA]O:?\s*(\d{2}/\d{2}/\d{4})", words_text)
+        return match.group(1) if match else None
+
+    def _extrair_nota_fiscal(self, words: list[dict[str, Any]], text: str) -> NotaFiscal | None:
+        words_text = self._words_to_text(words)
+        match = re.search(
+            r"NOTA\s+FISCAL\s+N[°º]\s*([\d.]+)\s*-\s*S[ÉE]RIE\s*([A-Z0-9]+)",
+            words_text,
+            re.I,
+        )
+        if not match:
+            normalized = " ".join(text.split())
+            match = re.search(
+                r"NOTA\s+FISCAL\s+N[°º]\s*([\d.]+)\s*-\s*S[ÉE]RIE\s*([A-Z0-9]+)",
+                normalized,
+                re.I,
+            )
+        if not match:
+            return None
+        return NotaFiscal(
+            numero_serie=f"Nº {match.group(1)} Série {match.group(2)}",
+            apresentacao_data=self._extrair_emissao_data(text, words),
+        )
+
+    def _extrair_controle_n(self, text: str) -> str | None:
+        match = re.search(r"Protocolo de autorização:\s*([\d-]+.*)", text)
+        if match:
+            return " ".join(match.group(1).split())
+        return None
+
+    def _extrair_aviso(self, text: str) -> str | None:
+        match = re.search(r"(ATENÇÃO![\s\S]+?)INFORMAÇÕES IMPORTANTES", text, re.I)
+        return " ".join(match.group(1).split()) if match else None
+
+    def _extrair_informacoes_gerais(self, text: str) -> str | None:
+        blocks = re.findall(
+            r"INFORMAÇÕES IMPORTANTES\s*([\s\S]+?)(?:DANFE - DOCUMENTO AUXILIAR|$)",
+            text,
+            re.I,
+        )
+        cleaned_blocks = []
+        for block in blocks:
+            cleaned = " ".join(block.split())
+            if cleaned and cleaned not in cleaned_blocks:
+                cleaned_blocks.append(cleaned)
+        return "\n".join(cleaned_blocks) if cleaned_blocks else None
+
+    def _extrair_codigo_barras(self, text: str) -> str | None:
+        candidates = re.findall(r"(?:(?:\d{5}\.\d{5}\s+){3}\d{5}\.\d{6}\s+\d\s+\d{14})", text)
+        if candidates:
+            return re.sub(r"\s+", " ", candidates[0]).strip()
+        return None
+
+    def _extrair_composicao(self, text: str) -> ComposicaoFornecimento | None:
+        patterns = {
+            "energia": r"ENERGIA\s+R?\$?\s*([\d.,]+)",
+            "encargos": r"ENCARGOS\s+R?\$?\s*([\d.,]+)",
+            "distribuicao": r"DISTRIBUIÇÃO\s+R?\$?\s*([\d.,]+)",
+            "tributos": r"TRIBUTOS\s+R?\$?\s*([\d.,]+)",
+            "transmissao": r"TRANSMISS[ÃA]O\s+R?\$?\s*([\d.,]+)",
+            "perdas": r"PERDAS\s+R?\$?\s*([\d.,]+)",
+        }
+        extracted: dict[str, Decimal] = {}
+        for field_name, pattern in patterns.items():
+            match = re.search(pattern, text, re.I)
+            if match:
+                normalized = normalizar_decimal_br(match.group(1))
+                if normalized is not None:
+                    extracted[field_name] = normalized
+        return ComposicaoFornecimento(**extracted) if extracted else None
 
     @staticmethod
-    def _nonnone(row: list) -> list:
-        """Remove None e células em branco de uma linha da tabela."""
-        return [c for c in row if c is not None and str(c).strip()]
+    def _nonnone(row: list) -> list[str]:
+        return [str(cell) for cell in row if cell is not None and str(cell).strip()]
+
+    @staticmethod
+    def _words_to_text(words: list[dict[str, Any]]) -> str:
+        return " ".join(word.get("text", "").strip() for word in words if word.get("text"))
+
+    @staticmethod
+    def _fingerprint(pdf_path: Path) -> str:
+        return hashlib.sha256(pdf_path.read_bytes()).hexdigest()
 
 
-def _parse_date(s: str) -> date:
-    """Converte 'DD/MM/AAAA' para date."""
-    parts = s.strip().split("/")
-    if len(parts) == 3:
-        dia, mes, ano = int(parts[0]), int(parts[1]), int(parts[2])
-        return date(ano, mes, dia)
-    raise ValueError(f"Formato de data inválido: {s!r}")
+def _parse_date(value: str) -> date:
+    parts = value.strip().split("/")
+    if len(parts) != 3:
+        raise ValueError(f"Formato de data inválido: {value!r}")
+    day, month, year = int(parts[0]), int(parts[1]), int(parts[2])
+    return date(year, month, day)
 
 
 def parse_fatura_coelba_ocr(pdf_path: Path) -> ContaDistribuidora:
-    """Ponto de extensão OCR. Implementar quando necessário."""
-    raise NotImplementedError(
-        "OCR não implementado. Instale pytesseract e implemente esta função."
+    parser = CoelbaPdfParser(
+        config=ParserConfig(enable_mistral_fallback=True, validate_new_pdfs_with_mistral=False)
     )
+    return parser.parse(pdf_path)

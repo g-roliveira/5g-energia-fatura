@@ -11,6 +11,14 @@ portal:
 database:
   url: "sqlite:///data/faturas.db"
 
+parser:
+  engine: "pymupdf"
+  enable_mistral_fallback: true
+  validate_new_pdfs_with_mistral: false
+  mistral_api_key: ""
+  mistral_model: "mistral-ocr-latest"
+  mistral_timeout_ms: 45000
+
 service:
   host: "127.0.0.1"
   port: 8000

@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/assets/images/icons/youtube_silver_v2.svg",
+  "path": "/assets/images/icons/youtube_silver_v2.svg",
+  "query": {},
+  "request_headers": {
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "cache-control": "max-age=912267",
+    "content-encoding": "gzip",
+    "etag": "\"69b9c341-6d9\"",
+    "x-content-type-options": "nosniff",
+    "accept-ranges": "bytes",
+    "content-length": "860",
+    "x-xss-protection": "1; mode=block",
+    "date": "Fri, 17 Apr 2026 01:17:49 GMT",
+    "content-type": "image/svg+xml",
+    "last-modified": "Tue, 17 Mar 2026 21:10:25 GMT",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "response_body": "<svg width=\"20\" height=\"21\" viewBox=\"0 0 20 21\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<g clip-path=\"url(#clip0_2163_2023)\">\n<g clip-path=\"url(#clip1_2163_2023)\">\n<path d=\"M10 20.21C7.69141 20.2116 5.45335 19.4143 3.66566 17.9535C1.87796 16.4927 0.650769 14.4584 0.192328 12.1958C-0.266113 9.93312 0.0724422 7.58155 1.15054 5.54011C2.22864 3.49868 3.97986 1.89315 6.10703 0.995987C8.55073 -0.0363683 11.3045 -0.0556829 13.7624 0.942292C16.2203 1.94027 18.1812 3.87378 19.2135 6.31749C20.2459 8.76119 20.2652 11.5149 19.2672 13.9729C18.2692 16.4308 16.3357 18.3916 13.892 19.424C12.6608 19.9451 11.337 20.2125 10 20.21ZM10 6.54299C8.60747 6.52613 7.21535 6.60263 5.83303 6.77199C5.60484 6.83661 5.39762 6.96005 5.23213 7.12993C5.06664 7.29981 4.94867 7.51018 4.89003 7.73999C4.73675 8.61018 4.66212 9.49241 4.66703 10.376C4.66191 11.2589 4.73621 12.1404 4.88903 13.01C4.94767 13.2398 5.06564 13.4502 5.23113 13.62C5.39662 13.7899 5.60384 13.9134 5.83203 13.978C7.21462 14.1484 8.60707 14.2259 10 14.21C11.3926 14.2269 12.7847 14.1503 14.167 13.981C14.3952 13.9164 14.6024 13.7929 14.7679 13.623C14.9334 13.4532 15.0514 13.2428 15.11 13.013C15.2634 12.1428 15.3381 11.2606 15.333 10.377C15.3381 9.4934 15.2634 8.61117 15.11 7.74099C15.0514 7.51118 14.9334 7.30081 14.7679 7.13093C14.6024 6.96105 14.3952 6.83762 14.167 6.77299C12.7847 6.60329 11.3926 6.52645 10 6.54299Z\" fill=\"#007F33\"/>\n<path d=\"M8.98389 12.404V9.01599L11.6939 10.71L8.98389 12.404Z\" fill=\"#007F33\"/>\n</g>\n</g>\n<defs>\n<clipPath id=\"clip0_2163_2023\">\n<rect width=\"20\" height=\"20\" fill=\"white\" transform=\"translate(0 0.209961)\"/>\n</clipPath>\n<clipPath id=\"clip1_2163_2023\">\n<rect width=\"20\" height=\"20\" fill=\"white\" transform=\"translate(0 0.209961)\"/>\n</clipPath>\n</defs>\n</svg>\n"
+}

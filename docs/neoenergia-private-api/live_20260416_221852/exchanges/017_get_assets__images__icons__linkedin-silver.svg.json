@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/assets/images/icons/linkedin-silver.svg",
+  "path": "/assets/images/icons/linkedin-silver.svg",
+  "query": {},
+  "request_headers": {
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "cache-control": "max-age=731542",
+    "content-encoding": "gzip",
+    "etag": "\"69b9c341-406\"",
+    "x-content-type-options": "nosniff",
+    "accept-ranges": "bytes",
+    "content-length": "539",
+    "x-xss-protection": "1; mode=block",
+    "date": "Fri, 17 Apr 2026 01:18:54 GMT",
+    "content-type": "image/svg+xml",
+    "last-modified": "Tue, 17 Mar 2026 21:10:25 GMT",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "response_body": "<svg width=\"20\" height=\"21\" viewBox=\"0 0 20 21\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">\n<g clip-path=\"url(#clip0_1981_5058)\">\n<path d=\"M10 0.5C4.47656 0.5 0 4.97656 0 10.5C0 16.0234 4.47656 20.5 10 20.5C15.5234 20.5 20 16.0234 20 10.5C20 4.97656 15.5234 0.5 10 0.5ZM7.20312 14.6836H5.25391V8.44531H7.20312V14.6836ZM6.17578 7.66406H6.16016C5.45312 7.66406 4.99609 7.1875 4.99609 6.58203C4.99609 5.96484 5.46875 5.5 6.1875 5.5C6.90625 5.5 7.34766 5.96484 7.36328 6.58203C7.36719 7.18359 6.91016 7.66406 6.17578 7.66406ZM15 14.6836H12.7891V11.457C12.7891 10.6133 12.4453 10.0352 11.6836 10.0352C11.1016 10.0352 10.7773 10.4258 10.6289 10.8008C10.5742 10.9336 10.582 11.1211 10.582 11.3125V14.6836H8.39063C8.39063 14.6836 8.41797 8.96484 8.39063 8.44531H10.582V9.42578C10.7109 8.99609 11.4102 8.38672 12.5273 8.38672C13.9141 8.38672 15 9.28516 15 11.2148V14.6836Z\" fill=\"#007F33\"/>\n</g>\n<defs>\n<clipPath id=\"clip0_1981_5058\">\n<rect width=\"20\" height=\"20\" fill=\"white\" transform=\"translate(0 0.5)\"/>\n</clipPath>\n</defs>\n</svg>\n"
+}

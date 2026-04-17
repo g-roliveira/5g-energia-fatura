@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/9831.cb12b7924c78a649.js",
+  "path": "/9831.cb12b7924c78a649.js",
+  "query": {},
+  "request_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "cache-control": "max-age=380757",
+    "content-encoding": "gzip",
+    "etag": "W/\"69ced885-4a94\"",
+    "x-content-type-options": "nosniff",
+    "content-length": "5175",
+    "x-xss-protection": "1; mode=block",
+    "date": "Fri, 17 Apr 2026 01:17:49 GMT",
+    "content-type": "application/javascript",
+    "last-modified": "Thu, 02 Apr 2026 20:58:45 GMT",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "response_body": "\"use strict\";\n(self[\"webpackChunkneoenergia_web\"] = self[\"webpackChunkneoenergia_web\"] || []).push([[9831],{\n\n/***/ 61556:\n/*!**********************************!*\\\n  !*** ./src/app/app.constants.ts ***!\n  \\**********************************/\n/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {\n\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"Constants\": () => (/* binding */ Constants)\n/* harmony export */ });\nlet Constants = /*#__PURE__*/(() => {\n  class Constants {}\n\n  Constants.userRole = {\n    Administrator: 'ROLE_ADMIN',\n    CommonUser: 'ROLE_COMMON_USER'\n  };\n  Constants.userRoles = [{\n    code: 'ROLE_ADMIN',\n    description: 'Administrator'\n  }];\n  return Constants;\n})();\n\n/***/ }),\n\n/***/ 19831:\n/*!******************************************************!*\\\n  !*** ./src/app/core/services/utils/utils.service.ts ***!\n  \\******************************************************/\n/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {\n\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"MONTHS\": () => (/* binding */ MONTHS),\n/* harmony export */   \"PATHS\": () => (/* binding */ PATHS),\n/* harmony export */   \"checkAndConvertExcelDateToJSDate\": () => (/* binding */ checkAndConvertExcelDateToJSDate),\n/* harmony export */   \"convertDates\": () => (/* binding */ convertDates),\n/* harmony export */   \"convertHours\": () => (/* binding */ convertHours),\n/* harmony export */   \"convertMonthDaysList\": () => (/* binding */ convertMonthDaysList),\n/* harmony export */   \"convertWeekList\": () => (/* binding */ convertWeekList),\n/* harmony export */   \"formatDateArrayToString\": () => (/* binding */ formatDateArrayToString),\n/* harmony export */   \"formatMonetaryNumber\": () => (/* binding */ formatMonetaryNumber),\n/* harmony export */   \"formatNumber\": () => (/* binding */ formatNumber),\n/* harmony export */   \"formatTooltip\": () => (/* binding */ formatTooltip),\n/* harmony export */   \"formatarMoeda\": () => (/* binding */ formatarMoeda),\n/* harmony export */   \"formatarStatus\": () => (/* binding */ formatarStatus),\n/* harmony export */   \"getDate\": () => (/* binding */ getDate),\n/* harmony export */   \"getEnderecoCompleto\": () => (/* binding */ getEnderecoCompleto),\n/* harmony export */   \"getFormattedCelular\": () => (/* binding */ getFormattedCelular),\n/* harmony export */   \"getFormattedTelefone\": () => (/* binding */ getFormattedTelefone),\n/* harmony export */   \"getKeysDayMonthFromJson\": () => (/* binding */ getKeysDayMonthFromJson),\n/* harmony export */   \"getKeysYearWeekFromJson\": () => (/* binding */ getKeysYearWeekFromJson),\n/* harmony export */   \"msgSituacao\": () => (/* binding */ msgSituacao),\n/* harmony export */   \"removeFirstAndLastCharacter\": () => (/* binding */ removeFirstAndLastCharacter),\n/* harmony export */   \"retornaDataFormatada\": () => (/* binding */ retornaDataFormatada),\n/* harmony export */   \"showActionAdministrator\": () => (/* binding */ showActionAdministrator),\n/* harmony export */   \"showDownloadsButtonsToSAP\": () => (/* binding */ showDownloadsButtonsToSAP),\n/* harmony export */   \"showMenuAdministrator\": () => (/* binding */ showMenuAdministrator),\n/* harmony export */   \"showMenuParametrization\": () => (/* binding */ showMenuParametrization),\n/* harmony export */   \"showMenuPerfomAlignment\": () => (/* binding */ showMenuPerfomAlignment),\n/* harmony export */   \"showMenuViewReport\": () => (/* binding */ showMenuViewReport),\n/* harmony export */   \"showMenuYourReference\": () => (/* binding */ showMenuYourReference),\n/* harmony export */   \"showPipelineOptimization\": () => (/* binding */ showPipelineOptimization),\n/* harmony export */   \"toDate\": () => (/* binding */ toDate),\n/* harmony export */   \"toDateTime\": () => (/* binding */ toDateTime),\n/* harmony export */   \"toLocalDate\": () => (/* bindi"
+}

@@ -5,7 +5,7 @@ description = "Automação de download e parsing de faturas Coelba/Neoenergia"
 requires-python = ">=3.12"
 dependencies = [
     "playwright>=1.49",
-    "pdfplumber>=0.11",
+    "pymupdf>=1.27",
     "pydantic>=2.9",
     "sqlalchemy>=2.0",
     "pyyaml>=6.0",
@@ -14,23 +14,23 @@ dependencies = [
     "rich>=13.0",
     "fastapi>=0.115",
     "uvicorn>=0.34",
+    "httpx>=0.28",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0",
     "pytest-asyncio>=0.24",
-    "httpx>=0.28",
     "ruff>=0.8",
 ]
 ocr = [
-    "pytesseract>=0.3",
-    "Pillow>=10.0",
+    "mistralai>=2.4",
 ]
 
 [project.scripts]
 fatura = "fatura.main:main"
 fatura-api = "fatura.api:main"
+fatura-openapi = "fatura.export_openapi:main"
 
 [build-system]
 requires = ["setuptools>=68.0"]
@@ -48,4 +48,5 @@ asyncio_mode = "auto"
 testpaths = ["tests"]
 markers = [
     "real_portal: testes reais contra o portal Neoenergia",
+    "real_api_e2e: teste ponta a ponta da API HTTP com portal real",
 ]

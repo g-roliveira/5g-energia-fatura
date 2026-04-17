@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/6856.c1b940162fba60a2.js",
+  "path": "/6856.c1b940162fba60a2.js",
+  "query": {},
+  "request_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "cache-control": "max-age=380757",
+    "content-encoding": "gzip",
+    "etag": "W/\"69ced885-39f23\"",
+    "x-content-type-options": "nosniff",
+    "content-length": "53210",
+    "x-xss-protection": "1; mode=block",
+    "date": "Fri, 17 Apr 2026 01:17:49 GMT",
+    "content-type": "application/javascript",
+    "last-modified": "Thu, 02 Apr 2026 20:58:45 GMT",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "response_body": "\"use strict\";\n(self[\"webpackChunkneoenergia_web\"] = self[\"webpackChunkneoenergia_web\"] || []).push([[6856],{\n\n/***/ 86856:\n/*!****************************************************************!*\\\n  !*** ./node_modules/@angular/material/fesm2015/datepicker.mjs ***!\n  \\****************************************************************/\n/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {\n\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"DateRange\": () => (/* binding */ DateRange),\n/* harmony export */   \"DefaultMatCalendarRangeStrategy\": () => (/* binding */ DefaultMatCalendarRangeStrategy),\n/* harmony export */   \"MAT_DATEPICKER_SCROLL_STRATEGY\": () => (/* binding */ MAT_DATEPICKER_SCROLL_STRATEGY),\n/* harmony export */   \"MAT_DATEPICKER_SCROLL_STRATEGY_FACTORY\": () => (/* binding */ MAT_DATEPICKER_SCROLL_STRATEGY_FACTORY),\n/* harmony export */   \"MAT_DATEPICKER_SCROLL_STRATEGY_FACTORY_PROVIDER\": () => (/* binding */ MAT_DATEPICKER_SCROLL_STRATEGY_FACTORY_PROVIDER),\n/* harmony export */   \"MAT_DATEPICKER_VALIDATORS\": () => (/* binding */ MAT_DATEPICKER_VALIDATORS),\n/* harmony export */   \"MAT_DATEPICKER_VALUE_ACCESSOR\": () => (/* binding */ MAT_DATEPICKER_VALUE_ACCESSOR),\n/* harmony export */   \"MAT_DATE_RANGE_SELECTION_STRATEGY\": () => (/* binding */ MAT_DATE_RANGE_SELECTION_STRATEGY),\n/* harmony export */   \"MAT_RANGE_DATE_SELECTION_MODEL_FACTORY\": () => (/* binding */ MAT_RANGE_DATE_SELECTION_MODEL_FACTORY),\n/* harmony export */   \"MAT_RANGE_DATE_SELECTION_MODEL_PROVIDER\": () => (/* binding */ MAT_RANGE_DATE_SELECTION_MODEL_PROVIDER),\n/* harmony export */   \"MAT_SINGLE_DATE_SELECTION_MODEL_FACTORY\": () => (/* binding */ MAT_SINGLE_DATE_SELECTION_MODEL_FACTORY),\n/* harmony export */   \"MAT_SINGLE_DATE_SELECTION_MODEL_PROVIDER\": () => (/* binding */ MAT_SINGLE_DATE_SELECTION_MODEL_PROVIDER),\n/* harmony export */   \"MatCalendar\": () => (/* binding */ MatCalendar),\n/* harmony export */   \"MatCalendarBody\": () => (/* binding */ MatCalendarBody),\n/* harmony export */   \"MatCalendarCell\": () => (/* binding */ MatCalendarCell),\n/* harmony export */   \"MatCalendarHeader\": () => (/* binding */ MatCalendarHeader),\n/* harmony export */   \"MatDateRangeInput\": () => (/* binding */ MatDateRangeInput),\n/* harmony export */   \"MatDateRangePicker\": () => (/* binding */ MatDateRangePicker),\n/* harmony export */   \"MatDateSelectionModel\": () => (/* binding */ MatDateSelectionModel),\n/* harmony export */   \"MatDatepicker\": () => (/* binding */ MatDatepicker),\n/* harmony export */   \"MatDatepickerActions\": () => (/* binding */ MatDatepickerActions),\n/* harmony export */   \"MatDatepickerApply\": () => (/* binding */ MatDatepickerApply),\n/* harmony export */   \"MatDatepickerCancel\": () => (/* binding */ MatDatepickerCancel),\n/* harmony export */   \"MatDatepickerContent\": () => (/* binding */ MatDatepickerContent),\n/* harmony export */   \"MatDatepickerInput\": () => (/* binding */ MatDatepickerInput),\n/* harmony export */   \"MatDatepickerInputEvent\": () => (/* binding */ MatDatepickerInputEvent),\n/* harmony export */   \"MatDatepickerIntl\": () => (/* binding */ MatDatepickerIntl),\n/* harmony export */   \"MatDatepickerModule\": () => (/* binding */ MatDatepickerModule),\n/* harmony export */   \"MatDatepickerToggle\": () => (/* binding */ MatDatepickerToggle),\n/* harmony export */   \"MatDatepickerToggleIcon\": () => (/* binding */ MatDatepickerToggleIcon),\n/* harmony export */   \"MatEndDate\": () => (/* binding */ MatEndDate),\n/* harmony export */   \"MatMonthView\": () => (/* binding */ MatMonthView),\n/* harmony export */   \"MatMultiYearView\": () => (/* binding */ MatMultiYearView),\n/* harmony export */   \"MatRangeDateSelectionModel\": () => (/* binding */ MatRangeDateSelectionModel),\n/* harmony export */   \"MatSingleDateSelectionModel\": () => (/* binding */ MatSingleDateSelectionModel),\n/* harmony export */   \"MatStartDate\": () => (/* binding"
+}

@@ -1,0 +1,141 @@
+name: publish-backend
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  REGISTRY: ghcr.io
+  BACKEND_IMAGE_NAME: ${{ github.repository_owner }}/5g-energia-fatura-backend-go
+  EXTRACTOR_IMAGE_NAME: ${{ github.repository_owner }}/5g-energia-fatura-doc-extractor-py
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: services/backend-go/go.mod
+
+      - name: Test backend-go
+        working-directory: services/backend-go
+        run: go test ./...
+
+  publish:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Docker metadata backend
+        id: meta-backend
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}
+          tags: |
+            type=raw,value=main
+            type=sha
+
+      - name: Docker metadata extractor
+        id: meta-extractor
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.EXTRACTOR_IMAGE_NAME }}
+          tags: |
+            type=raw,value=main
+            type=sha
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: services/backend-go/Dockerfile
+          push: true
+          tags: ${{ steps.meta-backend.outputs.tags }}
+          labels: ${{ steps.meta-backend.outputs.labels }}
+
+      - name: Build and push extractor image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: services/doc-extractor-py/Dockerfile
+          push: true
+          tags: ${{ steps.meta-extractor.outputs.tags }}
+          labels: ${{ steps.meta-extractor.outputs.labels }}
+
+      - name: Deploy stack on Portainer
+        env:
+          PORTAINER_URL: ${{ secrets.PORTAINER_URL }}
+          PORTAINER_TOKEN: ${{ secrets.PORTAINER_TOKEN }}
+          PORTAINER_ENDPOINT_ID: ${{ secrets.PORTAINER_ENDPOINT_ID }}
+          STACK_NAME: ${{ secrets.PORTAINER_STACK_NAME }}
+          API_HOST: ${{ secrets.API_HOST }}
+          BACKEND_ENCRYPTION_KEY: ${{ secrets.BACKEND_ENCRYPTION_KEY }}
+          MISTRAL_API_KEY: ${{ secrets.MISTRAL_API_KEY }}
+          MISTRAL_MODEL: mistral-ocr-latest
+          BACKEND_IMAGE: ${{ env.REGISTRY }}/${{ env.BACKEND_IMAGE_NAME }}:main
+          DOC_EXTRACTOR_IMAGE: ${{ env.REGISTRY }}/${{ env.EXTRACTOR_IMAGE_NAME }}:main
+        run: |
+          set -euo pipefail
+
+          stacks_json=$(curl -fsSL -H "X-API-Key: ${PORTAINER_TOKEN}" "${PORTAINER_URL}/api/stacks")
+          stack_id=$(echo "$stacks_json" | jq -r --arg name "${STACK_NAME}" --arg eid "${PORTAINER_ENDPOINT_ID}" '.[] | select(.Name == $name and (.EndpointId|tostring) == $eid) | .Id' | head -n1)
+
+          env_payload=$(jq -n \
+            --arg backendImage "${BACKEND_IMAGE}" \
+            --arg extractorImage "${DOC_EXTRACTOR_IMAGE}" \
+            --arg apiHost "${API_HOST}" \
+            --arg encryptionKey "${BACKEND_ENCRYPTION_KEY}" \
+            --arg mistralApiKey "${MISTRAL_API_KEY}" \
+            --arg mistralModel "${MISTRAL_MODEL}" \
+            '[
+              {"name":"BACKEND_IMAGE","value":$backendImage},
+              {"name":"DOC_EXTRACTOR_IMAGE","value":$extractorImage},
+              {"name":"API_HOST","value":$apiHost},
+              {"name":"BACKEND_ENCRYPTION_KEY","value":$encryptionKey},
+              {"name":"MISTRAL_API_KEY","value":$mistralApiKey},
+              {"name":"MISTRAL_MODEL","value":$mistralModel}
+            ]')
+
+          if [ -n "${stack_id}" ] && [ "${stack_id}" != "null" ]; then
+            jq -n \
+              --arg content "$(cat deploy/portainer-stack.yml)" \
+              --argjson env "${env_payload}" \
+              '{StackFileContent:$content, Env:$env, Prune:true, PullImage:true}' \
+            | curl -fsSL -X PUT \
+                -H "X-API-Key: ${PORTAINER_TOKEN}" \
+                -H "Content-Type: application/json" \
+                "${PORTAINER_URL}/api/stacks/${stack_id}?endpointId=${PORTAINER_ENDPOINT_ID}" \
+                --data @-
+          else
+            jq -n \
+              --arg name "${STACK_NAME}" \
+              --arg content "$(cat deploy/portainer-stack.yml)" \
+              --argjson env "${env_payload}" \
+              '{Name:$name, StackFileContent:$content, Env:$env, Prune:true, PullImage:true}' \
+            | curl -fsSL -X POST \
+                -H "X-API-Key: ${PORTAINER_TOKEN}" \
+                -H "Content-Type: application/json" \
+                "${PORTAINER_URL}/api/stacks/create/swarm/string?endpointId=${PORTAINER_ENDPOINT_ID}&method=string&type=1" \
+                --data @-
+          fi

@@ -1,0 +1,119 @@
+{
+  "method": "GET",
+  "url": "https://apineprd.neoenergia.com/imoveis/1.1.0/clientes/03021937586/ucs?documento=03021937586&canalSolicitante=AGC&distribuidora=COELBA&usuario=WSO2_CONEXAO&indMaisUcs=X&protocolo=123&opcaoSSOS=S&tipoPerfil=1",
+  "path": "/imoveis/1.1.0/clientes/03021937586/ucs",
+  "query": {
+    "documento": "*******7586",
+    "canalSolicitante": "AGC",
+    "distribuidora": "COELBA",
+    "usuario": "***",
+    "indMaisUcs": "X",
+    "protocolo": "123",
+    "opcaoSSOS": "S",
+    "tipoPerfil": "1"
+  },
+  "request_headers": {
+    "sec-ch-ua-platform": "\"Linux\"",
+    "authorization": "<redacted>",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "accept-language": "pt-BR",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "sec-ch-ua-mobile": "?0",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "accept": "application/json"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "transactionid": "8d062b57-885d-4c87-881a-bddbf293013a",
+    "access-control-expose-headers": "",
+    "content-encoding": "gzip",
+    "uber-trace-id": "1bf3d4f84c3bf633%3A9958bd574d1369df%3A7059a7ed24469747%3A1",
+    "access-control-allow-methods": "GET",
+    "expires": "Fri, 17 Apr 2026 01:19:05 GMT",
+    "date": "Fri, 17 Apr 2026 01:19:05 GMT",
+    "content-type": "application/json; charset=UTF-8",
+    "vary": "Accept-Encoding",
+    "activityid": "5bd5ea66-4a3a-4568-b60b-9e77d706c615",
+    "access-control-allow-headers": "authorization,Access-Control-Allow-Origin,Content-Type,SOAPAction,Authorization",
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "cache-control": "max-age=0, no-cache, no-store",
+    "pragma": "no-cache",
+    "access-control-allow-origin": "*",
+    "content-length": "432"
+  },
+  "response_body": {
+    "ucs": [
+      {
+        "status": "LIGADA",
+        "uc": "007098175908",
+        "nomeCliente": "PAULA PEREIRA FERNANDES",
+        "instalacao": "0009043917",
+        "local": {
+          "endereco": "RUA BAHIA, 130",
+          "bairro": "CENTRO-LAPAO",
+          "municipio": "LAPAO",
+          "cep": "44905-000",
+          "uf": "BA"
+        },
+        "enderecoEntrega": {
+          "endereco": "RUA BAHIA 130",
+          "bairro": "CENTRO-LAPAO",
+          "municipio": "LAPAO",
+          "cep": "44905-000",
+          "uf": "BA"
+        },
+        "isGrupo": null,
+        "nomeGrupo": null,
+        "grupoTensao": "B",
+        "bOptante": null,
+        "contrato": "0023513361",
+        "dt_inicio": "2026-02-20",
+        "dt_fim": "9999-12-31",
+        "medidor": null,
+        "indMaisUcs": null,
+        "ucColetiva": null,
+        "indCCColetiva": null
+      },
+      {
+        "status": "DESLIGADA",
+        "uc": "007085489032",
+        "nomeCliente": "PAULA PEREIRA FERNANDES",
+        "instalacao": "0009043917",
+        "local": {
+          "endereco": "RUA BAHIA, 130",
+          "bairro": "CENTRO-LAPAO",
+          "municipio": "LAPAO",
+          "cep": "44905-000",
+          "uf": "BA"
+        },
+        "enderecoEntrega": {
+          "endereco": "RUA BAHIA 130",
+          "bairro": "CENTRO-LAPAO",
+          "municipio": "LAPAO",
+          "cep": "44905-000",
+          "uf": "BA"
+        },
+        "isGrupo": null,
+        "nomeGrupo": null,
+        "grupoTensao": "B",
+        "bOptante": null,
+        "contrato": "0022215892",
+        "dt_inicio": "2024-07-31",
+        "dt_fim": "2024-12-19",
+        "medidor": null,
+        "indMaisUcs": null,
+        "ucColetiva": null,
+        "indCCColetiva": null
+      }
+    ],
+    "e_resultado": "X",
+    "retorno": {
+      "id": "ZATCWS",
+      "tipo": "S",
+      "numero": "029",
+      "mensagem": "Executado com sucesso."
+    }
+  }
+}

@@ -1,0 +1,13 @@
+{
+  "nome": "Paula Pereira fernandes",
+  "usuarioAcesso": "Paula",
+  "email": "paulinha_fernandes7@hotmail.com",
+  "celular": "(74) 98135-0825",
+  "dtUltimaAtualizacao": "2026-04-15T23:42:19.601-03:00",
+  "retorno": {
+    "tipo": "WSO2",
+    "id": "200",
+    "numero": "200_OK",
+    "mensagem": "Sucesso!"
+  }
+}

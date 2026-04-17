@@ -3,7 +3,7 @@ import uuid
 from abc import ABC, abstractmethod
 from datetime import datetime
 
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, inspect, select, text
 from sqlalchemy.orm import Session, sessionmaker
 
 from fatura.db.schema import (
@@ -17,6 +17,7 @@ from fatura.db.schema import (
 )
 from fatura.exceptions import RepositoryError
 from fatura.models import ContaDistribuidora
+from fatura.models import conta_para_ocr_payload
 from fatura.service_models import (
     BatchItemResult,
     FaturaJobRequest,
@@ -52,10 +53,18 @@ class SqliteFaturaRepository(FaturaRepository):
     def __init__(self, db_url: str = "sqlite:///data/faturas.db"):
         self._engine = create_engine(db_url, echo=False)
         Base.metadata.create_all(self._engine)
+        self._ensure_runtime_columns()
         self._Session = sessionmaker(bind=self._engine)
 
     def _get_session(self) -> Session:
         return self._Session()
+
+    def _ensure_runtime_columns(self) -> None:
+        inspector = inspect(self._engine)
+        conta_columns = {column["name"] for column in inspector.get_columns("contas")}
+        with self._engine.begin() as connection:
+            if "ocr_json" not in conta_columns:
+                connection.execute(text("ALTER TABLE contas ADD COLUMN ocr_json TEXT"))
 
     def salvar_conta(self, conta: ContaDistribuidora) -> int:
         try:
@@ -84,6 +93,7 @@ class SqliteFaturaRepository(FaturaRepository):
                     nota_fiscal_json=(
                         conta.nota_fiscal.model_dump_json() if conta.nota_fiscal else None
                     ),
+                    ocr_json=json.dumps(conta_para_ocr_payload(conta), ensure_ascii=False),
                 )
 
                 for item in conta.itens_fatura:
@@ -176,12 +186,15 @@ class SqliteFaturaRepository(FaturaRepository):
 
     def criar_job(self, request: FaturaJobRequest) -> str:
         job_id = str(uuid.uuid4())
+        request_public = request.model_dump()
+        request_public["cpf_cnpj"] = "***"
+        request_public["senha_portal"] = "***"
         try:
             with self._get_session() as session:
                 job = JobDB(
                     id=job_id,
                     status="queued",
-                    request_json=request.model_dump_json(),
+                    request_json=json.dumps(request_public, ensure_ascii=False),
                     total_items=len(request.ucs),
                 )
                 session.add(job)
@@ -207,7 +220,20 @@ class SqliteFaturaRepository(FaturaRepository):
             job = session.get(JobDB, job_id)
             if not job:
                 raise RepositoryError(f"Job não encontrado: {job_id}")
-            return FaturaJobRequest.model_validate_json(job.request_json)
+            try:
+                request_data = json.loads(job.request_json)
+            except json.JSONDecodeError as e:
+                raise RepositoryError(f"request_json inválido para job {job_id}: {e}") from e
+
+            if request_data.get("cpf_cnpj") in (None, "", "***") or request_data.get(
+                "senha_portal"
+            ) in (None, "", "***"):
+                raise RepositoryError(
+                    "Credenciais do job não estão disponíveis no banco. "
+                    "O job precisa ser executado com as credenciais mantidas em memória pelo runtime."
+                )
+
+            return FaturaJobRequest.model_validate(request_data)
 
     def marcar_job_em_execucao(self, job_id: str) -> None:
         with self._get_session() as session:
@@ -302,6 +328,9 @@ class SqliteFaturaRepository(FaturaRepository):
                     "mes": result.mes,
                     "ano": result.ano,
                     "valor": str(result.valor) if result.valor is not None else None,
+                    "data_vencimento": result.data_vencimento,
+                    "normalizado_valor": result.normalizado_valor,
+                    "ocr": result.ocr_data,
                 },
                 ensure_ascii=False,
             )
@@ -348,6 +377,9 @@ class SqliteFaturaRepository(FaturaRepository):
                     mes=item.mes,
                     ano=item.ano,
                     valor=item.valor,
+                    data_vencimento=(json.loads(item.result_json).get("data_vencimento") if item.result_json else None),
+                    normalizado_valor=(json.loads(item.result_json).get("normalizado_valor") if item.result_json else None),
+                    ocr=(json.loads(item.result_json).get("ocr") if item.result_json else None),
                     attempts=item.attempts,
                 )
                 for item in sorted(job.items, key=lambda value: value.id)

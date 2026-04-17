@@ -9,16 +9,29 @@ from pathlib import Path
 
 import pytest
 
+from fatura.config import ParserConfig
+from fatura.models import ComposicaoFornecimento
 from fatura.parser_pdf import CoelbaPdfParser
 
 FIXTURES = Path(__file__).parent / "fixtures"
 PDF_DEC24_A = FIXTURES / "333775733213.pdf"  # dez/2024, 433 kWh, 31 dias
 PDF_DEC24_B = FIXTURES / "334075735546.pdf"  # dez/2024, 96 kWh, 6 dias
+PDF_APR26_ACTIVE_UC = FIXTURES / "neoenergia_007098175908_202604.pdf"
 
 
 @pytest.fixture
 def parser():
     return CoelbaPdfParser()
+
+
+class FakeOCRClient:
+    def __init__(self, payload: dict):
+        self.payload = payload
+        self.calls = 0
+
+    def extract_with_mistral(self, pdf_path: Path) -> dict:
+        self.calls += 1
+        return self.payload
 
 
 class TestParsePdfA:
@@ -50,13 +63,37 @@ class TestParsePdfA:
         assert "PAULA" in self.conta.cliente.nome
         assert "FERNANDES" in self.conta.cliente.nome
 
+    def test_cliente_codigo(self):
+        assert self.conta.cliente.codigo == "7085489032"
+
     def test_classificacao(self):
         assert self.conta.cliente.classificacao is not None
         assert "B1" in self.conta.cliente.classificacao
 
+    def test_emissao_data(self):
+        assert self.conta.emissao_data == "13/12/2024"
+
+    def test_nota_fiscal(self):
+        assert self.conta.nota_fiscal is not None
+        assert "Série 000" in self.conta.nota_fiscal.numero_serie
+
+    def test_aviso(self):
+        assert self.conta.aviso is not None
+        assert "SUSPENSÃO DO FORNECIMENTO" in self.conta.aviso
+
+    def test_informacoes_gerais(self):
+        assert self.conta.informacoes_gerais is not None
+        assert "bandeira em vigor é a Verde".lower() in self.conta.informacoes_gerais.lower()
+
     def test_medidor(self):
         assert self.conta.consumo is not None
         assert self.conta.consumo.medidor == "1204300816"
+
+    def test_datas_leitura(self):
+        assert self.conta.consumo is not None
+        assert self.conta.consumo.leitura_anterior_data == "12/11/2024"
+        assert self.conta.consumo.leitura_data == "13/12/2024"
+        assert self.conta.consumo.leitura_proxima_data == "10/01/2025"
 
     def test_leituras(self):
         assert self.conta.consumo.leitura_anterior is not None
@@ -124,6 +161,15 @@ class TestParsePdfB:
     def test_numero_dias(self):
         assert self.conta.numero_dias == 6
 
+    def test_emissao_data(self):
+        assert self.conta.emissao_data == "20/12/2024"
+
+    def test_datas_leitura(self):
+        assert self.conta.consumo is not None
+        assert self.conta.consumo.leitura_anterior_data == "13/12/2024"
+        assert self.conta.consumo.leitura_data == "19/12/2024"
+        assert self.conta.consumo.leitura_proxima_data == "10/01/2025"
+
     def test_consumo_kwh_historico(self):
         periodos = {h.periodo: h.kwh for h in self.conta.historico_energia}
         assert "DEZ/24" in periodos
@@ -140,8 +186,92 @@ class TestParsePdfB:
         assert not any("Band" in d for d in descricoes)
 
 
+class TestParsePdfActiveUC:
+    """PDF 339800707843 — abril/2026, UC ligada com layout em tabela única."""
+
+    @pytest.fixture(autouse=True)
+    def conta(self, parser):
+        self.conta = parser.parse(PDF_APR26_ACTIVE_UC)
+
+    def test_uc(self):
+        assert self.conta.uc == "7098175908"
+
+    def test_mes_ano_valor(self):
+        assert self.conta.mes == 4
+        assert self.conta.ano == 2026
+        assert self.conta.valor == Decimal("521.53")
+
+    def test_consumo(self):
+        assert self.conta.consumo is not None
+        assert self.conta.consumo.medidor == "1204300816"
+        assert self.conta.consumo.leitura_anterior == "14.647,00"
+        assert self.conta.consumo.leitura_atual == "15.065,00"
+
+    def test_historico(self):
+        periodos = {h.periodo: h.kwh for h in self.conta.historico_energia}
+        assert periodos["ABR/26"] == Decimal("418")
+        assert periodos["MAR/26"] == Decimal("370")
+
+    def test_itens_fatura_layout_tabela_unica(self):
+        itens = {it.descricao: it for it in self.conta.itens_fatura}
+        assert set(itens) >= {"Consumo-TUSD", "Consumo-TE", "Ilum. Púb. Municipal"}
+        assert itens["Consumo-TUSD"].quantidade == Decimal("418")
+        assert itens["Consumo-TUSD"].valor == Decimal("315.48")
+        assert itens["Consumo-TUSD"].valor_total == Decimal("315.48")
+        assert itens["Consumo-TE"].quantidade == Decimal("418")
+        assert itens["Consumo-TE"].valor == Decimal("156.05")
+        assert itens["Ilum. Púb. Municipal"].valor == Decimal("50.00")
+
+
 class TestParserEdgeCases:
     def test_arquivo_inexistente(self, parser):
         from fatura.exceptions import ParserError
         with pytest.raises(ParserError, match="não encontrado"):
             parser.parse("/tmp/nao_existe.pdf")
+
+    def test_fallback_mistral_preenche_campos_faltantes(self):
+        ocr_client = FakeOCRClient(
+            {
+                "codigo_barras": "34191.79001 01043.510047 91020.150008 5 12340000010000",
+                "composicao_fornecimento": {
+                    "energia": "45,10",
+                    "encargos": "10,20",
+                    "distribuicao": "25,30",
+                    "tributos": "18,40",
+                    "transmissao": "7,00",
+                    "perdas": "3,12",
+                },
+            }
+        )
+        parser = CoelbaPdfParser(
+            config=ParserConfig(enable_mistral_fallback=True),
+            ocr_client=ocr_client,
+        )
+
+        conta = parser.parse(PDF_DEC24_B)
+
+        assert ocr_client.calls == 1
+        assert conta.codigo_barras == "34191.79001 01043.510047 91020.150008 5 12340000010000"
+        assert conta.composicao == ComposicaoFornecimento(
+            energia="45,10",
+            encargos="10,20",
+            distribuicao="25,30",
+            tributos="18,40",
+            transmissao="7,00",
+            perdas="3,12",
+        )
+
+    def test_validacao_mistral_acontece_so_na_primeira_leitura_do_pdf(self):
+        ocr_client = FakeOCRClient({})
+        parser = CoelbaPdfParser(
+            config=ParserConfig(
+                enable_mistral_fallback=False,
+                validate_new_pdfs_with_mistral=True,
+            ),
+            ocr_client=ocr_client,
+        )
+
+        parser.parse(PDF_DEC24_A)
+        parser.parse(PDF_DEC24_A)
+
+        assert ocr_client.calls == 1

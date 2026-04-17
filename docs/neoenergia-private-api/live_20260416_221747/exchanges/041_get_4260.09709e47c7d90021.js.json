@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/4260.09709e47c7d90021.js",
+  "path": "/4260.09709e47c7d90021.js",
+  "query": {},
+  "request_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "cache-control": "max-age=184892",
+    "content-encoding": "gzip",
+    "etag": "W/\"69ced885-12290\"",
+    "x-content-type-options": "nosniff",
+    "content-length": "19735",
+    "x-xss-protection": "1; mode=block",
+    "date": "Fri, 17 Apr 2026 01:17:59 GMT",
+    "content-type": "application/javascript",
+    "last-modified": "Thu, 02 Apr 2026 20:58:45 GMT",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "response_body": "\"use strict\";\n(self[\"webpackChunkneoenergia_web\"] = self[\"webpackChunkneoenergia_web\"] || []).push([[4260],{\n\n/***/ 62500:\n/*!***************************************************************!*\\\n  !*** ./src/app/core/models/multilogin/multilogin-cadastro.ts ***!\n  \\***************************************************************/\n/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {\n\n__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"AcessoComumCompartilhaCom\": () => (/* binding */ AcessoComumCompartilhaCom),\n/* harmony export */   \"ConjugeCompartilhaCom\": () => (/* binding */ ConjugeCompartilhaCom),\n/* harmony export */   \"CredenciadoCompartilhaCom\": () => (/* binding */ CredenciadoCompartilhaCom),\n/* harmony export */   \"ImobiliariaCompartilhaCom\": () => (/* binding */ ImobiliariaCompartilhaCom),\n/* harmony export */   \"InformacoesUsuario\": () => (/* binding */ InformacoesUsuario),\n/* harmony export */   \"MultiloginCompartilharAcesso\": () => (/* binding */ MultiloginCompartilharAcesso),\n/* harmony export */   \"RepresetanteLegalCompartilhaCom\": () => (/* binding */ RepresetanteLegalCompartilhaCom),\n/* harmony export */   \"SubRotasMultiloginCadastro\": () => (/* binding */ SubRotasMultiloginCadastro),\n/* harmony export */   \"ValidaRelacao\": () => (/* binding */ ValidaRelacao),\n/* harmony export */   \"emailsBO\": () => (/* binding */ emailsBO),\n/* harmony export */   \"servicosMKTAutomation\": () => (/* binding */ servicosMKTAutomation)\n/* harmony export */ });\n/* harmony import */ var _documentos_box_anexo_box_anexo__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../documentos/box-anexo/box-anexo */ 78014);\n/* harmony import */ var _multilogin_acesso__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./multilogin-acesso */ 22836);\n\n\nvar SubRotasMultiloginCadastro = /*#__PURE__*/(() => {\n  (function (SubRotasMultiloginCadastro) {\n    SubRotasMultiloginCadastro[\"Imobiliaria\"] = \"imobiliario\";\n    SubRotasMultiloginCadastro[\"Credenciado\"] = \"estabelecimento-credenciado\";\n    SubRotasMultiloginCadastro[\"Compartilhamento\"] = \"compartilhar-acesso\";\n    SubRotasMultiloginCadastro[\"Avisos\"] = \"avisos\";\n    SubRotasMultiloginCadastro[\"ImobiliariaANL\"] = \"cadastro-imobiliario\";\n    SubRotasMultiloginCadastro[\"CredenciadoANL\"] = \"cadastro-credenciado\";\n    SubRotasMultiloginCadastro[\"CadastroDeParceiros\"] = \"cadastro-de-parceiros\";\n  })(SubRotasMultiloginCadastro || (SubRotasMultiloginCadastro = {}));\n\n  return SubRotasMultiloginCadastro;\n})();\nclass MultiloginCompartilharAcesso {\n  constructor(tipoAtribuicao, nomeFiscalSecundario, documentoFiscalSecundario, dataVigenciaContrato, boxAnexo, comprovantes, tipoEmailBO, customerKey) {\n    this.tipoAtribuicao = tipoAtribuicao;\n    this.nomeFiscalSecundario = nomeFiscalSecundario;\n    this.documentoFiscalSecundario = documentoFiscalSecundario;\n    this.dataVigenciaContrato = dataVigenciaContrato;\n    this.boxAnexo = boxAnexo;\n    this.comprovantes = comprovantes;\n    this.tipoEmailBO = tipoEmailBO;\n    this.customerKey = customerKey;\n    this.boxAnexo = new _documentos_box_anexo_box_anexo__WEBPACK_IMPORTED_MODULE_0__.BoxAnexo('DOCUMENTO DE COMPROVAÇÃO', false, 'DOCUMENTO DE COMPROVAÇÃO');\n    this.comprovantes = [];\n  }\n\n}\nclass InformacoesUsuario {\n  constructor(cpf, nome, inicio, fim, button, isValid) {\n    this.cpf = cpf;\n    this.nome = nome;\n    this.inicio = inicio;\n    this.fim = fim;\n    this.button = button;\n    this.isValid = isValid;\n  }\n\n}\nconst ValidaRelacao = [{\n  key: 'C',\n  value: _multilogin_acesso__WEBPACK_IMPORTED_MODULE_1__.PerfisDeAcesso.conjuge\n}, {\n  key: 'R',\n  value: _multilogin_acesso__WEBPACK_IMPORTED_MODULE_1__.PerfisDeAcesso.representanteLegal\n}];\nconst AcessoComumCompartilhaCom = [{\n  key: 'ACESSO COMUM COM REPRESENTANTE LEGAL',\n  value: _multilogin_acesso__WEBPACK_IMPORTED_MODULE_1__.PerfisDeAcesso.representanteLegal\n}, {\n  key: 'ACESSO COMUM COM PADRO"
+}

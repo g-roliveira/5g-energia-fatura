@@ -1,0 +1,33 @@
+{
+  "method": "GET",
+  "url": "https://agenciavirtual.neoenergia.com/assets/images/icons/icone_fatura_facil.svg",
+  "path": "/assets/images/icons/icone_fatura_facil.svg",
+  "query": {},
+  "request_headers": {
+    "sec-ch-ua-platform": "\"Linux\"",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "sec-ch-ua": "\"Chromium\";v=\"146\", \"Not-A.Brand\";v=\"24\", \"Google Chrome\";v=\"146\"",
+    "accept-language": "pt-BR",
+    "sec-ch-ua-mobile": "?0"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "content-security-policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.google-analytics.com https://www.googletagmanager.com https://apis.google.com https://s.go-mpulse.net https://www.google.com https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://use.fontawesome.com; font-src 'self' https://fonts.gstatic.com https://use.fontawesome.com; img-src 'self' https://www.googletagmanager.com data: blob:; object-src 'self' data: blob:; connect-src 'self' https://www.google-analytics.com https://*.neoenergia.com https://*.neoenergia.net http://*.neoenergia.com http://*.neoenergia.net https://c.go-mpulse.net https://17de4c1f.akstat.io https://17de4c1c.akstat.io https://17de4c12.akstat.io https://17de4c15.akstat.io https://17de4c1b.akstat.io https://trial-eum-clientnsv4-s.akamaihd.net https://trial-eum-clienttons-s.akamaihd.net https://wxpolaixytqauzvbgrha-p1uijs-9b874a077-clientnsv4-s.akamaihd.net https://wxpolaixgyl2gzvbhmnq-piq3tz-daee3df0e-clientnsv4-s.akamaihd.net https://www.google.com/recaptcha/; frame-src 'self' https://www.google.com https://www.youtube.com https://*.neoenergia.com https://*.neoenergia.net data: blob:;",
+    "cache-control": "max-age=2465438",
+    "content-encoding": "gzip",
+    "etag": "\"69ced885-2db\"",
+    "x-content-type-options": "nosniff",
+    "accept-ranges": "bytes",
+    "content-length": "352",
+    "x-xss-protection": "1; mode=block",
+    "date": "Fri, 17 Apr 2026 01:20:23 GMT",
+    "content-type": "image/svg+xml",
+    "last-modified": "Thu, 02 Apr 2026 20:58:45 GMT",
+    "vary": "Accept-Encoding",
+    "x-frame-options": "SAMEORIGIN"
+  },
+  "response_body": "<svg id=\"copy\" xmlns=\"http://www.w3.org/2000/svg\" width=\"33.74\" height=\"41.238\" viewBox=\"0 0 33.74 41.238\">\n  <path id=\"Caminho_332\" data-name=\"Caminho 332\" d=\"M12.754,6.918H7V5h5.754Z\" transform=\"translate(2.329 2.864)\" fill=\"#fff\"/>\n  <path id=\"Caminho_333\" data-name=\"Caminho 333\" d=\"M12.754,10.918H7V9h5.754Z\" transform=\"translate(2.329 6.728)\" fill=\"#fff\"/>\n  <path id=\"Caminho_334\" data-name=\"Caminho 334\" d=\"M7,14.918h5.754V13H7Z\" transform=\"translate(2.329 10.592)\" fill=\"#fff\"/>\n  <path id=\"Caminho_335\" data-name=\"Caminho 335\" d=\"M3,34.74V1H29.242V8.5h7.5v33.74H10.5v-7.5Zm22.494-3.749V4.749H6.749V30.991Zm3.749-18.745V34.74h-15v3.749H32.991V12.247Z\" transform=\"translate(-3 -1)\" fill=\"#fff\" fill-rule=\"evenodd\"/>\n</svg>\n"
+}

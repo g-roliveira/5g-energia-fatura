@@ -1,0 +1,56 @@
+{
+  "method": "GET",
+  "url": "https://apineprd.neoenergia.com/multilogin/2.0.0/servicos/debito-automatico/conta-cadastrada-debito?codigo=007085489032&codCliente=1014945628&canalSolicitante=AGC&usuario=WSO2_CONEXAO&valida=&distribuidora=COELBA&tipoPerfil=1&documentoSolicitante=",
+  "path": "/multilogin/2.0.0/servicos/debito-automatico/conta-cadastrada-debito",
+  "query": {
+    "codigo": "007085489032",
+    "codCliente": "1014945628",
+    "canalSolicitante": "AGC",
+    "usuario": "***",
+    "valida": "",
+    "distribuidora": "COELBA",
+    "tipoPerfil": "1",
+    "documentoSolicitante": "***"
+  },
+  "request_headers": {
+    "host": "apineprd.neoenergia.com",
+    "accept-encoding": "gzip, deflate",
+    "connection": "keep-alive",
+    "accept": "application/json",
+    "accept-language": "pt-BR",
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "referer": "https://agenciavirtual.neoenergia.com/",
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
+    "authorization": "<redacted>",
+    "cookie": "<redacted>"
+  },
+  "request_body": null,
+  "status_code": 200,
+  "response_headers": {
+    "origin": "https://agenciavirtual.neoenergia.com",
+    "activityid": "4d6e4ff3-a0d8-461e-801d-d15431e61e9e",
+    "access-control-expose-headers": "",
+    "access-control-allow-origin": "*",
+    "access-control-allow-methods": "DELETE, POST, PUT, PATCH, GET",
+    "access-control-allow-headers": "authorization,Access-Control-Allow-Origin,Content-Type,SOAPAction,Authorization",
+    "transactionid": "3be97561-33ed-40d7-a53b-79c35fb9be6c",
+    "content-type": "application/json; charset=UTF-8",
+    "content-length": "130",
+    "expires": "Fri, 17 Apr 2026 01:19:26 GMT",
+    "cache-control": "max-age=0, no-cache, no-store",
+    "pragma": "no-cache",
+    "date": "Fri, 17 Apr 2026 01:19:26 GMT",
+    "connection": "keep-alive",
+    "strict-transport-security": "max-age=31536000 ; includeSubDomains",
+    "set-cookie": "<redacted>"
+  },
+  "response_body": {
+    "e_resultado": "X",
+    "retorno": {
+      "id": "ZATCWS",
+      "tipo": "S",
+      "numero": "145",
+      "mensagem": "UC não possui débito automático cadastrado"
+    }
+  }
+}

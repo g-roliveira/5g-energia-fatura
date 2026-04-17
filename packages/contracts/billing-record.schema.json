@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://5g-energia-fatura.local/contracts/billing-record.schema.json",
+  "title": "BillingRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["uc", "numero_fatura", "mes_referencia", "valor_total", "source_map"],
+  "properties": {
+    "uc": {
+      "type": "string"
+    },
+    "numero_fatura": {
+      "type": "string"
+    },
+    "mes_referencia": {
+      "type": "string"
+    },
+    "valor_total": {
+      "type": ["string", "number"]
+    },
+    "codigo_barras": {
+      "type": ["string", "null"]
+    },
+    "data_emissao": {
+      "type": ["string", "null"]
+    },
+    "data_vencimento": {
+      "type": ["string", "null"]
+    },
+    "data_pagamento": {
+      "type": ["string", "null"]
+    },
+    "historico_consumo": {
+      "type": ["array", "null"]
+    },
+    "itens_fatura": {
+      "type": ["array", "null"]
+    },
+    "composicao_fornecimento": {
+      "type": ["object", "null"]
+    },
+    "nota_fiscal": {
+      "type": ["object", "null"]
+    },
+    "source_map": {
+      "type": "object"
+    },
+    "confidence_map": {
+      "type": ["object", "null"]
+    }
+  }
+}
