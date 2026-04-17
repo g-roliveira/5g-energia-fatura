@@ -1,6 +1,9 @@
 # syntax=docker/dockerfile:1.7
 
-FROM golang:1.25-bookworm AS go-builder
+FROM --platform=$BUILDPLATFORM golang:1.25-bookworm AS go-builder
+
+ARG TARGETOS
+ARG TARGETARCH
 
 WORKDIR /src
 COPY services/backend-go/go.mod services/backend-go/go.sum ./services/backend-go/
@@ -9,7 +12,7 @@ RUN go mod download
 WORKDIR /src
 COPY services/backend-go ./services/backend-go
 WORKDIR /src/services/backend-go
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o /out/backend-go ./cmd/api
+RUN CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH} go build -o /out/backend-go ./cmd/api
 
 FROM mcr.microsoft.com/playwright/python:v1.55.0-noble
 
