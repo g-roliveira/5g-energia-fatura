@@ -1,7 +1,17 @@
+import { PrismaPg } from "@prisma/adapter-pg"
 import { PrismaClient, TipoPessoa, ClientStatus, TipoCliente } from "@prisma/client"
 import { randomUUID } from "crypto"
+import { Pool } from "pg"
 
-const db = new PrismaClient()
+const connectionString = process.env.DATABASE_URL
+
+if (!connectionString) {
+  throw new Error("DATABASE_URL is not set")
+}
+
+const pool = new Pool({ connectionString })
+const adapter = new PrismaPg(pool)
+const db = new PrismaClient({ adapter })
 
 const ufs = ["BA", "SP", "RJ", "MG", "RS", "PR", "SC", "GO", "DF", "PE"]
 const distribuidoras = ["COELBA", "CEMIG", "CPFL", "ENEL", "COPEL", "CELESC", "CELG", "CEB"]
@@ -119,4 +129,7 @@ async function main() {
 
 main()
   .catch(console.error)
-  .finally(() => db.$disconnect())
+  .finally(async () => {
+    await db.$disconnect()
+    await pool.end()
+  })
