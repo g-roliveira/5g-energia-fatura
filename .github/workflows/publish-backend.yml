@@ -88,6 +88,7 @@ jobs:
           PORTAINER_URL: ${{ secrets.PORTAINER_URL }}
           PORTAINER_TOKEN: ${{ secrets.PORTAINER_TOKEN }}
           PORTAINER_ENDPOINT_ID: ${{ secrets.PORTAINER_ENDPOINT_ID }}
+          PORTAINER_SWARM_ID: ${{ secrets.PORTAINER_SWARM_ID }}
           STACK_NAME: ${{ secrets.PORTAINER_STACK_NAME }}
           API_HOST: ${{ secrets.API_HOST }}
           BACKEND_ENCRYPTION_KEY: ${{ secrets.BACKEND_ENCRYPTION_KEY }}
@@ -130,9 +131,10 @@ jobs:
           else
             jq -n \
               --arg name "${STACK_NAME}" \
+              --arg swarmId "${PORTAINER_SWARM_ID}" \
               --arg content "$(cat deploy/portainer-stack.yml)" \
               --argjson env "${env_payload}" \
-              '{Name:$name, StackFileContent:$content, Env:$env, Prune:true, PullImage:true}' \
+              '{Name:$name, SwarmID:$swarmId, StackFileContent:$content, Env:$env, Prune:true, PullImage:true}' \
             | curl -fsSL -X POST \
                 -H "X-API-Key: ${PORTAINER_TOKEN}" \
                 -H "Content-Type: application/json" \
