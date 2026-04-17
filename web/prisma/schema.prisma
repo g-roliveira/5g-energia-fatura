@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TipoPessoa {
+  PF
+  PJ
+}
+
+enum ClientStatus {
+  ativo
+  inativo
+  prospecto
+}
+
+enum TipoCliente {
+  residencial
+  condominio
+  empresa
+  imobiliaria
+  outro
+}
+
+model Client {
+  id            String       @id @default(cuid())
+  tipo_pessoa   TipoPessoa
+  nome_razao    String
+  nome_fantasia String?
+  cpf_cnpj      String       @unique
+  email         String?
+  telefone      String?
+  status        ClientStatus @default(prospecto)
+  tipo_cliente  TipoCliente
+  observacoes   String?
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @updatedAt
+  archived_at   DateTime?
+
+  address         ClientAddress?
+  ucs             ConsumerUnit[]
+  commercial_data CommercialData?
+  credentials     IntegrationCredential[]
+}
+
+model ClientAddress {
+  id          String   @id @default(cuid())
+  client_id   String   @unique
+  client      Client   @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  cep         String?
+  logradouro  String?
+  numero      String?
+  complemento String?
+  bairro      String?
+  cidade      String?
+  uf          String?  @db.Char(2)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+model ConsumerUnit {
+  id               String                 @id @default(cuid())
+  client_id        String
+  client           Client                 @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  uc_code          String                 @unique
+  distribuidora    String?
+  apelido          String?
+  classe_consumo   String?
+  endereco_unidade String?
+  cidade           String?
+  uf               String?                @db.Char(2)
+  ativa            Boolean                @default(true)
+  credential_id    String?
+  credential       IntegrationCredential? @relation(fields: [credential_id], references: [id], onDelete: SetNull)
+  created_at       DateTime               @default(now())
+  updated_at       DateTime               @updatedAt
+}
+
+model CommercialData {
+  id                     String    @id @default(cuid())
+  client_id              String    @unique
+  client                 Client    @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  tipo_contrato          String?
+  data_inicio            DateTime?
+  data_fim               DateTime?
+  status_contrato        String?
+  observacoes_comerciais String?
+  created_at             DateTime  @default(now())
+  updated_at             DateTime  @updatedAt
+}
+
+model IntegrationCredential {
+  id               String   @id @default(cuid())
+  client_id        String
+  client           Client   @relation(fields: [client_id], references: [id], onDelete: Cascade)
+  label            String
+  documento_masked String
+  uf               String   @db.Char(2)
+  tipo_acesso      String   @default("normal")
+  go_credential_id String   @unique
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  ucs ConsumerUnit[]
+}
