@@ -1,10 +1,13 @@
 'use client'
 
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CreateUcSchema, type CreateUcInput } from '@/types/clientes'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
+import { Checkbox } from '@/components/ui/checkbox'
 
 type UcCredentialOption = { id: string; label: string; documento_masked: string }
 
@@ -20,6 +23,7 @@ export function UcForm({ defaultValues, credentials, onSubmit, isLoading, mode }
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm<CreateUcInput>({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -31,8 +35,9 @@ export function UcForm({ defaultValues, credentials, onSubmit, isLoading, mode }
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
-          <label className="text-sm font-medium">Código UC *</label>
+          <Label htmlFor="uc_code">Código UC *</Label>
           <Input
+            id="uc_code"
             {...register('uc_code')}
             placeholder="Ex: 007098175908"
             disabled={mode === 'edit'}
@@ -41,48 +46,49 @@ export function UcForm({ defaultValues, credentials, onSubmit, isLoading, mode }
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-sm font-medium">Distribuidora</label>
-          <Input {...register('distribuidora')} placeholder="Ex: Neoenergia" />
+          <Label htmlFor="distribuidora">Distribuidora</Label>
+          <Input id="distribuidora" {...register('distribuidora')} placeholder="Ex: Neoenergia" />
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-sm font-medium">Apelido</label>
-          <Input {...register('apelido')} placeholder="Ex: Sede comercial" />
+          <Label htmlFor="apelido">Apelido</Label>
+          <Input id="apelido" {...register('apelido')} placeholder="Ex: Sede comercial" />
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-sm font-medium">Classe de Consumo</label>
-          <Input {...register('classe_consumo')} placeholder="Ex: Comercial B3" />
+          <Label htmlFor="classe_consumo">Classe de Consumo</Label>
+          <Input id="classe_consumo" {...register('classe_consumo')} placeholder="Ex: Comercial B3" />
         </div>
 
         <div className="space-y-1.5 sm:col-span-2">
-          <label className="text-sm font-medium">Endereço da Unidade</label>
-          <Input {...register('endereco_unidade')} placeholder="Endereço completo da UC" />
+          <Label htmlFor="endereco_unidade">Endereço da Unidade</Label>
+          <Input
+            id="endereco_unidade"
+            {...register('endereco_unidade')}
+            placeholder="Endereço completo da UC"
+          />
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-sm font-medium">Cidade</label>
-          <Input {...register('cidade')} placeholder="Cidade" />
+          <Label htmlFor="cidade">Cidade</Label>
+          <Input id="cidade" {...register('cidade')} placeholder="Cidade" />
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-sm font-medium">UF</label>
-          <Input {...register('uf')} placeholder="BA" maxLength={2} className="uppercase" />
+          <Label htmlFor="uf">UF</Label>
+          <Input id="uf" {...register('uf')} placeholder="BA" maxLength={2} className="uppercase" />
         </div>
 
         <div className="space-y-1.5 sm:col-span-2">
-          <label className="text-sm font-medium">Credencial de Integração</label>
-          <select
-            {...register('credential_id')}
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-          >
-            <option value="">Sem credencial</option>
+          <Label htmlFor="credential_id">Credencial de Integração</Label>
+          <NativeSelect id="credential_id" {...register('credential_id')} className="w-full">
+            <NativeSelectOption value="">Sem credencial</NativeSelectOption>
             {credentials.map((c) => (
-              <option key={c.id} value={c.id}>
+              <NativeSelectOption key={c.id} value={c.id}>
                 {c.label} — {c.documento_masked}
-              </option>
+              </NativeSelectOption>
             ))}
-          </select>
+          </NativeSelect>
           <p className="text-xs text-muted-foreground">
             Selecione uma credencial para habilitar a sincronização automática.
           </p>
@@ -90,8 +96,20 @@ export function UcForm({ defaultValues, credentials, onSubmit, isLoading, mode }
       </div>
 
       <div className="flex items-center gap-2 pt-2">
-        <input type="checkbox" id="ativa" {...register('ativa')} className="accent-primary" />
-        <label htmlFor="ativa" className="text-sm">UC ativa</label>
+        <Controller
+          name="ativa"
+          control={control}
+          render={({ field }) => (
+            <div className="flex items-center gap-2">
+              <Checkbox
+                id="ativa"
+                checked={field.value ?? false}
+                onCheckedChange={field.onChange}
+              />
+              <Label htmlFor="ativa">UC ativa</Label>
+            </div>
+          )}
+        />
       </div>
 
       <Button type="submit" disabled={isLoading}>

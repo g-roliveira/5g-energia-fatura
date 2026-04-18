@@ -4,9 +4,13 @@ import { useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { ArrowLeft01Icon, PencilEdit01Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react'
 
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
   Dialog,
@@ -104,12 +108,16 @@ function formatDate(iso?: string | null) {
 
 // ─── Skeleton ─────────────────────────────────────────────────────────────────
 
-function Skeleton() {
+function PageSkeleton() {
   return (
-    <div className="p-6 space-y-6 animate-pulse">
-      <div className="h-8 w-64 rounded bg-muted" />
-      <div className="h-4 w-48 rounded bg-muted" />
-      <div className="h-40 rounded bg-muted" />
+    <div className="flex flex-col gap-6 p-6">
+      <Skeleton className="h-8 w-32" />
+      <div className="space-y-2">
+        <Skeleton className="h-8 w-64" />
+        <Skeleton className="h-4 w-48" />
+      </div>
+      <Skeleton className="h-10 w-48" />
+      <Skeleton className="h-64 w-full" />
     </div>
   )
 }
@@ -178,24 +186,41 @@ export default function ClientDetailPage() {
 
   // ── Loading ──────────────────────────────────────────────────────────────────
 
-  if (isLoading || !client) return <Skeleton />
+  if (isLoading || !client) return <PageSkeleton />
 
   // ── Render ──────────────────────────────────────────────────────────────────
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="flex flex-col gap-6 p-6">
+      {/* Back button */}
+      <div>
+        <Button variant="outline" size="sm" asChild>
+          <Link href="/clientes">
+            <HugeiconsIcon icon={ArrowLeft01Icon} strokeWidth={2} />
+            Clientes
+          </Link>
+        </Button>
+      </div>
+
       {/* Header */}
       <div className="space-y-3">
         <div className="flex flex-wrap items-center gap-3">
           <h1 className="text-2xl font-semibold">{client.nome_razao}</h1>
           <StatusBadge status={client.status} />
-          <span className="text-sm text-muted-foreground capitalize">{client.tipo_cliente}</span>
+          <Badge variant="secondary" className="capitalize">{client.tipo_cliente}</Badge>
           <span className="font-mono text-sm text-muted-foreground">{client.cpf_cnpj}</span>
         </div>
 
+        {client.email && (
+          <p className="text-sm text-muted-foreground">{client.email}</p>
+        )}
+
         <div className="flex gap-2">
           <Button variant="outline" size="sm" asChild>
-            <Link href={`/clientes/${id}/editar`}>Editar</Link>
+            <Link href={`/clientes/${id}/editar`}>
+              <HugeiconsIcon icon={PencilEdit01Icon} strokeWidth={2} />
+              Editar
+            </Link>
           </Button>
 
           <AlertDialog>
@@ -233,6 +258,7 @@ export default function ClientDetailPage() {
           <Card>
             <CardHeader>
               <CardTitle>Dados do cliente</CardTitle>
+              <CardDescription>Informações cadastrais e de contato</CardDescription>
             </CardHeader>
             <CardContent>
               <dl className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -254,6 +280,7 @@ export default function ClientDetailPage() {
           <Card>
             <CardHeader>
               <CardTitle>Endereço</CardTitle>
+              <CardDescription>Localização do cliente</CardDescription>
             </CardHeader>
             <CardContent>
               {client.address ? (
@@ -284,7 +311,10 @@ export default function ClientDetailPage() {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Unidades consumidoras</CardTitle>
+                <div>
+                  <CardTitle>Unidades consumidoras</CardTitle>
+                  <CardDescription>UCs vinculadas a este cliente</CardDescription>
+                </div>
                 <Button size="sm" onClick={() => setUcSheetOpen(true)}>
                   Adicionar UC
                 </Button>
@@ -319,6 +349,7 @@ export default function ClientDetailPage() {
           <Card>
             <CardHeader>
               <CardTitle>Dados comerciais</CardTitle>
+              <CardDescription>Contrato e histórico comercial</CardDescription>
             </CardHeader>
             <CardContent>
               {client.commercial_data ? (
@@ -343,7 +374,10 @@ export default function ClientDetailPage() {
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Credenciais de integração</CardTitle>
+                <div>
+                  <CardTitle>Credenciais de integração</CardTitle>
+                  <CardDescription>Acesso ao portal da concessionária</CardDescription>
+                </div>
                 <Button size="sm" onClick={() => setCredSheetOpen(true)}>
                   Adicionar credencial
                 </Button>
