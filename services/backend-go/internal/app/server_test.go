@@ -240,6 +240,155 @@ func TestCredentialAndSessionEndpointsDoNotExposeSecrets(t *testing.T) {
 	}
 }
 
+func TestCredentialActionRoutingStatusCodes(t *testing.T) {
+	cfg := Config{
+		Host:               "127.0.0.1",
+		Port:               "8080",
+		ExtractorBaseURL:   "http://127.0.0.1:8090",
+		NeoenergiaBaseURL:  "http://127.0.0.1:9999",
+		DatabaseURL:        "file::memory:?cache=shared",
+		EncryptionKey:      "test-secret",
+		BootstrapPythonBin: "/bin/false",
+		BootstrapScript:    "scripts/bootstrap_neoenergia_token.py",
+	}
+	server, err := NewServer(cfg, slog.New(slog.NewTextHandler(io.Discard, nil)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	apiServer := httptest.NewServer(server.mux)
+	defer apiServer.Close()
+
+	unknownResp, err := http.Get(apiServer.URL + "/v1/credentials/abc/unknown")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer unknownResp.Body.Close()
+	if unknownResp.StatusCode != http.StatusNotFound {
+		t.Fatalf("expected 404 for unknown action, got %d", unknownResp.StatusCode)
+	}
+
+	wrongMethodReq, err := http.NewRequest(http.MethodGet, apiServer.URL+"/v1/credentials/abc/session", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	wrongMethodResp, err := http.DefaultClient.Do(wrongMethodReq)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer wrongMethodResp.Body.Close()
+	if wrongMethodResp.StatusCode != http.StatusMethodNotAllowed {
+		t.Fatalf("expected 405 for session with wrong method, got %d", wrongMethodResp.StatusCode)
+	}
+}
+
+func TestDiscoverEndpointSanitizesPartialUpstreamErrors(t *testing.T) {
+	neoServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		switch r.URL.Path {
+		case "/multilogin/2.0.0/servicos/minha-conta":
+			w.WriteHeader(http.StatusServiceUnavailable)
+			_, _ = w.Write([]byte(`{"message":"token secret-bearer-token leaked"}`))
+		case "/multilogin/2.0.0/servicos/minha-conta/minha-conta-legado":
+			w.WriteHeader(http.StatusUnauthorized)
+			_, _ = w.Write([]byte(`{"message":"authorization failed"}`))
+		case "/imoveis/1.1.0/clientes/03021937586/ucs":
+			_, _ = w.Write([]byte(`{"ucs":[{"status":"LIGADA","uc":"007098175908","nomeCliente":"PAULA","instalacao":"0001","grupoTensao":"B","contrato":"0023","dt_inicio":"2026-02-20","dt_fim":"9999-12-31","local":{"endereco":"Rua X","bairro":"Centro","municipio":"Lapao","cep":"44905-000","uf":"BA"}}]}`))
+		default:
+			t.Fatalf("unexpected path in discover test: %s", r.URL.Path)
+		}
+	}))
+	defer neoServer.Close()
+
+	pythonBin, err := exec.LookPath("python3")
+	if err != nil {
+		pythonBin, err = exec.LookPath("python")
+		if err != nil {
+			t.Skip("python not available")
+		}
+	}
+	scriptPath := filepath.Join(t.TempDir(), "bootstrap_fake.py")
+	script := `import json; print(json.dumps({"token":"secret-bearer-token","token_ne_se":{"ne":"x"},"local_storage":{"token":"x"}}))`
+	if err := os.WriteFile(scriptPath, []byte(script), 0o755); err != nil {
+		t.Fatal(err)
+	}
+
+	cfg := Config{
+		Host:               "127.0.0.1",
+		Port:               "8080",
+		ExtractorBaseURL:   "http://127.0.0.1:8090",
+		NeoenergiaBaseURL:  neoServer.URL,
+		DatabaseURL:        "file::memory:?cache=shared",
+		EncryptionKey:      "test-secret",
+		BootstrapPythonBin: pythonBin,
+		BootstrapScript:    scriptPath,
+	}
+	server, err := NewServer(cfg, slog.New(slog.NewTextHandler(io.Discard, nil)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	apiServer := httptest.NewServer(server.mux)
+	defer apiServer.Close()
+
+	credBody := bytes.NewBufferString(`{"label":"neo-paula","documento":"03021937586","senha":"MinhaSenha@123","uf":"BA","tipo_acesso":"normal"}`)
+	credResp, err := http.Post(apiServer.URL+"/v1/credentials", "application/json", credBody)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer credResp.Body.Close()
+	if credResp.StatusCode != http.StatusCreated {
+		t.Fatalf("unexpected credential status: %d", credResp.StatusCode)
+	}
+	var credPayload map[string]any
+	if err := json.NewDecoder(credResp.Body).Decode(&credPayload); err != nil {
+		t.Fatal(err)
+	}
+	credentialID := credPayload["id"].(string)
+
+	sessReq, err := http.NewRequest(http.MethodPost, apiServer.URL+"/v1/credentials/"+credentialID+"/session", bytes.NewBuffer(nil))
+	if err != nil {
+		t.Fatal(err)
+	}
+	sessResp, err := http.DefaultClient.Do(sessReq)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer sessResp.Body.Close()
+	if sessResp.StatusCode != http.StatusOK {
+		t.Fatalf("unexpected session status: %d", sessResp.StatusCode)
+	}
+
+	discoverResp, err := http.Get(apiServer.URL + "/v1/credentials/" + credentialID + "/discover")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer discoverResp.Body.Close()
+	if discoverResp.StatusCode != http.StatusOK {
+		t.Fatalf("unexpected discover status: %d", discoverResp.StatusCode)
+	}
+
+	var payload map[string]any
+	if err := json.NewDecoder(discoverResp.Body).Decode(&payload); err != nil {
+		t.Fatal(err)
+	}
+	errorsObj, ok := payload["errors"].(map[string]any)
+	if !ok {
+		t.Fatalf("expected errors object in partial discover response")
+	}
+	if errorsObj["minha_conta"] != "upstream_unavailable" {
+		t.Fatalf("unexpected minha_conta error code: %v", errorsObj["minha_conta"])
+	}
+	if errorsObj["minha_conta_legado"] != "unauthorized" {
+		t.Fatalf("unexpected minha_conta_legado error code: %v", errorsObj["minha_conta_legado"])
+	}
+	if strings.Contains(payloadString(payload), "secret-bearer-token") {
+		t.Fatalf("discover payload leaked secret token: %+v", payload)
+	}
+}
+
+func payloadString(v any) string {
+	raw, _ := json.Marshal(v)
+	return string(raw)
+}
+
 func TestSyncUCEndpointWithExtraction(t *testing.T) {
 	extractorServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/v1/extract" {

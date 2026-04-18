@@ -80,26 +80,36 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 	})
 
 	docs.add(http.MethodPost, "/v1/credentials/{id}/session", "Create session from credential", []string{"credentials"}, http.StatusOK)
+	docs.add(http.MethodGet, "/v1/credentials/{id}/discover", "Discover profile and UCs from credential", []string{"credentials"}, http.StatusOK)
 	mux.HandleFunc("/v1/credentials/", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
 		parts := splitPath(r.URL.Path)
-		var credentialID string
-		if len(parts) == 4 && parts[0] == "v1" && parts[1] == "credentials" && parts[3] == "session" {
-			credentialID = parts[2]
-		}
-		if credentialID == "" {
+		if len(parts) != 4 || parts[0] != "v1" || parts[1] != "credentials" {
 			w.WriteHeader(http.StatusNotFound)
 			return
 		}
-		sessionView, _, err := sessionManager.CreateSessionFromCredential(r.Context(), credentialID)
-		if err != nil {
-			writeInternalError(w, logger, "create_session_from_credential", err)
-			return
+		credentialID, action := parts[2], parts[3]
+
+		switch action {
+		case "session":
+			if r.Method != http.MethodPost {
+				w.WriteHeader(http.StatusMethodNotAllowed)
+				return
+			}
+			sessionView, _, err := sessionManager.CreateSessionFromCredential(r.Context(), credentialID)
+			if err != nil {
+				writeInternalError(w, logger, "create_session_from_credential", err)
+				return
+			}
+			writeJSON(w, http.StatusOK, sessionView)
+		case "discover":
+			if r.Method != http.MethodGet {
+				w.WriteHeader(http.StatusMethodNotAllowed)
+				return
+			}
+			handleDiscover(w, r, credentialID, sessionManager, apiClient, logger)
+		default:
+			w.WriteHeader(http.StatusNotFound)
 		}
-		writeJSON(w, http.StatusOK, sessionView)
 	})
 
 	docs.add(http.MethodPost, "/v1/sync/uc", "Sync consumer unit", []string{"sync"}, http.StatusOK)
