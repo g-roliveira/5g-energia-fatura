@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { ClientForm } from '@/components/clientes/client-form'
 import type { CreateClientInput } from '@/types/clientes'
+import { useSetBreadcrumbTitle } from '@/contexts/breadcrumb'
 
 export default function EditarClientePage() {
   const router = useRouter()
@@ -22,6 +23,8 @@ export default function EditarClientePage() {
       return res.json()
     },
   })
+
+  useSetBreadcrumbTitle(id, client?.nome_razao)
 
   async function handleSubmit(data: CreateClientInput) {
     setIsLoading(true)

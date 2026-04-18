@@ -13,7 +13,7 @@ import { ptBR } from 'date-fns/locale'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { NativeSelect } from '@/components/ui/native-select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Badge } from '@/components/ui/badge'
 import { StatusBadge } from './status-badge'
@@ -123,28 +123,36 @@ export function ClientTable({ data, total, page, pageSize, isLoading }: ClientTa
           onChange={(e) => handleSearch(e.target.value)}
           className="max-w-sm"
         />
-        <NativeSelect
-          value={searchParams.get('status') ?? ''}
-          onChange={(e) => updateParam('status', e.target.value)}
-          className="w-40"
+        <Select
+          value={searchParams.get('status') ?? '_all'}
+          onValueChange={(v) => updateParam('status', v === '_all' ? '' : v)}
         >
-          <option value="">Todos os status</option>
-          <option value="ativo">Ativo</option>
-          <option value="inativo">Inativo</option>
-          <option value="prospecto">Prospecto</option>
-        </NativeSelect>
-        <NativeSelect
-          value={searchParams.get('tipo_cliente') ?? ''}
-          onChange={(e) => updateParam('tipo_cliente', e.target.value)}
-          className="w-44"
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="Todos os status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="_all">Todos os status</SelectItem>
+            <SelectItem value="ativo">Ativo</SelectItem>
+            <SelectItem value="inativo">Inativo</SelectItem>
+            <SelectItem value="prospecto">Prospecto</SelectItem>
+          </SelectContent>
+        </Select>
+        <Select
+          value={searchParams.get('tipo_cliente') ?? '_all'}
+          onValueChange={(v) => updateParam('tipo_cliente', v === '_all' ? '' : v)}
         >
-          <option value="">Todos os tipos</option>
-          <option value="residencial">Residencial</option>
-          <option value="condominio">Condomínio</option>
-          <option value="empresa">Empresa</option>
-          <option value="imobiliaria">Imobiliária</option>
-          <option value="outro">Outro</option>
-        </NativeSelect>
+          <SelectTrigger className="w-44">
+            <SelectValue placeholder="Todos os tipos" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="_all">Todos os tipos</SelectItem>
+            <SelectItem value="residencial">Residencial</SelectItem>
+            <SelectItem value="condominio">Condomínio</SelectItem>
+            <SelectItem value="empresa">Empresa</SelectItem>
+            <SelectItem value="imobiliaria">Imobiliária</SelectItem>
+            <SelectItem value="outro">Outro</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Table */}

@@ -8,7 +8,12 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -25,6 +30,7 @@ import { UcList } from '@/components/clientes/uc-list'
 import { UcForm } from '@/components/clientes/uc-form'
 import { CredentialForm } from '@/components/clientes/credential-form'
 import type { CreateUcInput, CreateCredentialInput } from '@/types/clientes'
+import { useSetBreadcrumbTitle } from '@/contexts/breadcrumb'
 
 // ─── Local types (avoids importing Prisma in a client component) ──────────────
 
@@ -111,8 +117,7 @@ function Skeleton() {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function ClientDetailPage() {
-  const params = useParams()
-  const id = params.id as string
+  const { id } = useParams<{ id: string }>()
   const router = useRouter()
   const queryClient = useQueryClient()
 
@@ -129,6 +134,8 @@ export default function ClientDetailPage() {
       return res.json()
     },
   })
+
+  useSetBreadcrumbTitle(id, client?.nome_razao)
 
   // ── Handlers ────────────────────────────────────────────────────────────────
 
@@ -292,21 +299,19 @@ export default function ClientDetailPage() {
             </CardContent>
           </Card>
 
-          <Sheet open={ucSheetOpen} onOpenChange={setUcSheetOpen}>
-            <SheetContent className="overflow-y-auto">
-              <SheetHeader>
-                <SheetTitle>Nova UC</SheetTitle>
-              </SheetHeader>
-              <div className="mt-4">
-                <UcForm
-                  mode="create"
-                  credentials={client.credentials}
-                  onSubmit={handleCreateUc}
-                  isLoading={ucLoading}
-                />
-              </div>
-            </SheetContent>
-          </Sheet>
+          <Dialog open={ucSheetOpen} onOpenChange={setUcSheetOpen}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Adicionar UC</DialogTitle>
+              </DialogHeader>
+              <UcForm
+                mode="create"
+                credentials={client.credentials}
+                onSubmit={handleCreateUc}
+                isLoading={ucLoading}
+              />
+            </DialogContent>
+          </Dialog>
         </TabsContent>
 
         {/* Tab 4: Comercial */}
@@ -365,20 +370,18 @@ export default function ClientDetailPage() {
             </CardContent>
           </Card>
 
-          <Sheet open={credSheetOpen} onOpenChange={setCredSheetOpen}>
-            <SheetContent className="overflow-y-auto">
-              <SheetHeader>
-                <SheetTitle>Nova credencial</SheetTitle>
-              </SheetHeader>
-              <div className="mt-4">
-                <CredentialForm
-                  clientId={id}
-                  onSubmit={handleCreateCredential}
-                  isLoading={credLoading}
-                />
-              </div>
-            </SheetContent>
-          </Sheet>
+          <Dialog open={credSheetOpen} onOpenChange={setCredSheetOpen}>
+            <DialogContent className="max-w-2xl">
+              <DialogHeader>
+                <DialogTitle>Adicionar Credencial</DialogTitle>
+              </DialogHeader>
+              <CredentialForm
+                clientId={id}
+                onSubmit={handleCreateCredential}
+                isLoading={credLoading}
+              />
+            </DialogContent>
+          </Dialog>
         </TabsContent>
       </Tabs>
     </div>
