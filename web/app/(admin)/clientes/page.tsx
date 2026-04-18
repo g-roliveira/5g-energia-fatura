@@ -3,7 +3,17 @@
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { PlusSignIcon, Download01Icon } from '@hugeicons/core-free-icons'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card'
 import { ClientTable } from '@/components/clientes/client-table'
 
 export default function ClientesPage() {
@@ -31,21 +41,50 @@ export default function ClientesPage() {
   })
 
   return (
-    <div className="p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">Clientes</h1>
-        <Button asChild>
-          <Link href="/clientes/novo">Novo cliente</Link>
-        </Button>
+    <div className="flex flex-col gap-6 p-6">
+      {/* Page header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">Clientes</h1>
+          <p className="text-sm text-muted-foreground">Gerencie seus clientes cadastrados</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" disabled>
+            <HugeiconsIcon icon={Download01Icon} strokeWidth={2} />
+            Importar CSV
+            <Badge variant="secondary" className="ml-1 text-[10px]">Em breve</Badge>
+          </Button>
+          <Button asChild>
+            <Link href="/clientes/novo">
+              <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
+              Novo cliente
+            </Link>
+          </Button>
+        </div>
       </div>
 
-      <ClientTable
-        data={data?.data ?? []}
-        total={data?.total ?? 0}
-        page={page}
-        pageSize={pageSize}
-        isLoading={isLoading}
-      />
+      {/* Table card */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>Lista de clientes</CardTitle>
+              <CardDescription>
+                {isLoading ? 'Carregando...' : `${data?.total ?? 0} cliente${(data?.total ?? 0) !== 1 ? 's' : ''} encontrado${(data?.total ?? 0) !== 1 ? 's' : ''}`}
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <ClientTable
+            data={data?.data ?? []}
+            total={data?.total ?? 0}
+            page={page}
+            pageSize={pageSize}
+            isLoading={isLoading}
+          />
+        </CardContent>
+      </Card>
     </div>
   )
 }

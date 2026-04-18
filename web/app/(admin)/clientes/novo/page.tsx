@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { ArrowLeft01Icon } from '@hugeicons/core-free-icons'
 import { Button } from '@/components/ui/button'
 import { ClientForm } from '@/components/clientes/client-form'
 import type { CreateClientInput } from '@/types/clientes'
@@ -28,14 +30,19 @@ export default function NovoClientePage() {
   }
 
   return (
-    <div className="p-6 max-w-4xl">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">Novo Cliente</h1>
+    <div className="flex flex-col gap-6 p-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold">Novo Cliente</h1>
+          <p className="text-sm text-muted-foreground">Preencha os dados para cadastrar um novo cliente</p>
+        </div>
         <Button variant="outline" asChild>
-          <Link href="/clientes">Voltar</Link>
+          <Link href="/clientes">
+            <HugeiconsIcon icon={ArrowLeft01Icon} strokeWidth={2} />
+            Voltar
+          </Link>
         </Button>
       </div>
-
       <ClientForm mode="create" onSubmit={handleSubmit} isLoading={isLoading} />
     </div>
   )

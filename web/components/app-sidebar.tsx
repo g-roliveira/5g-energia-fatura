@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { HugeiconsIcon } from "@hugeicons/react"
 import {
   Home01Icon,
@@ -243,6 +244,8 @@ const clientesNav = [
 ]
 
 function NavClientes() {
+  const pathname = usePathname()
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Clientes</SidebarGroupLabel>
@@ -250,7 +253,7 @@ function NavClientes() {
         <SidebarMenu>
           <Collapsible defaultOpen>
             <SidebarMenuItem>
-              <SidebarMenuButton asChild tooltip="Clientes">
+              <SidebarMenuButton asChild isActive={pathname.startsWith("/clientes")} tooltip="Clientes">
                 <Link href="/clientes">
                   <HugeiconsIcon icon={UserGroupIcon} strokeWidth={2} />
                   <span>Clientes</span>
@@ -266,7 +269,7 @@ function NavClientes() {
                 <SidebarMenuSub>
                   {clientesNav.map((item) => (
                     <SidebarMenuSubItem key={item.title}>
-                      <SidebarMenuSubButton asChild>
+                      <SidebarMenuSubButton asChild isActive={pathname === item.url}>
                         <Link href={item.url}>
                           <span>{item.title}</span>
                         </Link>
@@ -284,24 +287,29 @@ function NavClientes() {
 }
 
 function NavMain() {
+  const pathname = usePathname()
+
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Navegacao</SidebarGroupLabel>
       <SidebarGroupContent>
         <SidebarMenu>
-          {navigationData.mainNav.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <SidebarMenuButton asChild isActive={item.isActive} tooltip={item.title}>
-                <Link href={item.url}>
-                  <HugeiconsIcon icon={item.icon} strokeWidth={2} />
-                  <span>{item.title}</span>
-                </Link>
-              </SidebarMenuButton>
-              {item.badge && (
-                <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
-              )}
-            </SidebarMenuItem>
-          ))}
+          {navigationData.mainNav.map((item) => {
+            const isActive = item.url === "/" ? pathname === "/" : pathname.startsWith(item.url)
+            return (
+              <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton asChild isActive={isActive} tooltip={item.title}>
+                  <Link href={item.url}>
+                    <HugeiconsIcon icon={item.icon} strokeWidth={2} />
+                    <span>{item.title}</span>
+                  </Link>
+                </SidebarMenuButton>
+                {item.badge && (
+                  <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
+                )}
+              </SidebarMenuItem>
+            )
+          })}
         </SidebarMenu>
       </SidebarGroupContent>
     </SidebarGroup>
