@@ -1,6 +1,7 @@
 package app
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"log/slog"
@@ -10,6 +11,7 @@ import (
 
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/extractor"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/neoenergia"
+	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/pgstore"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/security"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/session"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/store"
@@ -59,7 +61,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 	docs.add(http.MethodPost, "/v1/credentials", "Create credential", []string{"credentials"}, http.StatusCreated)
 	mux.HandleFunc("/v1/credentials", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
-			w.WriteHeader(http.StatusMethodNotAllowed)
+			writeClientError(w, http.StatusMethodNotAllowed, "method_not_allowed")
 			return
 		}
 		var req session.CredentialInput
@@ -84,7 +86,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 	mux.HandleFunc("/v1/credentials/", func(w http.ResponseWriter, r *http.Request) {
 		parts := splitPath(r.URL.Path)
 		if len(parts) != 4 || parts[0] != "v1" || parts[1] != "credentials" {
-			w.WriteHeader(http.StatusNotFound)
+			writeClientError(w, http.StatusNotFound, "not_found")
 			return
 		}
 		credentialID, action := parts[2], parts[3]
@@ -92,7 +94,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 		switch action {
 		case "session":
 			if r.Method != http.MethodPost {
-				w.WriteHeader(http.StatusMethodNotAllowed)
+				writeClientError(w, http.StatusMethodNotAllowed, "method_not_allowed")
 				return
 			}
 			sessionView, _, err := sessionManager.CreateSessionFromCredential(r.Context(), credentialID)
@@ -103,19 +105,19 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 			writeJSON(w, http.StatusOK, sessionView)
 		case "discover":
 			if r.Method != http.MethodGet {
-				w.WriteHeader(http.StatusMethodNotAllowed)
+				writeClientError(w, http.StatusMethodNotAllowed, "method_not_allowed")
 				return
 			}
 			handleDiscover(w, r, credentialID, sessionManager, apiClient, logger)
 		default:
-			w.WriteHeader(http.StatusNotFound)
+			writeClientError(w, http.StatusNotFound, "not_found")
 		}
 	})
 
 	docs.add(http.MethodPost, "/v1/sync/uc", "Sync consumer unit", []string{"sync"}, http.StatusOK)
 	mux.HandleFunc("/v1/sync/uc", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
-			w.WriteHeader(http.StatusMethodNotAllowed)
+			writeClientError(w, http.StatusMethodNotAllowed, "method_not_allowed")
 			return
 		}
 
@@ -154,7 +156,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 	docs.add(http.MethodGet, "/v1/consumer-units", "List consumer units", []string{"consumer-units"}, http.StatusOK)
 	mux.HandleFunc("/v1/consumer-units", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
-			w.WriteHeader(http.StatusMethodNotAllowed)
+			writeClientError(w, http.StatusMethodNotAllowed, "method_not_allowed")
 			return
 		}
 		limit := parsePositiveInt(r.URL.Query().Get("limit"), 100)
@@ -174,18 +176,18 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 	mux.HandleFunc("/v1/consumer-units/", func(w http.ResponseWriter, r *http.Request) {
 		parts := splitPath(r.URL.Path)
 		if len(parts) < 3 || parts[0] != "v1" || parts[1] != "consumer-units" {
-			w.WriteHeader(http.StatusNotFound)
+			writeClientError(w, http.StatusNotFound, "not_found")
 			return
 		}
 		uc := parts[2]
 		if uc == "" {
-			w.WriteHeader(http.StatusNotFound)
+			writeClientError(w, http.StatusNotFound, "not_found")
 			return
 		}
 
 		if len(parts) == 4 && parts[3] == "invoices" {
 			if r.Method != http.MethodGet {
-				w.WriteHeader(http.StatusMethodNotAllowed)
+				writeClientError(w, http.StatusMethodNotAllowed, "method_not_allowed")
 				return
 			}
 			limit := parsePositiveInt(r.URL.Query().Get("limit"), 100)
@@ -201,7 +203,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 
 		if len(parts) == 3 {
 			if r.Method != http.MethodGet {
-				w.WriteHeader(http.StatusMethodNotAllowed)
+				writeClientError(w, http.StatusMethodNotAllowed, "method_not_allowed")
 				return
 			}
 			item, err := sqliteStore.GetConsumerUnitByUC(uc)
@@ -210,7 +212,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 				return
 			}
 			if item == nil {
-				w.WriteHeader(http.StatusNotFound)
+				writeClientError(w, http.StatusNotFound, "not_found")
 				return
 			}
 			writeJSON(w, http.StatusOK, item)
@@ -219,7 +221,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 
 		if len(parts) == 4 && parts[3] == "latest-invoice" {
 			if r.Method != http.MethodGet {
-				w.WriteHeader(http.StatusMethodNotAllowed)
+				writeClientError(w, http.StatusMethodNotAllowed, "method_not_allowed")
 				return
 			}
 			item, err := sqliteStore.GetLatestInvoiceByUC(uc)
@@ -228,7 +230,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 				return
 			}
 			if item == nil {
-				w.WriteHeader(http.StatusNotFound)
+				writeClientError(w, http.StatusNotFound, "not_found")
 				return
 			}
 			writeJSON(w, http.StatusOK, item)
@@ -237,7 +239,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 
 		if len(parts) == 4 && parts[3] == "sync" {
 			if r.Method != http.MethodPost {
-				w.WriteHeader(http.StatusMethodNotAllowed)
+				writeClientError(w, http.StatusMethodNotAllowed, "method_not_allowed")
 				return
 			}
 			var req syncsvc.SyncUCRequest
@@ -268,18 +270,18 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 			return
 		}
 
-		w.WriteHeader(http.StatusNotFound)
+		writeClientError(w, http.StatusNotFound, "not_found")
 	})
 
 	docs.add(http.MethodGet, "/v1/invoices/{id}", "Get invoice by id", []string{"invoices"}, http.StatusOK)
 	mux.HandleFunc("/v1/invoices/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
-			w.WriteHeader(http.StatusMethodNotAllowed)
+			writeClientError(w, http.StatusMethodNotAllowed, "method_not_allowed")
 			return
 		}
 		parts := splitPath(r.URL.Path)
 		if len(parts) != 3 || parts[0] != "v1" || parts[1] != "invoices" {
-			w.WriteHeader(http.StatusNotFound)
+			writeClientError(w, http.StatusNotFound, "not_found")
 			return
 		}
 		item, err := sqliteStore.GetInvoiceByID(parts[2])
@@ -288,7 +290,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 			return
 		}
 		if item == nil {
-			w.WriteHeader(http.StatusNotFound)
+			writeClientError(w, http.StatusNotFound, "not_found")
 			return
 		}
 		writeJSON(w, http.StatusOK, item)
@@ -297,12 +299,12 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 	docs.add(http.MethodGet, "/v1/sync-runs/{id}", "Get sync run by id", []string{"sync"}, http.StatusOK)
 	mux.HandleFunc("/v1/sync-runs/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet {
-			w.WriteHeader(http.StatusMethodNotAllowed)
+			writeClientError(w, http.StatusMethodNotAllowed, "method_not_allowed")
 			return
 		}
 		parts := splitPath(r.URL.Path)
 		if len(parts) != 3 || parts[0] != "v1" || parts[1] != "sync-runs" {
-			w.WriteHeader(http.StatusNotFound)
+			writeClientError(w, http.StatusNotFound, "not_found")
 			return
 		}
 		item, err := sqliteStore.GetSyncRunByID(parts[2])
@@ -311,7 +313,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 			return
 		}
 		if item == nil {
-			w.WriteHeader(http.StatusNotFound)
+			writeClientError(w, http.StatusNotFound, "not_found")
 			return
 		}
 		writeJSON(w, http.StatusOK, item)
@@ -325,7 +327,18 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 		})
 	})
 
-	rootHandler := withRequestLogging(logger, mux)
+	if strings.TrimSpace(cfg.BackofficePGURL) != "" {
+		pgCfg := pgstore.LoadConfigFromEnv()
+		pgCfg.URL = cfg.BackofficePGURL
+		pool, err := pgstore.Open(context.Background(), pgCfg)
+		if err != nil {
+			return nil, fmt.Errorf("pgstore.Open: %w", err)
+		}
+		RegisterBillingRoutes(mux, docs, NewBillingDeps(pool), logger)
+		logger.Info("billing_module_enabled", "routes", "/v1/billing/*")
+	}
+
+	rootHandler := withRequestLogging(logger, withOptionalAPIKeyAuth(cfg.APIKey, mux))
 	return &Server{
 		cfg:    cfg,
 		logger: logger,

@@ -5,6 +5,8 @@ import "os"
 type Config struct {
 	Host               string
 	Port               string
+	APIKey             string
+	BackofficePGURL    string
 	ExtractorBaseURL   string
 	NeoenergiaBaseURL  string
 	ArtifactsDirectory string
@@ -18,6 +20,8 @@ func LoadConfigFromEnv() Config {
 	return Config{
 		Host:               envOrDefault("BACKEND_HOST", "127.0.0.1"),
 		Port:               envOrDefault("BACKEND_PORT", "8080"),
+		APIKey:             envOrDefault("BACKEND_API_KEY", ""),
+		BackofficePGURL:    envOrDefault("BACKOFFICE_PG_URL", ""),
 		ExtractorBaseURL:   envOrDefault("EXTRACTOR_BASE_URL", "http://127.0.0.1:8090"),
 		NeoenergiaBaseURL:  envOrDefault("NEOENERGIA_API_BASE_URL", "https://apineprd.neoenergia.com"),
 		ArtifactsDirectory: envOrDefault("ARTIFACTS_DIR", "./artifacts"),

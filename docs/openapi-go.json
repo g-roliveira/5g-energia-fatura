@@ -1,0 +1,2896 @@
+{
+  "components": {
+    "responses": {
+      "BadRequest": {
+        "content": {
+          "application/json": {
+            "example": {
+              "error": "invalid_json"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Requisição inválida."
+      },
+      "InternalServerError": {
+        "content": {
+          "application/json": {
+            "example": {
+              "error": "internal_error"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Erro interno."
+      },
+      "MethodNotAllowed": {
+        "content": {
+          "application/json": {
+            "example": {
+              "error": "method_not_allowed"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Método não suportado para o endpoint."
+      },
+      "NotFound": {
+        "content": {
+          "application/json": {
+            "example": {
+              "error": "not_found"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Recurso não encontrado."
+      },
+      "Unauthorized": {
+        "content": {
+          "application/json": {
+            "example": {
+              "error": "unauthorized"
+            },
+            "schema": {
+              "$ref": "#/components/schemas/ErrorResponse"
+            }
+          }
+        },
+        "description": "Não autenticado."
+      }
+    },
+    "schemas": {
+      "BillingCalculationView": {
+        "properties": {
+          "approved_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "approved_by": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "billing_cycle_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "calculated_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "consumer_unit_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "contract_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "contract_snapshot": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "economia_pct": {
+            "type": "string"
+          },
+          "economia_rs": {
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "inputs_snapshot": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "needs_review_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "result_snapshot": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "needs_review",
+              "approved",
+              "superseded"
+            ],
+            "type": "string"
+          },
+          "total_com_desconto": {
+            "type": "string"
+          },
+          "total_sem_desconto": {
+            "type": "string"
+          },
+          "utility_invoice_ref_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "version": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "utility_invoice_ref_id",
+          "billing_cycle_id",
+          "consumer_unit_id",
+          "contract_id",
+          "total_sem_desconto",
+          "total_com_desconto",
+          "economia_rs",
+          "economia_pct",
+          "status",
+          "version",
+          "calculated_at"
+        ],
+        "type": "object"
+      },
+      "BillingCompleteness": {
+        "properties": {
+          "missing_fields": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "status": {
+            "enum": [
+              "complete",
+              "partial"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "BillingContractCreateRequest": {
+        "properties": {
+          "bandeira_com_desconto": {
+            "default": false,
+            "type": "boolean"
+          },
+          "consumer_unit_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "created_by": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "custo_disponibilidade_sempre_cobrado": {
+            "default": true,
+            "type": "boolean"
+          },
+          "customer_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "desconto_percentual": {
+            "description": "Decimal no intervalo (0,1], ex.: 0.30",
+            "type": "string"
+          },
+          "ip_faturamento_mode": {
+            "default": "fixed",
+            "enum": [
+              "fixed",
+              "percent"
+            ],
+            "type": "string"
+          },
+          "ip_faturamento_percent": {
+            "type": "string"
+          },
+          "ip_faturamento_valor": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "vigencia_inicio": {
+            "format": "date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "customer_id",
+          "consumer_unit_id",
+          "vigencia_inicio",
+          "desconto_percentual"
+        ],
+        "type": "object"
+      },
+      "BillingContractView": {
+        "properties": {
+          "bandeira_com_desconto": {
+            "type": "boolean"
+          },
+          "consumer_unit_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "created_by": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "custo_disponibilidade_sempre_cobrado": {
+            "type": "boolean"
+          },
+          "customer_id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "desconto_percentual": {
+            "type": "string"
+          },
+          "id": {
+            "format": "uuid",
+            "type": "string"
+          },
+          "ip_faturamento_mode": {
+            "type": "string"
+          },
+          "ip_faturamento_percent": {
+            "type": "string"
+          },
+          "ip_faturamento_valor": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "draft",
+              "active",
+              "ended"
+            ],
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "vigencia_fim": {
+            "format": "date",
+            "type": "string"
+          },
+          "vigencia_inicio": {
+            "format": "date",
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "customer_id",
+          "consumer_unit_id",
+          "vigencia_inicio",
+          "desconto_percentual",
+          "ip_faturamento_mode",
+          "status",
+          "created_at",
+          "updated_at"
+        ],
+        "type": "object"
+      },
+      "BillingRecord": {
+        "properties": {
+          "codigo_barras": {
+            "type": "string"
+          },
+          "completeness": {
+            "$ref": "#/components/schemas/BillingCompleteness"
+          },
+          "composicao_fornecimento": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "confidence_map": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object"
+          },
+          "data_emissao": {
+            "type": "string"
+          },
+          "data_fim_periodo": {
+            "type": "string"
+          },
+          "data_inicio_periodo": {
+            "type": "string"
+          },
+          "data_pagamento": {
+            "type": "string"
+          },
+          "data_vencimento": {
+            "type": "string"
+          },
+          "extractor_status": {
+            "type": "string"
+          },
+          "historico_consumo": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "itens_fatura": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "mes_referencia": {
+            "type": "string"
+          },
+          "nota_fiscal": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "numero_fatura": {
+            "type": "string"
+          },
+          "raw_source_availability": {
+            "additionalProperties": {
+              "type": "boolean"
+            },
+            "type": "object"
+          },
+          "source_map": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "status_fatura": {
+            "type": "string"
+          },
+          "uc": {
+            "type": "string"
+          },
+          "valor_total": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ConsumerUnitDetailsView": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/ConsumerUnitView"
+          },
+          {
+            "properties": {
+              "latest_invoice": {
+                "$ref": "#/components/schemas/InvoiceView"
+              },
+              "latest_sync_run": {
+                "$ref": "#/components/schemas/SyncRunView"
+              }
+            },
+            "type": "object"
+          }
+        ]
+      },
+      "ConsumerUnitListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ConsumerUnitView"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ConsumerUnitView": {
+        "properties": {
+          "contrato": {
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "credential_id": {
+            "type": "string"
+          },
+          "endereco": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "grupo_tensao": {
+            "type": "string"
+          },
+          "imovel": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "instalacao": {
+            "type": "string"
+          },
+          "nome_cliente": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "uc": {
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "CredentialCreateRequest": {
+        "properties": {
+          "documento": {
+            "description": "CPF/CNPJ usado no login Neoenergia.",
+            "type": "string"
+          },
+          "label": {
+            "description": "Nome amigável da credencial.",
+            "type": "string"
+          },
+          "senha": {
+            "description": "Senha do portal Neoenergia.",
+            "format": "password",
+            "type": "string"
+          },
+          "tipo_acesso": {
+            "default": "normal",
+            "type": "string"
+          },
+          "uf": {
+            "default": "BA",
+            "type": "string"
+          }
+        },
+        "required": [
+          "documento",
+          "senha"
+        ],
+        "type": "object"
+      },
+      "CredentialView": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "documento": {
+            "description": "Documento mascarado.",
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "tipo_acesso": {
+            "type": "string"
+          },
+          "uf": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "label",
+          "documento",
+          "uf",
+          "tipo_acesso",
+          "created_at"
+        ],
+        "type": "object"
+      },
+      "DadosPagamentoResponse": {
+        "properties": {
+          "codBarras": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "DataCertaResponse": {
+        "properties": {
+          "dataAtual": {
+            "type": "string"
+          },
+          "possuiDataBoa": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "DebitoAutomaticoResponse": {
+        "properties": {
+          "retorno": {
+            "additionalProperties": true,
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "DiscoveryResult": {
+        "properties": {
+          "errors": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "minha_conta": {
+            "$ref": "#/components/schemas/MinhaContaResponse"
+          },
+          "minha_conta_legado": {
+            "$ref": "#/components/schemas/MinhaContaLegadoResponse"
+          },
+          "ucs": {
+            "items": {
+              "$ref": "#/components/schemas/UC"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "ucs"
+        ],
+        "type": "object"
+      },
+      "DocumentRecord": {
+        "properties": {
+          "data_vencimento": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "normalizado_valor": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "number"
+              }
+            ]
+          },
+          "ocr": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "site_receipt": {
+            "type": "string"
+          },
+          "uc": {
+            "type": "string"
+          },
+          "valor": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ErrorResponse": {
+        "properties": {
+          "error": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "error"
+        ],
+        "type": "object"
+      },
+      "ExtractorContractsResponse": {
+        "properties": {
+          "extractor_request": {
+            "type": "string"
+          },
+          "extractor_response": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "extractor_request",
+          "extractor_response"
+        ],
+        "type": "object"
+      },
+      "ExtractorResponse": {
+        "properties": {
+          "artifacts": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "confidence_map": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "type": "object"
+          },
+          "fields": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "job_id": {
+            "type": "string"
+          },
+          "schema_version": {
+            "type": "string"
+          },
+          "source_map": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "status": {
+            "type": "string"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "Fatura": {
+        "properties": {
+          "aceitaPix": {
+            "type": "string"
+          },
+          "dataCompetencia": {
+            "type": "string"
+          },
+          "dataEmissao": {
+            "type": "string"
+          },
+          "dataFimPeriodo": {
+            "type": "string"
+          },
+          "dataInicioPeriodo": {
+            "type": "string"
+          },
+          "dataPagamento": {
+            "type": "string"
+          },
+          "dataVencimento": {
+            "type": "string"
+          },
+          "mesReferencia": {
+            "type": "string"
+          },
+          "numeroFatura": {
+            "type": "string"
+          },
+          "origemFatura": {
+            "type": "string"
+          },
+          "statusFatura": {
+            "type": "string"
+          },
+          "tipoDoc": {
+            "type": "string"
+          },
+          "tipoEntrega": {
+            "type": "string"
+          },
+          "tipoLeitura": {
+            "type": "string"
+          },
+          "uc": {
+            "type": "string"
+          },
+          "valorEmissao": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "FaturaDigitalResponse": {
+        "properties": {
+          "PossuiFaturaDigital": {
+            "type": "string"
+          },
+          "emailCadastro": {
+            "type": "string"
+          },
+          "emailFatura": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "FaturaPDFResponse": {
+        "properties": {
+          "fileData": {
+            "type": "string"
+          },
+          "fileExtension": {
+            "type": "string"
+          },
+          "fileName": {
+            "type": "string"
+          },
+          "fileSize": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "FaturasResponse": {
+        "properties": {
+          "entregaFaturas": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "faturas": {
+            "items": {
+              "$ref": "#/components/schemas/Fatura"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "GrupoClienteResponse": {
+        "properties": {
+          "dados": {
+            "items": {
+              "properties": {
+                "ativo": {
+                  "type": "boolean"
+                },
+                "codigo": {
+                  "type": "integer"
+                },
+                "funcionalidades": {
+                  "items": {
+                    "properties": {
+                      "codigo": {
+                        "type": "string"
+                      }
+                    },
+                    "type": "object"
+                  },
+                  "type": "array"
+                },
+                "nome": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "HealthResponse": {
+        "properties": {
+          "service": {
+            "example": "backend-go",
+            "type": "string"
+          },
+          "status": {
+            "example": "ok",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "service"
+        ],
+        "type": "object"
+      },
+      "HistoricoConsumoItem": {
+        "properties": {
+          "consumoKw": {
+            "type": "string"
+          },
+          "dataFimPeriodoCalc": {
+            "type": "string"
+          },
+          "dataInicioPeriodoCalc": {
+            "type": "string"
+          },
+          "dataLeitura": {
+            "type": "string"
+          },
+          "dataPagamento": {
+            "type": "string"
+          },
+          "dataProxLeitura": {
+            "type": "string"
+          },
+          "dataVencimento": {
+            "type": "string"
+          },
+          "mesReferencia": {
+            "type": "string"
+          },
+          "numeroFatura": {
+            "type": "string"
+          },
+          "numeroLeitura": {
+            "type": "string"
+          },
+          "statusFatura": {
+            "type": "string"
+          },
+          "tipoLeitura": {
+            "type": "string"
+          },
+          "valorFatura": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "HistoricoConsumoResponse": {
+        "properties": {
+          "historicoConsumo": {
+            "items": {
+              "$ref": "#/components/schemas/HistoricoConsumoItem"
+            },
+            "type": "array"
+          },
+          "mediamensal": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ImovelResponse": {
+        "properties": {
+          "cliente": {
+            "properties": {
+              "codigo": {
+                "type": "string"
+              },
+              "nome": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "codigo": {
+            "type": "string"
+          },
+          "dataLigacao": {
+            "type": "string"
+          },
+          "fase": {
+            "type": "string"
+          },
+          "instalacao": {
+            "type": "string"
+          },
+          "medidor": {
+            "type": "string"
+          },
+          "situacao": {
+            "properties": {
+              "codigo": {
+                "type": "string"
+              },
+              "dataSituacaoUC": {
+                "type": "string"
+              },
+              "descricao": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "InvoiceListResponse": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/InvoiceView"
+            },
+            "type": "array"
+          },
+          "limit": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string"
+          },
+          "uc": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "InvoiceView": {
+        "properties": {
+          "billing_record": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "codigo_barras": {
+            "type": "string"
+          },
+          "completeness_missing": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array"
+          },
+          "completeness_status": {
+            "type": "string"
+          },
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "data_emissao": {
+            "type": "string"
+          },
+          "data_fim_periodo": {
+            "type": "string"
+          },
+          "data_inicio_periodo": {
+            "type": "string"
+          },
+          "data_pagamento": {
+            "type": "string"
+          },
+          "data_vencimento": {
+            "type": "string"
+          },
+          "document_record": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "id": {
+            "type": "string"
+          },
+          "items": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array"
+          },
+          "mes_referencia": {
+            "type": "string"
+          },
+          "numero_fatura": {
+            "type": "string"
+          },
+          "status_fatura": {
+            "type": "string"
+          },
+          "uc": {
+            "type": "string"
+          },
+          "updated_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "valor_total": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "MinhaContaLegadoResponse": {
+        "properties": {
+          "dtNascimento": {
+            "type": "string"
+          },
+          "emailCadastro": {
+            "type": "string"
+          },
+          "nomeTitular": {
+            "type": "string"
+          },
+          "telefoneContato": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "MinhaContaResponse": {
+        "properties": {
+          "celular": {
+            "type": "string"
+          },
+          "dtUltimaAtualizacao": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "nome": {
+            "type": "string"
+          },
+          "usuarioAcesso": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "MotivosSegundaViaResponse": {
+        "properties": {
+          "motivos": {
+            "items": {
+              "properties": {
+                "descricao": {
+                  "type": "string"
+                },
+                "idMotivo": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      },
+      "NeoenergiaErrorResponse": {
+        "properties": {
+          "body": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "method": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          },
+          "status_code": {
+            "type": "integer"
+          }
+        },
+        "type": "object"
+      },
+      "OptionalDadosPagamentoResult": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DadosPagamentoResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/NeoenergiaErrorResponse"
+          }
+        },
+        "type": "object"
+      },
+      "OptionalDataCertaResult": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DataCertaResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/NeoenergiaErrorResponse"
+          }
+        },
+        "type": "object"
+      },
+      "OptionalDebitoAutomaticoResult": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DebitoAutomaticoResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/NeoenergiaErrorResponse"
+          }
+        },
+        "type": "object"
+      },
+      "OptionalExtractorResponseResult": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ExtractorResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/NeoenergiaErrorResponse"
+          }
+        },
+        "type": "object"
+      },
+      "OptionalFaturaDigitalResult": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/FaturaDigitalResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/NeoenergiaErrorResponse"
+          }
+        },
+        "type": "object"
+      },
+      "OptionalFaturaPDFResult": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/FaturaPDFResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/NeoenergiaErrorResponse"
+          }
+        },
+        "type": "object"
+      },
+      "OptionalFaturasResult": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/FaturasResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/NeoenergiaErrorResponse"
+          }
+        },
+        "type": "object"
+      },
+      "OptionalGrupoClienteResult": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/GrupoClienteResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/NeoenergiaErrorResponse"
+          }
+        },
+        "type": "object"
+      },
+      "OptionalHistoricoConsumoResult": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/HistoricoConsumoResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/NeoenergiaErrorResponse"
+          }
+        },
+        "type": "object"
+      },
+      "OptionalImovelResult": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ImovelResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/NeoenergiaErrorResponse"
+          }
+        },
+        "type": "object"
+      },
+      "OptionalMinhaContaLegadoResult": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/MinhaContaLegadoResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/NeoenergiaErrorResponse"
+          }
+        },
+        "type": "object"
+      },
+      "OptionalMinhaContaResult": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/MinhaContaResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/NeoenergiaErrorResponse"
+          }
+        },
+        "type": "object"
+      },
+      "OptionalMotivosSegundaViaResult": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/MotivosSegundaViaResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/NeoenergiaErrorResponse"
+          }
+        },
+        "type": "object"
+      },
+      "OptionalProtocoloResult": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ProtocoloResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/NeoenergiaErrorResponse"
+          }
+        },
+        "type": "object"
+      },
+      "OptionalUCsResult": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/UCsResponse"
+          },
+          "error": {
+            "$ref": "#/components/schemas/NeoenergiaErrorResponse"
+          }
+        },
+        "type": "object"
+      },
+      "PersistenceResult": {
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "invoice_id": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "sync_run_id": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "ProtocoloResponse": {
+        "properties": {
+          "protocoloLegadoStr": {
+            "type": "string"
+          },
+          "protocoloSalesforceStr": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SessionView": {
+        "properties": {
+          "created_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "credential_id": {
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "credential_id",
+          "created_at"
+        ],
+        "type": "object"
+      },
+      "SyncRunView": {
+        "properties": {
+          "credential_id": {
+            "type": "string"
+          },
+          "documento": {
+            "type": "string"
+          },
+          "error_message": {
+            "type": "string"
+          },
+          "finished_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "id": {
+            "type": "string"
+          },
+          "raw_response": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "started_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "uc": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SyncUCPathRequest": {
+        "properties": {
+          "bearer_token": {
+            "type": "string"
+          },
+          "credential_id": {
+            "type": "string"
+          },
+          "documento": {
+            "type": "string"
+          },
+          "include_extraction": {
+            "default": false,
+            "type": "boolean"
+          },
+          "include_pdf": {
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "type": "object"
+      },
+      "SyncUCRequest": {
+        "properties": {
+          "bearer_token": {
+            "description": "Token Bearer Neoenergia (opcional quando credential_id for enviado).",
+            "type": "string"
+          },
+          "credential_id": {
+            "description": "Credencial salva para resolver sessão automaticamente.",
+            "type": "string"
+          },
+          "documento": {
+            "description": "Obrigatório quando bearer_token é enviado manualmente.",
+            "type": "string"
+          },
+          "include_extraction": {
+            "default": false,
+            "type": "boolean"
+          },
+          "include_pdf": {
+            "default": false,
+            "type": "boolean"
+          },
+          "uc": {
+            "description": "Unidade consumidora alvo.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "uc"
+        ],
+        "type": "object"
+      },
+      "SyncUCResponse": {
+        "properties": {
+          "billing_record": {
+            "$ref": "#/components/schemas/BillingRecord"
+          },
+          "dados_pagamento_primeira_fatura": {
+            "$ref": "#/components/schemas/OptionalDadosPagamentoResult"
+          },
+          "data_certa": {
+            "$ref": "#/components/schemas/OptionalDataCertaResult"
+          },
+          "debito_automatico": {
+            "$ref": "#/components/schemas/OptionalDebitoAutomaticoResult"
+          },
+          "document_record": {
+            "$ref": "#/components/schemas/DocumentRecord"
+          },
+          "documento": {
+            "type": "string"
+          },
+          "extraction": {
+            "$ref": "#/components/schemas/OptionalExtractorResponseResult"
+          },
+          "fatura_digital": {
+            "$ref": "#/components/schemas/OptionalFaturaDigitalResult"
+          },
+          "faturas": {
+            "$ref": "#/components/schemas/OptionalFaturasResult"
+          },
+          "grupo_cliente": {
+            "$ref": "#/components/schemas/OptionalGrupoClienteResult"
+          },
+          "historico_consumo": {
+            "$ref": "#/components/schemas/OptionalHistoricoConsumoResult"
+          },
+          "imovel": {
+            "$ref": "#/components/schemas/OptionalImovelResult"
+          },
+          "minha_conta": {
+            "$ref": "#/components/schemas/OptionalMinhaContaResult"
+          },
+          "minha_conta_legado": {
+            "$ref": "#/components/schemas/OptionalMinhaContaLegadoResult"
+          },
+          "motivos_segunda_via": {
+            "$ref": "#/components/schemas/OptionalMotivosSegundaViaResult"
+          },
+          "pdf_primeira_fatura": {
+            "$ref": "#/components/schemas/OptionalFaturaPDFResult"
+          },
+          "persistence": {
+            "$ref": "#/components/schemas/PersistenceResult"
+          },
+          "protocolo": {
+            "$ref": "#/components/schemas/OptionalProtocoloResult"
+          },
+          "uc": {
+            "type": "string"
+          },
+          "ucs": {
+            "$ref": "#/components/schemas/OptionalUCsResult"
+          }
+        },
+        "required": [
+          "documento",
+          "uc"
+        ],
+        "type": "object"
+      },
+      "UC": {
+        "properties": {
+          "contrato": {
+            "type": "string"
+          },
+          "dt_fim": {
+            "type": "string"
+          },
+          "dt_inicio": {
+            "type": "string"
+          },
+          "grupoTensao": {
+            "type": "string"
+          },
+          "instalacao": {
+            "type": "string"
+          },
+          "local": {
+            "properties": {
+              "bairro": {
+                "type": "string"
+              },
+              "cep": {
+                "type": "string"
+              },
+              "endereco": {
+                "type": "string"
+              },
+              "municipio": {
+                "type": "string"
+              },
+              "uf": {
+                "type": "string"
+              }
+            },
+            "type": "object"
+          },
+          "nomeCliente": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "uc": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "UCsResponse": {
+        "properties": {
+          "ucs": {
+            "items": {
+              "$ref": "#/components/schemas/UC"
+            },
+            "type": "array"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "description": "Obrigatório quando BACKEND_API_KEY estiver configurado.",
+        "in": "header",
+        "name": "X-API-Key",
+        "type": "apiKey"
+      }
+    }
+  },
+  "info": {
+    "description": "API para:\n- criar credenciais com criptografia em repouso;\n- criar/reusar sessão Neoenergia;\n- sincronizar UC e persistir dados normalizados;\n- consultar UCs/faturas/sync-runs persistidos.\n\nAutenticação da API:\n- se `BACKEND_API_KEY` estiver configurado, enviar header `X-API-Key` em todos os endpoints `/v1/*`;\n- endpoints de infra (`/healthz`, `/docs`, `/openapi.json`, `/docs.md`) permanecem públicos.\n\nFluxo recomendado:\n1. `POST /v1/credentials`\n2. `POST /v1/credentials/{id}/session` (opcional: `GET /v1/credentials/{id}/discover`)\n3. `POST /v1/sync/uc` ou `POST /v1/consumer-units/{uc}/sync`\n4. consultas via endpoints `GET /v1/*`.",
+    "summary": "API persistida para sincronização e leitura de dados da Neoenergia",
+    "title": "5G Energia Fatura Backend Go API",
+    "version": "1.0.0"
+  },
+  "openapi": "3.0.3",
+  "paths": {
+    "/docs": {
+      "get": {
+        "description": "Swagger UI gerado a partir de /openapi.json.",
+        "operationId": "get_docs",
+        "responses": {
+          "200": {
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Página HTML do Swagger UI."
+          }
+        },
+        "summary": "Swagger UI",
+        "tags": [
+          "infra"
+        ]
+      }
+    },
+    "/docs.md": {
+      "get": {
+        "description": "Guia operacional em Markdown.",
+        "operationId": "get_docs.md",
+        "responses": {
+          "200": {
+            "content": {
+              "text/markdown": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "Documentação markdown."
+          }
+        },
+        "summary": "Markdown docs",
+        "tags": [
+          "infra"
+        ]
+      }
+    },
+    "/healthz": {
+      "get": {
+        "description": "Verifica disponibilidade do serviço.",
+        "operationId": "get_healthz",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "service": "backend-go",
+                  "status": "ok"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            },
+            "description": "Status da API."
+          }
+        },
+        "summary": "Health check",
+        "tags": [
+          "infra"
+        ]
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "description": "Schema OpenAPI desta API.",
+        "operationId": "get_openapi.json",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "description": "OpenAPI JSON."
+          }
+        },
+        "summary": "OpenAPI schema",
+        "tags": [
+          "infra"
+        ]
+      }
+    },
+    "/v1/billing/calculations/{id}": {
+      "get": {
+        "description": "Retorna um cálculo de faturamento persistido.",
+        "operationId": "get_v1_billing_calculations_id",
+        "parameters": [
+          {
+            "description": "ID do cálculo.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "billing_cycle_id": "62f931a9-e8fa-4a28-80fc-b4e48125768a",
+                  "calculated_at": "2026-04-19T13:40:00Z",
+                  "consumer_unit_id": "0e446b0c-bfa1-4f42-8a9c-f92eac68538d",
+                  "contract_id": "be7d933f-5607-4f70-90f3-31729d3ecb2f",
+                  "economia_pct": "0.2539",
+                  "economia_rs": "132.42",
+                  "id": "a7f810e8-b4dc-425e-a64d-087f5e6a9273",
+                  "status": "draft",
+                  "total_com_desconto": "389.11",
+                  "total_sem_desconto": "521.53",
+                  "utility_invoice_ref_id": "94948c16-9f47-4de8-86dd-3f1d4de59176",
+                  "version": 1
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/BillingCalculationView"
+                }
+              }
+            },
+            "description": "Cálculo encontrado."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Get billing calculation",
+        "tags": [
+          "billing",
+          "calculations"
+        ]
+      }
+    },
+    "/v1/billing/consumer-units/{uc_id}/active-contract": {
+      "get": {
+        "description": "Retorna o contrato ativo da UC no momento da consulta.",
+        "operationId": "get_v1_billing_consumer_units_uc_id_active_contract",
+        "parameters": [
+          {
+            "description": "ID da unidade consumidora (UUID).",
+            "in": "path",
+            "name": "uc_id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "bandeira_com_desconto": false,
+                  "consumer_unit_id": "0e446b0c-bfa1-4f42-8a9c-f92eac68538d",
+                  "created_at": "2026-04-19T13:40:00Z",
+                  "custo_disponibilidade_sempre_cobrado": true,
+                  "customer_id": "d2bc53b4-034c-4e76-a8d8-e2b4f438b9cf",
+                  "desconto_percentual": "0.30",
+                  "id": "be7d933f-5607-4f70-90f3-31729d3ecb2f",
+                  "ip_faturamento_mode": "fixed",
+                  "ip_faturamento_percent": "0",
+                  "ip_faturamento_valor": "45",
+                  "status": "active",
+                  "updated_at": "2026-04-19T13:40:00Z",
+                  "vigencia_inicio": "2026-03-01"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/BillingContractView"
+                }
+              }
+            },
+            "description": "Contrato ativo da UC."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Get active contract for UC",
+        "tags": [
+          "billing",
+          "contracts"
+        ]
+      }
+    },
+    "/v1/billing/contracts": {
+      "post": {
+        "description": "Cria um novo contrato da UC e encerra automaticamente o ativo anterior.",
+        "operationId": "post_v1_billing_contracts",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "default": {
+                  "value": {
+                    "bandeira_com_desconto": false,
+                    "consumer_unit_id": "0e446b0c-bfa1-4f42-8a9c-f92eac68538d",
+                    "created_by": "9ebd13f5-b7e0-4235-9f47-4b1df50e80cb",
+                    "custo_disponibilidade_sempre_cobrado": true,
+                    "customer_id": "d2bc53b4-034c-4e76-a8d8-e2b4f438b9cf",
+                    "desconto_percentual": "0.30",
+                    "ip_faturamento_mode": "fixed",
+                    "ip_faturamento_valor": "45.00",
+                    "notes": "Contrato inicial",
+                    "vigencia_inicio": "2026-03-01"
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/BillingContractCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "bandeira_com_desconto": false,
+                  "consumer_unit_id": "0e446b0c-bfa1-4f42-8a9c-f92eac68538d",
+                  "created_at": "2026-04-19T13:40:00Z",
+                  "custo_disponibilidade_sempre_cobrado": true,
+                  "customer_id": "d2bc53b4-034c-4e76-a8d8-e2b4f438b9cf",
+                  "desconto_percentual": "0.30",
+                  "id": "be7d933f-5607-4f70-90f3-31729d3ecb2f",
+                  "ip_faturamento_mode": "fixed",
+                  "ip_faturamento_percent": "0",
+                  "ip_faturamento_valor": "45",
+                  "status": "active",
+                  "updated_at": "2026-04-19T13:40:00Z",
+                  "vigencia_inicio": "2026-03-01"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/BillingContractView"
+                }
+              }
+            },
+            "description": "Contrato criado."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Create contract (nova versão fecha anterior)",
+        "tags": [
+          "billing",
+          "contracts"
+        ]
+      }
+    },
+    "/v1/billing/contracts/{id}": {
+      "get": {
+        "description": "Busca contrato por ID.",
+        "operationId": "get_v1_billing_contracts_id",
+        "parameters": [
+          {
+            "description": "ID do contrato.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "bandeira_com_desconto": false,
+                  "consumer_unit_id": "0e446b0c-bfa1-4f42-8a9c-f92eac68538d",
+                  "created_at": "2026-04-19T13:40:00Z",
+                  "custo_disponibilidade_sempre_cobrado": true,
+                  "customer_id": "d2bc53b4-034c-4e76-a8d8-e2b4f438b9cf",
+                  "desconto_percentual": "0.30",
+                  "id": "be7d933f-5607-4f70-90f3-31729d3ecb2f",
+                  "ip_faturamento_mode": "fixed",
+                  "ip_faturamento_percent": "0",
+                  "ip_faturamento_valor": "45",
+                  "status": "active",
+                  "updated_at": "2026-04-19T13:40:00Z",
+                  "vigencia_inicio": "2026-03-01"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/BillingContractView"
+                }
+              }
+            },
+            "description": "Contrato encontrado."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Get contract by id",
+        "tags": [
+          "billing",
+          "contracts"
+        ]
+      }
+    },
+    "/v1/consumer-units": {
+      "get": {
+        "description": "Lista UCs persistidas.",
+        "operationId": "get_v1_consumer_units",
+        "parameters": [
+          {
+            "description": "Limite de itens.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Filtro por status da UC (ex.: LIGADA).",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "items": [
+                    {
+                      "contrato": "0023",
+                      "created_at": "2026-04-18T13:20:00Z",
+                      "credential_id": "a0f6f5c4f2a44511b7af35d6b2e9f893",
+                      "grupo_tensao": "B",
+                      "instalacao": "0001",
+                      "nome_cliente": "PAULA",
+                      "status": "LIGADA",
+                      "uc": "007098175908",
+                      "updated_at": "2026-04-18T13:20:00Z"
+                    }
+                  ],
+                  "limit": 100,
+                  "status": "LIGADA"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ConsumerUnitListResponse"
+                }
+              }
+            },
+            "description": "Lista de UCs."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "List consumer units",
+        "tags": [
+          "consumer-units"
+        ]
+      }
+    },
+    "/v1/consumer-units/{uc}": {
+      "get": {
+        "description": "Consulta uma UC específica com ponteiros para última fatura e último sync.",
+        "operationId": "get_v1_consumer_units_uc",
+        "parameters": [
+          {
+            "description": "Código da unidade consumidora.",
+            "in": "path",
+            "name": "uc",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "latest_invoice": {
+                    "id": "4c1a4c03a38b404987343123bce75ea8",
+                    "mes_referencia": "2026/04",
+                    "numero_fatura": "339800707843",
+                    "uc": "007098175908"
+                  },
+                  "latest_sync_run": {
+                    "documento": "03021937586",
+                    "id": "f4f896f8f4f64f7a935b8762ff9df3a8",
+                    "started_at": "2026-04-18T13:20:00Z",
+                    "status": "succeeded",
+                    "uc": "007098175908"
+                  },
+                  "nome_cliente": "PAULA",
+                  "status": "LIGADA",
+                  "uc": "007098175908"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ConsumerUnitDetailsView"
+                }
+              }
+            },
+            "description": "Detalhes da UC."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Get consumer unit by UC",
+        "tags": [
+          "consumer-units"
+        ]
+      }
+    },
+    "/v1/consumer-units/{uc}/invoices": {
+      "get": {
+        "description": "Lista faturas de uma UC com filtros.",
+        "operationId": "get_v1_consumer_units_uc_invoices",
+        "parameters": [
+          {
+            "description": "Código da unidade consumidora.",
+            "in": "path",
+            "name": "uc",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "Limite de itens.",
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 100,
+              "minimum": 1,
+              "type": "integer"
+            }
+          },
+          {
+            "description": "Filtro por status da fatura (ex.: A Vencer).",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "items": [
+                    {
+                      "completeness_status": "complete",
+                      "created_at": "2026-04-18T13:20:00Z",
+                      "id": "4c1a4c03a38b404987343123bce75ea8",
+                      "mes_referencia": "2026/04",
+                      "numero_fatura": "339800707843",
+                      "status_fatura": "A Vencer",
+                      "uc": "007098175908",
+                      "updated_at": "2026-04-18T13:20:00Z",
+                      "valor_total": "521.53"
+                    }
+                  ],
+                  "limit": 100,
+                  "status": "A Vencer",
+                  "uc": "007098175908"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceListResponse"
+                }
+              }
+            },
+            "description": "Lista de faturas da UC."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "List invoices by UC",
+        "tags": [
+          "invoices"
+        ]
+      }
+    },
+    "/v1/consumer-units/{uc}/latest-invoice": {
+      "get": {
+        "description": "Retorna a fatura mais recente de uma UC.",
+        "operationId": "get_v1_consumer_units_uc_latest_invoice",
+        "parameters": [
+          {
+            "description": "Código da unidade consumidora.",
+            "in": "path",
+            "name": "uc",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "completeness_status": "complete",
+                  "created_at": "2026-04-18T13:20:00Z",
+                  "id": "4c1a4c03a38b404987343123bce75ea8",
+                  "mes_referencia": "2026/04",
+                  "numero_fatura": "339800707843",
+                  "status_fatura": "A Vencer",
+                  "uc": "007098175908",
+                  "updated_at": "2026-04-18T13:20:00Z",
+                  "valor_total": "521.53"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceView"
+                }
+              }
+            },
+            "description": "Última fatura da UC."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Get latest invoice by UC",
+        "tags": [
+          "invoices"
+        ]
+      }
+    },
+    "/v1/consumer-units/{uc}/sync": {
+      "post": {
+        "description": "Sincroniza uma UC específica definida no path.",
+        "operationId": "post_v1_consumer_units_uc_sync",
+        "parameters": [
+          {
+            "description": "Código da unidade consumidora.",
+            "in": "path",
+            "name": "uc",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncUCPathRequest"
+              }
+            }
+          },
+          "description": "Mesmo payload de /v1/sync/uc sem o campo `uc` (ele vem do path).",
+          "required": false
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "billing_record": {
+                    "codigo_barras": "838700000052215300300078098175908215056066285939",
+                    "completeness": {
+                      "status": "complete"
+                    },
+                    "mes_referencia": "2026/04",
+                    "numero_fatura": "339800707843",
+                    "raw_source_availability": {
+                      "api.fatura": true,
+                      "api.pdf": true
+                    },
+                    "source_map": {
+                      "codigo_barras": "api",
+                      "valor_total": "api"
+                    },
+                    "uc": "007098175908",
+                    "valor_total": "521.53"
+                  },
+                  "dados_pagamento_primeira_fatura": {
+                    "data": {
+                      "codBarras": "838700000052215300300078098175908215056066285939"
+                    }
+                  },
+                  "documento": "03021937586",
+                  "faturas": {
+                    "data": {
+                      "faturas": [
+                        {
+                          "dataVencimento": "2026-05-06",
+                          "mesReferencia": "2026/04",
+                          "numeroFatura": "339800707843",
+                          "statusFatura": "A Vencer",
+                          "uc": "007098175908",
+                          "valorEmissao": "521.53"
+                        }
+                      ]
+                    }
+                  },
+                  "pdf_primeira_fatura": {
+                    "data": {
+                      "fileData": "JVBERi0xLjQ=",
+                      "fileExtension": ".pdf",
+                      "fileName": "007098175908"
+                    }
+                  },
+                  "persistence": {
+                    "invoice_id": "4c1a4c03a38b404987343123bce75ea8",
+                    "status": "succeeded",
+                    "sync_run_id": "f4f896f8f4f64f7a935b8762ff9df3a8"
+                  },
+                  "uc": "007098175908"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/SyncUCResponse"
+                }
+              }
+            },
+            "description": "Sincronização executada."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Sync specific UC",
+        "tags": [
+          "sync"
+        ]
+      }
+    },
+    "/v1/credentials": {
+      "post": {
+        "description": "Cria uma credencial criptografada para uso em sessões/sincronização.",
+        "operationId": "post_v1_credentials",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "cpf": {
+                  "summary": "Credencial CPF",
+                  "value": {
+                    "documento": "03021937586",
+                    "label": "neo-paula",
+                    "senha": "MinhaSenha@123",
+                    "tipo_acesso": "normal",
+                    "uf": "BA"
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/CredentialCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "created_at": "2026-04-18T13:10:00Z",
+                  "documento": "*******7586",
+                  "id": "a0f6f5c4f2a44511b7af35d6b2e9f893",
+                  "label": "neo-paula",
+                  "tipo_acesso": "normal",
+                  "uf": "BA"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/CredentialView"
+                }
+              }
+            },
+            "description": "Credencial criada."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Create credential",
+        "tags": [
+          "credentials"
+        ]
+      }
+    },
+    "/v1/credentials/{id}/discover": {
+      "get": {
+        "description": "Resolve sessão e retorna dados de perfil + UCs disponíveis no portal.",
+        "operationId": "get_v1_credentials_id_discover",
+        "parameters": [
+          {
+            "description": "ID da credencial.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "minha_conta": {
+                    "celular": "(74) 99999-9999",
+                    "dtUltimaAtualizacao": "2026-04-16T22:00:00-03:00",
+                    "email": "a@b.com",
+                    "nome": "PAULA",
+                    "usuarioAcesso": "PAULA"
+                  },
+                  "ucs": [
+                    {
+                      "contrato": "0023",
+                      "dt_fim": "9999-12-31",
+                      "dt_inicio": "2026-02-20",
+                      "grupoTensao": "B",
+                      "instalacao": "0001",
+                      "local": {
+                        "bairro": "Centro",
+                        "cep": "44905-000",
+                        "endereco": "Rua X",
+                        "municipio": "Lapão",
+                        "uf": "BA"
+                      },
+                      "nomeCliente": "PAULA",
+                      "status": "LIGADA",
+                      "uc": "007098175908"
+                    }
+                  ]
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryResult"
+                }
+              }
+            },
+            "description": "Perfil e UCs descobertos."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Discover profile and UCs from credential",
+        "tags": [
+          "credentials"
+        ]
+      }
+    },
+    "/v1/credentials/{id}/session": {
+      "post": {
+        "description": "Cria uma sessão Neoenergia para a credencial informada. O token é armazenado criptografado.",
+        "operationId": "post_v1_credentials_id_session",
+        "parameters": [
+          {
+            "description": "ID da credencial.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "created_at": "2026-04-18T13:11:00Z",
+                  "credential_id": "a0f6f5c4f2a44511b7af35d6b2e9f893",
+                  "id": "d8c0c6624877463bb3027cbcb0ea2197"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/SessionView"
+                }
+              }
+            },
+            "description": "Sessão criada."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Create session from credential",
+        "tags": [
+          "credentials"
+        ]
+      }
+    },
+    "/v1/extractor/contracts": {
+      "get": {
+        "description": "Informa os caminhos dos contratos JSON Schema usados na integração com o extrator.",
+        "operationId": "get_v1_extractor_contracts",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "extractor_request": "packages/contracts/extractor-request.schema.json",
+                  "extractor_response": "packages/contracts/extractor-response.schema.json"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/ExtractorContractsResponse"
+                }
+              }
+            },
+            "description": "Contratos do extrator."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "List extractor contracts",
+        "tags": [
+          "extractor"
+        ]
+      }
+    },
+    "/v1/invoices/{id}": {
+      "get": {
+        "description": "Consulta uma fatura persistida por ID.",
+        "operationId": "get_v1_invoices_id",
+        "parameters": [
+          {
+            "description": "ID da fatura.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "completeness_status": "complete",
+                  "created_at": "2026-04-18T13:20:00Z",
+                  "id": "4c1a4c03a38b404987343123bce75ea8",
+                  "mes_referencia": "2026/04",
+                  "numero_fatura": "339800707843",
+                  "status_fatura": "A Vencer",
+                  "uc": "007098175908",
+                  "updated_at": "2026-04-18T13:20:00Z",
+                  "valor_total": "521.53"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/InvoiceView"
+                }
+              }
+            },
+            "description": "Fatura persistida."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Get invoice by id",
+        "tags": [
+          "invoices"
+        ]
+      }
+    },
+    "/v1/sync-runs/{id}": {
+      "get": {
+        "description": "Consulta execução de sincronização por ID.",
+        "operationId": "get_v1_sync_runs_id",
+        "parameters": [
+          {
+            "description": "ID da execução de sync.",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "credential_id": "a0f6f5c4f2a44511b7af35d6b2e9f893",
+                  "documento": "03021937586",
+                  "finished_at": "2026-04-18T13:21:00Z",
+                  "id": "f4f896f8f4f64f7a935b8762ff9df3a8",
+                  "started_at": "2026-04-18T13:20:00Z",
+                  "status": "succeeded",
+                  "uc": "007098175908"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/SyncRunView"
+                }
+              }
+            },
+            "description": "Sync run persistido."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Get sync run by id",
+        "tags": [
+          "sync"
+        ]
+      }
+    },
+    "/v1/sync/uc": {
+      "post": {
+        "description": "Sincroniza uma UC e persiste resultados. Pode usar `credential_id` ou `bearer_token`+`documento`.",
+        "operationId": "post_v1_sync_uc",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "examples": {
+                "credential": {
+                  "summary": "Sincronização com credencial salva",
+                  "value": {
+                    "credential_id": "a0f6f5c4f2a44511b7af35d6b2e9f893",
+                    "include_extraction": true,
+                    "include_pdf": true,
+                    "uc": "007098175908"
+                  }
+                },
+                "manual_token": {
+                  "summary": "Sincronização com token manual",
+                  "value": {
+                    "bearer_token": "eyJhbGciOi...",
+                    "documento": "03021937586",
+                    "include_pdf": true,
+                    "uc": "007098175908"
+                  }
+                }
+              },
+              "schema": {
+                "$ref": "#/components/schemas/SyncUCRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "example": {
+                  "billing_record": {
+                    "codigo_barras": "838700000052215300300078098175908215056066285939",
+                    "completeness": {
+                      "status": "complete"
+                    },
+                    "mes_referencia": "2026/04",
+                    "numero_fatura": "339800707843",
+                    "raw_source_availability": {
+                      "api.fatura": true,
+                      "api.pdf": true
+                    },
+                    "source_map": {
+                      "codigo_barras": "api",
+                      "valor_total": "api"
+                    },
+                    "uc": "007098175908",
+                    "valor_total": "521.53"
+                  },
+                  "dados_pagamento_primeira_fatura": {
+                    "data": {
+                      "codBarras": "838700000052215300300078098175908215056066285939"
+                    }
+                  },
+                  "documento": "03021937586",
+                  "faturas": {
+                    "data": {
+                      "faturas": [
+                        {
+                          "dataVencimento": "2026-05-06",
+                          "mesReferencia": "2026/04",
+                          "numeroFatura": "339800707843",
+                          "statusFatura": "A Vencer",
+                          "uc": "007098175908",
+                          "valorEmissao": "521.53"
+                        }
+                      ]
+                    }
+                  },
+                  "pdf_primeira_fatura": {
+                    "data": {
+                      "fileData": "JVBERi0xLjQ=",
+                      "fileExtension": ".pdf",
+                      "fileName": "007098175908"
+                    }
+                  },
+                  "persistence": {
+                    "invoice_id": "4c1a4c03a38b404987343123bce75ea8",
+                    "status": "succeeded",
+                    "sync_run_id": "f4f896f8f4f64f7a935b8762ff9df3a8"
+                  },
+                  "uc": "007098175908"
+                },
+                "schema": {
+                  "$ref": "#/components/schemas/SyncUCResponse"
+                }
+              }
+            },
+            "description": "Sincronização executada."
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "405": {
+            "$ref": "#/components/responses/MethodNotAllowed"
+          },
+          "500": {
+            "$ref": "#/components/responses/InternalServerError"
+          }
+        },
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "summary": "Sync consumer unit",
+        "tags": [
+          "sync"
+        ]
+      }
+    }
+  },
+  "tags": [
+    {
+      "description": "Healthcheck, OpenAPI e documentação.",
+      "name": "infra"
+    },
+    {
+      "description": "Gestão de credenciais e sessões Neoenergia.",
+      "name": "credentials"
+    },
+    {
+      "description": "Sincronização com Neoenergia e estado do processamento.",
+      "name": "sync"
+    },
+    {
+      "description": "Consulta de unidades consumidoras persistidas.",
+      "name": "consumer-units"
+    },
+    {
+      "description": "Consulta de faturas persistidas.",
+      "name": "invoices"
+    },
+    {
+      "description": "Descoberta dos contratos JSON Schema do extrator.",
+      "name": "extractor"
+    },
+    {
+      "description": "Domínio de faturamento no Postgres do backoffice.",
+      "name": "billing"
+    },
+    {
+      "description": "Versionamento e leitura de contratos comerciais.",
+      "name": "contracts"
+    },
+    {
+      "description": "Consulta de cálculos de faturamento.",
+      "name": "calculations"
+    }
+  ]
+}
