@@ -115,7 +115,7 @@ func (h *Handler) listCycles(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// --- /v1/billing/cycles/{id} / {id}/rows / {id}/close ---
+// --- /v1/billing/cycles/{id} / {id}/rows / {id}/close / {id}/bulk ---
 
 func (h *Handler) handleCycleDetail(w http.ResponseWriter, r *http.Request) {
 	parts := splitPath(r.URL.Path)
@@ -145,6 +145,17 @@ func (h *Handler) handleCycleDetail(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodPost:
 			h.closeCycle(w, r, id)
+		default:
+			writeError(w, http.StatusMethodNotAllowed, "method_not_allowed")
+		}
+		return
+	}
+
+	// /v1/billing/cycles/{id}/bulk
+	if len(parts) == 5 && parts[4] == "bulk" {
+		switch r.Method {
+		case http.MethodPost:
+			h.bulkAction(w, r, id)
 		default:
 			writeError(w, http.StatusMethodNotAllowed, "method_not_allowed")
 		}
@@ -220,6 +231,26 @@ func (h *Handler) closeCycle(w http.ResponseWriter, r *http.Request, id uuid.UUI
 		return
 	}
 	writeJSON(w, http.StatusOK, map[string]string{"status": "closed"})
+}
+
+func (h *Handler) bulkAction(w http.ResponseWriter, r *http.Request, id uuid.UUID) {
+	var req BulkActionRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		writeError(w, http.StatusBadRequest, "invalid_json")
+		return
+	}
+	if req.Action == "" {
+		writeError(w, http.StatusBadRequest, "action é obrigatório")
+		return
+	}
+
+	result, err := h.svc.Bulk(r.Context(), id, req)
+	if err != nil {
+		h.logger.Error("bulk_action_failed", "error", err)
+		writeError(w, http.StatusBadRequest, err.Error())
+		return
+	}
+	writeJSON(w, http.StatusOK, result)
 }
 
 // --- SSE ---
