@@ -10,6 +10,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/shopspring/decimal"
 
+	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/billing/adjustment"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/billing/contract"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/billing/cycle"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/billing/repo"
@@ -22,6 +23,7 @@ type BillingDeps struct {
 	Contract    *contract.Service
 	Calculation *repo.CalculationRepo
 	Cycle       *cycle.Service
+	Adjustment  *adjustment.Service
 }
 
 // NewBillingDeps wires the repos and services from a pgx pool.
@@ -34,6 +36,7 @@ func NewBillingDeps(pool *pgxpool.Pool) *BillingDeps {
 		Contract:    contract.NewService(contractRepo),
 		Calculation: calcRepo,
 		Cycle:       cycle.NewService(pool),
+		Adjustment:  adjustment.NewService(pool),
 	}
 }
 
@@ -62,6 +65,8 @@ func RegisterBillingRoutes(
 	// --- CYCLES ------------------------------------------------------
 	cycleHandler := cycle.NewHandler(deps.Cycle, logger)
 	cycleHandler.RegisterRoutes(mux)
+
+
 	// --- CONTRACTS ---------------------------------------------------
 
 	docs.add(http.MethodPost, "/v1/billing/contracts", "Create contract (nova versão fecha anterior)", []string{"billing", "contracts"}, http.StatusCreated)
@@ -137,12 +142,8 @@ func RegisterBillingRoutes(
 	docs.add(http.MethodGet, "/v1/billing/calculations/{id}", "Get billing calculation", []string{"billing", "calculations"}, http.StatusOK)
 	mux.HandleFunc("/v1/billing/calculations/", func(w http.ResponseWriter, r *http.Request) {
 		parts := splitPath(r.URL.Path)
-		if len(parts) != 4 || parts[0] != "v1" || parts[1] != "billing" || parts[2] != "calculations" {
+		if len(parts) < 4 || parts[0] != "v1" || parts[1] != "billing" || parts[2] != "calculations" {
 			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		if r.Method != http.MethodGet {
-			w.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
 		id, err := uuid.Parse(parts[3])
@@ -150,16 +151,63 @@ func RegisterBillingRoutes(
 			writeClientError(w, http.StatusBadRequest, "id inválido")
 			return
 		}
-		c, err := deps.Calculation.GetByID(r.Context(), id)
-		if errors.Is(err, repo.ErrNotFound) {
-			w.WriteHeader(http.StatusNotFound)
+
+		// /v1/billing/calculations/{id}/adjust
+		if len(parts) == 5 && parts[4] == "adjust" {
+			if r.Method != http.MethodPost {
+				w.WriteHeader(http.StatusMethodNotAllowed)
+				return
+			}
+			var req adjustment.ApplyRequest
+			if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+				writeClientError(w, http.StatusBadRequest, "invalid_json")
+				return
+			}
+			req.CalculationID = id
+			adj, err := deps.Adjustment.Apply(r.Context(), req)
+			if err != nil {
+				writeInternalError(w, logger, "adjustment_apply", err)
+				return
+			}
+			writeJSON(w, http.StatusCreated, adj)
 			return
 		}
-		if err != nil {
-			writeInternalError(w, logger, "calculation_get", err)
+
+		// /v1/billing/calculations/{id}/adjustments
+		if len(parts) == 5 && parts[4] == "adjustments" {
+			if r.Method != http.MethodGet {
+				w.WriteHeader(http.StatusMethodNotAllowed)
+				return
+			}
+			adjs, err := deps.Adjustment.List(r.Context(), id)
+			if err != nil {
+				writeInternalError(w, logger, "adjustment_list", err)
+				return
+			}
+			writeJSON(w, http.StatusOK, map[string]any{"items": adjs, "count": len(adjs)})
 			return
 		}
-		writeJSON(w, http.StatusOK, calcView(c))
+
+		// /v1/billing/calculations/{id}
+		if len(parts) == 4 {
+			if r.Method != http.MethodGet {
+				w.WriteHeader(http.StatusMethodNotAllowed)
+				return
+			}
+			c, err := deps.Calculation.GetByID(r.Context(), id)
+			if errors.Is(err, repo.ErrNotFound) {
+				w.WriteHeader(http.StatusNotFound)
+				return
+			}
+			if err != nil {
+				writeInternalError(w, logger, "calculation_get", err)
+				return
+			}
+			writeJSON(w, http.StatusOK, calcView(c))
+			return
+		}
+
+		w.WriteHeader(http.StatusNotFound)
 	})
 }
 
