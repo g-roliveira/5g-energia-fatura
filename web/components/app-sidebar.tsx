@@ -240,7 +240,6 @@ function TeamSwitcher() {
 
 const clientesNav = [
   { title: "Todos os clientes", url: "/clientes" },
-  { title: "Novo cliente", url: "/clientes/novo" },
 ]
 
 function NavClientes() {

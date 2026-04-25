@@ -33,6 +33,16 @@ func TestClassify_RealPDFStrings(t *testing.T) {
 		// MP-BA 6-5 (SCEE moderno)
 		{"Acrés. Band. AMARELA", calcengine.ItemBandeira, true, false, "MP-BA 6-5"},
 		{"Acrés. Band. VERMELHA", calcengine.ItemBandeira, true, false, "MP-BA 6-5"},
+		{"Acrés, Bend. AMARELA", calcengine.ItemBandeira, true, false, "OCR typo"},
+		{"Acrés, Bend. VERMELHA", calcengine.ItemBandeira, true, false, "OCR typo"},
+		{"Hum. Púb. Municipal", calcengine.ItemIPCoelba, true, false, "OCR typo"},
+		{"Itum. Púb. Municipal", calcengine.ItemIPCoelba, true, false, "OCR typo"},
+		{"Cons.Real.Excedente", calcengine.ItemReativoExcedente, true, true, "OCR variant"},
+		{"Cons.Real.Exc.NPonta", calcengine.ItemReativoExcedente, true, true, "OCR variant"},
+		{"Cons.Real Exc.FPonta", calcengine.ItemReativoExcedente, true, true, "OCR variant"},
+		{"Demanda Ativa", calcengine.ItemTributoRetido, true, true, "Grupo A (não calculado)"},
+		{"Demanda Reativa Exc.", calcengine.ItemTributoRetido, true, true, "Grupo A (não calculado)"},
+		{"Imp.Som/Dim-C/Impost", calcengine.ItemTributoRetido, true, true, "Grupo A (não calculado)"},
 
 		// Planilha Azi Dourado
 		{"Acrés. Band. VERMELHA- P2", calcengine.ItemBandeira, true, false, "Azi Dourado"},

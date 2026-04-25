@@ -9,12 +9,12 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/catalog"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/extractor"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/neoenergia"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/pgstore"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/security"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/session"
-	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/store"
 	syncsvc "github.com/gustavo/5g-energia-fatura/services/backend-go/internal/sync"
 )
 
@@ -29,17 +29,17 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 	docs := newRouteCatalog()
 	apiClient := neoenergia.NewClient(cfg.NeoenergiaBaseURL)
 	extractorClient := extractor.NewClient(cfg.ExtractorBaseURL)
-	sqliteStore, err := store.OpenSQLite(cfg.DatabaseURL)
+	integrationStore, err := openIntegrationStore(cfg)
 	if err != nil {
 		return nil, err
 	}
-	syncService := syncsvc.NewService(apiClient, extractorClient, sqliteStore)
+	syncService := syncsvc.NewService(apiClient, extractorClient, integrationStore)
 	cipher, err := security.NewCipher(cfg.EncryptionKey)
 	if err != nil {
 		return nil, err
 	}
 	sessionManager := session.NewManager(
-		sqliteStore,
+		integrationStore,
 		cipher,
 		session.BootstrapRunner{
 			PythonBin:  cfg.BootstrapPythonBin,
@@ -161,7 +161,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 		}
 		limit := parsePositiveInt(r.URL.Query().Get("limit"), 100)
 		status := r.URL.Query().Get("status")
-		items, err := sqliteStore.ListConsumerUnits(limit, status)
+		items, err := integrationStore.ListConsumerUnits(limit, status)
 		if err != nil {
 			writeInternalError(w, logger, "list_consumer_units", err)
 			return
@@ -192,7 +192,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 			}
 			limit := parsePositiveInt(r.URL.Query().Get("limit"), 100)
 			status := r.URL.Query().Get("status")
-			items, err := sqliteStore.ListInvoicesByUC(uc, limit, status)
+			items, err := integrationStore.ListInvoicesByUC(uc, limit, status)
 			if err != nil {
 				writeInternalError(w, logger, "list_invoices_by_uc", err)
 				return
@@ -206,7 +206,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 				writeClientError(w, http.StatusMethodNotAllowed, "method_not_allowed")
 				return
 			}
-			item, err := sqliteStore.GetConsumerUnitByUC(uc)
+			item, err := integrationStore.GetConsumerUnitByUC(uc)
 			if err != nil {
 				writeInternalError(w, logger, "get_consumer_unit_by_uc", err)
 				return
@@ -224,7 +224,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 				writeClientError(w, http.StatusMethodNotAllowed, "method_not_allowed")
 				return
 			}
-			item, err := sqliteStore.GetLatestInvoiceByUC(uc)
+			item, err := integrationStore.GetLatestInvoiceByUC(uc)
 			if err != nil {
 				writeInternalError(w, logger, "get_latest_invoice_by_uc", err)
 				return
@@ -284,7 +284,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 			writeClientError(w, http.StatusNotFound, "not_found")
 			return
 		}
-		item, err := sqliteStore.GetInvoiceByID(parts[2])
+		item, err := integrationStore.GetInvoiceByID(parts[2])
 		if err != nil {
 			writeInternalError(w, logger, "get_invoice_by_id", err)
 			return
@@ -307,7 +307,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 			writeClientError(w, http.StatusNotFound, "not_found")
 			return
 		}
-		item, err := sqliteStore.GetSyncRunByID(parts[2])
+		item, err := integrationStore.GetSyncRunByID(parts[2])
 		if err != nil {
 			writeInternalError(w, logger, "get_sync_run_by_id", err)
 			return
@@ -334,6 +334,11 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 		if err != nil {
 			return nil, fmt.Errorf("pgstore.Open: %w", err)
 		}
+		catalogStore := catalog.NewStore(pool)
+		catalogSvc := catalog.NewService(catalogStore)
+		catalog.RegisterHandlers(mux, catalogSvc, logger)
+		logger.Info("catalog_module_enabled", "routes", "/v1/catalog/*")
+
 		RegisterBillingRoutes(mux, docs, NewBillingDeps(pool), logger)
 		logger.Info("billing_module_enabled", "routes", "/v1/billing/*")
 	}

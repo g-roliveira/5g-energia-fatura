@@ -6,21 +6,21 @@ import structlog
 
 from fatura.config import AppConfig
 from fatura.jobs import executar_job_persistido
-from fatura.repository import SqliteFaturaRepository
+from fatura.repository import SQLAlchemyFaturaRepository
 from fatura.service_models import FaturaJobRequest, JobResultResponse, JobStatusResponse
 
 logger = structlog.get_logger()
 
 
 class FaturaJobRuntime:
-    def __init__(self, config: AppConfig, repo: SqliteFaturaRepository | None = None) -> None:
+    def __init__(self, config: AppConfig, repo: SQLAlchemyFaturaRepository | None = None) -> None:
         self._config = config
-        self._repo = repo or SqliteFaturaRepository(config.database.url)
+        self._repo = repo or SQLAlchemyFaturaRepository(config.database.url)
         self._semaphore = asyncio.Semaphore(max(1, config.service.max_concurrent_jobs))
         self._request_cache: dict[str, FaturaJobRequest] = {}
 
     @property
-    def repo(self) -> SqliteFaturaRepository:
+    def repo(self) -> SQLAlchemyFaturaRepository:
         return self._repo
 
     def prepare(self) -> int:

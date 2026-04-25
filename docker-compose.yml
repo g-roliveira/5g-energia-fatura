@@ -1,0 +1,44 @@
+version: "3.8"
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: azi-billing-postgres
+    environment:
+      POSTGRES_USER: azi
+      POSTGRES_PASSWORD: azi
+      POSTGRES_DB: azi_billing
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./services/backend-go/migrations:/docker-entrypoint-initdb.d/migrations:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U azi -d azi_billing"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - azi-network
+
+  # Sidecar Python para extração de PDF (doc-extractor)
+  extractor:
+    build:
+      context: ./services/doc-extractor-py
+      dockerfile: Dockerfile
+    container_name: azi-extractor
+    environment:
+      DOC_EXTRACTOR_HOST: 0.0.0.0
+      DOC_EXTRACTOR_PORT: 8090
+    ports:
+      - "8090:8090"
+    networks:
+      - azi-network
+
+volumes:
+  postgres_data:
+
+networks:
+  azi-network:
+    driver: bridge

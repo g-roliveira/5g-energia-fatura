@@ -1,0 +1,447 @@
+═══════════════════════════════════════════════════════════════════════════
+BACKOFFICE AZI DOURADO — PACOTE COMPLETO
+═══════════════════════════════════════════════════════════════════════════
+
+Este pacote contém TODOS os entregáveis do projeto de backoffice de 
+faturamento de energia compartilhada desenvolvido para a Azi Dourado.
+
+Data: Abril/2026
+Versão: 1.0 completa
+Escopo: Sistema SaaS interno para gerenciar ~30 clientes, sincronizar faturas 
+       Neoenergia/Coelba, calcular valores com desconto, gerar PDFs.
+
+═══════════════════════════════════════════════════════════════════════════
+ESTRUTURA DO PACOTE
+═══════════════════════════════════════════════════════════════════════════
+
+backoffice-azi-dourado-completo/
+├── 00-LEIA-ME-PRIMEIRO.txt           ← ESTE ARQUIVO
+│
+├── 01-frontend/
+│   └── prd-frontend-backoffice.md    ← PRD completo (21 telas, 69 KB)
+│
+├── 02-backend-pr1/
+│   └── backoffice-billing-pr1.tar.gz ← PR 1: calc-engine, contracts, repos
+│
+├── 03-backend-pr2/
+│   └── backoffice-billing-pr2.tar.gz ← PR 2: cycles, adjustments, SSE
+│
+└── 04-backend-pr3/
+    └── backoffice-billing-pr3.tar.gz ← PR 3: PDF, workers, bulk, LISTEN/NOTIFY
+
+═══════════════════════════════════════════════════════════════════════════
+ORDEM DE APLICAÇÃO — IMPORTANTE!
+═══════════════════════════════════════════════════════════════════════════
+
+1. Backend PR 1 → PR 2 → PR 3 (nesta ordem, cada um depende do anterior)
+2. Frontend (depois do backend pronto, ou em paralelo se tiver 2 devs)
+
+═══════════════════════════════════════════════════════════════════════════
+BACKEND — 3 PULL REQUESTS (GO)
+═══════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ PR 1/N — CALC ENGINE, CONTRACTS, REPOS                                 │
+└─────────────────────────────────────────────────────────────────────────┘
+
+Localização: 02-backend-pr1/backoffice-billing-pr1.tar.gz
+Tamanho: 48 KB
+Commits: 8 commits organizados
+
+O QUE TEM:
+- packages/calc-engine/      Motor de cálculo puro (validado contra planilha)
+- packages/normalizer/        Classifier + parser de PDFs Coelba
+- migrations/000001_*.sql     DDL Postgres completo (13 tabelas)
+- billing/repo/               ContractRepo + CalculationRepo (pgx/v5)
+- billing/contract/service    Versionamento de contratos (imutável)
+- HTTP handlers               4 endpoints: contracts + calculations
+
+ENDPOINTS:
+POST   /v1/billing/contracts
+GET    /v1/billing/contracts/{id}
+GET    /v1/billing/consumer-units/{uc_id}/active-contract
+GET    /v1/billing/calculations/{id}
+
+COMO APLICAR:
+cd ~/repos/5g-energia-fatura
+tar -xzf 02-backend-pr1/backoffice-billing-pr1.tar.gz
+bash apply.sh
+cd services/backend-go
+migrate -path migrations -database "$BACKOFFICE_PG_URL" up
+# Seguir services/backend-go/internal/app/BILLING_INTEGRATION.md
+
+DOCUMENTAÇÃO:
+- README.txt (dentro do tar.gz)
+- BILLING_INTEGRATION.md (dentro do tar.gz)
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ PR 2/N — CYCLES, ADJUSTMENTS, SSE                                      │
+└─────────────────────────────────────────────────────────────────────────┘
+
+Localização: 03-backend-pr2/backoffice-billing-pr2.tar.gz
+Tamanho: 22 KB
+Commits: 5 commits organizados
+
+O QUE TEM:
+- migrations/000002_*.sql     core.notification + índices performance
+- billing/cycle/              Orquestração de competências (create/close)
+- billing/cycle/rows.go       Tabela principal do dashboard (GetCycleRows)
+- billing/cycle/sse.go        Server-Sent Events (polling 5s, MVP)
+- billing/adjustment/         Ajustes manuais com versionamento
+
+ENDPOINTS NOVOS:
+POST   /v1/billing/cycles
+GET    /v1/billing/cycles
+GET    /v1/billing/cycles/{id}
+GET    /v1/billing/cycles/{id}/rows           ← Dashboard Tela 14
+POST   /v1/billing/cycles/{id}/close
+GET    /v1/billing/events/cycles/{id}         ← SSE realtime (polling)
+POST   /v1/billing/calculations/{id}/adjust
+GET    /v1/billing/calculations/{id}/adjustments
+
+COMO APLICAR:
+cd ~/repos/5g-energia-fatura
+tar -xzf 03-backend-pr2/backoffice-billing-pr2.tar.gz
+bash apply-pr2.sh
+cd services/backend-go
+migrate -path migrations -database "$BACKOFFICE_PG_URL" up
+# Seguir BILLING_INTEGRATION_PR2.md
+
+DOCUMENTAÇÃO:
+- README-PR2.txt (dentro do tar.gz)
+- BILLING_INTEGRATION_PR2.md (dentro do tar.gz)
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│ PR 3/N — PDF, WORKER POOL, BULK ACTIONS, LISTEN/NOTIFY                 │
+└─────────────────────────────────────────────────────────────────────────┘
+
+Localização: 04-backend-pr3/backoffice-billing-pr3.tar.gz
+Tamanho: 27 KB
+Commits: 5 commits organizados
+
+O QUE TEM:
+- billing/pdf/                Geração PDF com chromium headless
+- internal/worker/            Worker pool com FOR UPDATE SKIP LOCKED
+- billing/cycle/bulk.go       Bulk actions (sync/recalc/pdf/approve)
+- billing/cycle/notify.go     LISTEN/NOTIFY real (Postgres pub/sub)
+
+ENDPOINTS NOVOS:
+POST   /v1/billing/cycles/{id}/bulk           ← sync_all, generate_pdfs
+POST   /v1/billing/calculations/{id}/pdf
+GET    /v1/billing/documents/{id}
+
+ATUALIZADO:
+GET    /v1/billing/events/cycles/{id}         ← SSE LISTEN/NOTIFY (não polling)
+
+DEPENDÊNCIAS EXTRAS:
+- github.com/chromedp/chromedp@v0.9.3
+- github.com/lib/pq@v1.10.9
+- chromium-browser (sistema)
+
+COMO APLICAR:
+cd ~/repos/5g-energia-fatura
+tar -xzf 04-backend-pr3/backoffice-billing-pr3.tar.gz
+bash apply-pr3.sh
+cd services/backend-go
+go get github.com/chromedp/chromedp@v0.9.3
+go get github.com/lib/pq@v1.10.9
+go mod tidy
+apt-get install chromium-browser
+mkdir -p /var/lib/backoffice/pdfs /opt/backoffice/templates
+# Seguir BILLING_INTEGRATION_PR3.md (CRÍTICO: registrar handlers)
+
+DOCUMENTAÇÃO:
+- README-PR3.txt (dentro do tar.gz)
+- BILLING_INTEGRATION_PR3.md (dentro do tar.gz)
+
+═══════════════════════════════════════════════════════════════════════════
+FRONTEND — PRD COMPLETO (NEXT.JS)
+═══════════════════════════════════════════════════════════════════════════
+
+Localização: 01-frontend/prd-frontend-backoffice.md
+Tamanho: 69 KB, 1671 linhas
+Formato: Markdown (português BR)
+
+O QUE TEM:
+- §1-5:   Fundação (stack, integrações, padrões UX, rotas, componentes)
+- §6:     21 TELAS detalhadas (cada uma com template completo)
+- §7:     5 fluxos end-to-end documentados
+- §8:     Sistema de notificações (3 camadas: toasts, banner, inbox)
+- §9:     O que NÃO está no MVP (16 itens com justificativa)
+- §10:    Checklist de implementação (6 sprints)
+
+21 TELAS COBERTAS:
+01. Login
+02. Dashboard home
+03. Lista clientes
+04. Novo cliente
+05. Detalhe cliente
+06. Editar cliente
+07. Lista UCs
+08. Detalhe UC
+09. Faturas da UC
+10. Detalhe fatura Coelba (com PDF viewer + botão download)
+11. Contrato versionado
+12. Lista competências
+13. Abrir competência
+14. Dashboard competência (SSE realtime, bulk actions)
+15. Detalhe cálculo (6 abas)
+16. Fila jobs
+17. Detalhe job/sync-run
+18. Settings geral
+19. Usuários
+20. Credenciais Neoenergia
+21. Inbox notificações
+
+COMO USAR:
+1. Passar o arquivo completo para Claude Code
+2. Ou seguir checklist manual (6 sprints no final do documento)
+3. Implementar na ordem: Sprint 1 → 2 → 3 → 4 → 5 → 6
+
+TECNOLOGIAS:
+- Next.js 14+ App Router
+- shadcn/ui + Tailwind
+- TanStack Table v8 + TanStack Query v5
+- React Hook Form + Zod
+- Drizzle ORM (Postgres)
+- Server-Sent Events (SSE)
+
+═══════════════════════════════════════════════════════════════════════════
+RESUMO ESTATÍSTICO
+═══════════════════════════════════════════════════════════════════════════
+
+BACKEND (GO):
+- Total de código:     ~3600 linhas Go
+- Módulos:             13 módulos
+- Migrations:          2 migrations (000001, 000002)
+- Endpoints HTTP:      15 endpoints
+- Commits:             18 commits organizados (8 + 5 + 5)
+- Packages externos:   calc-engine, normalizer (reutilizáveis)
+- Testes:              8 testes unitários (calc-engine + normalizer)
+
+FRONTEND (NEXT.JS):
+- PRD:                 69 KB, 1671 linhas markdown
+- Telas:               21 telas completas
+- Componentes:         14 componentes compartilhados
+- Fluxos:              5 fluxos end-to-end
+- Sistema notificação: 3 camadas (toasts, banner, inbox)
+- Sprints:             6 sprints estimadas
+
+TOTAL:                 ~5300 linhas especificadas + documentadas
+
+═══════════════════════════════════════════════════════════════════════════
+ROADMAP DE APLICAÇÃO RECOMENDADO
+═══════════════════════════════════════════════════════════════════════════
+
+FASE 1 — BACKEND CORE (1-2 dias)
+  ☐ Aplicar PR 1 (calc-engine, contracts, repos)
+  ☐ Rodar migration 000001
+  ☐ Integrar em server.go seguindo BILLING_INTEGRATION.md
+  ☐ Testar endpoints de contract e calculation
+  ☐ Validar motor de cálculo com dados reais
+
+FASE 2 — BACKEND CYCLES (1 dia)
+  ☐ Aplicar PR 2 (cycles, adjustments, SSE)
+  ☐ Rodar migration 000002
+  ☐ Integrar seguindo BILLING_INTEGRATION_PR2.md
+  ☐ Testar criação de ciclo
+  ☐ Testar SSE polling
+
+FASE 3 — BACKEND PRODUÇÃO (1-2 dias)
+  ☐ Aplicar PR 3 (PDF, workers, bulk, LISTEN/NOTIFY)
+  ☐ Instalar chromium
+  ☐ Criar diretórios (/var/lib/backoffice/pdfs)
+  ☐ Integrar seguindo BILLING_INTEGRATION_PR3.md
+  ☐ CRÍTICO: Registrar handlers do worker pool
+  ☐ Testar bulk sync
+  ☐ Testar geração de PDF
+  ☐ Testar SSE LISTEN/NOTIFY
+
+FASE 4 — FRONTEND SPRINT 1 (3-5 dias)
+  ☐ Setup rotas, layout, sidebar, topbar
+  ☐ Tela 1 (Login) + auth
+  ☐ Tela 2 (Dashboard, versão vazia)
+  ☐ Componentes base (DataTable, StatusBadge, formatadores)
+
+FASE 5 — FRONTEND SPRINT 2 (3-5 dias)
+  ☐ Telas 3-7 (cadastro de clientes e UCs)
+  ☐ Tela 20 (credenciais Neoenergia)
+  ☐ Tela 19 (usuários)
+
+FASE 6 — FRONTEND SPRINT 3 (3-5 dias)
+  ☐ Tela 8 (detalhe UC + sync)
+  ☐ Telas 9-10 (faturas + detalhe com PDF viewer)
+  ☐ Telas 16-17 (fila jobs + detalhe)
+
+FASE 7 — FRONTEND SPRINT 4 (3-5 dias)
+  ☐ Tela 11 (contrato versionado)
+  ☐ Telas 12-13 (lista ciclos + abrir)
+
+FASE 8 — FRONTEND SPRINT 5 (5-7 dias)
+  ☐ Tela 14 (dashboard ciclo com SSE)
+  ☐ Tela 15 (detalhe cálculo com 6 abas)
+  ☐ Bulk actions
+
+FASE 9 — FRONTEND SPRINT 6 (3-5 dias)
+  ☐ Sistema notificações (sino + inbox)
+  ☐ Tela 21 (inbox completo)
+  ☐ Tela 18 (settings)
+  ☐ Tela 2 (dashboard completo com dados reais)
+  ☐ Refactor de estados erro/empty
+  ☐ QA dos 5 fluxos
+
+TOTAL ESTIMADO: 20-35 dias (1 dev full-time)
+               ou 10-18 dias (2 devs, backend + frontend paralelo)
+
+═══════════════════════════════════════════════════════════════════════════
+DEPENDÊNCIAS DE SISTEMA
+═══════════════════════════════════════════════════════════════════════════
+
+BACKEND:
+  ☐ Go 1.22+
+  ☐ Postgres 14+ (com extensões: uuid-ossp, pgcrypto)
+  ☐ golang-migrate CLI
+  ☐ chromium-browser (apt-get install chromium-browser)
+  ☐ Variáveis de ambiente:
+     - BACKOFFICE_PG_URL (connection string Postgres)
+     - BACKEND_GO_API_KEY (opcional, se usar auth)
+
+FRONTEND:
+  ☐ Node.js 18+
+  ☐ pnpm ou npm
+  ☐ Postgres 14+ (mesmo do backend, acesso direto via Drizzle)
+  ☐ Variáveis de ambiente:
+     - NEXT_PUBLIC_BACKEND_GO_URL (http://localhost:8080)
+     - DATABASE_URL (Postgres connection string)
+
+═══════════════════════════════════════════════════════════════════════════
+QUESTÕES PENDENTES (DECISÕES DE NEGÓCIO)
+═══════════════════════════════════════════════════════════════════════════
+
+Estas questões foram identificadas mas não bloqueiam implementação.
+Defaults assumidos no código (reversíveis via Contract struct):
+
+1. IP da usina: fixo em R$ ou percentual do subtotal?
+   → Default: FIXO em R$
+
+2. Bandeiras aplicam desconto contratual ou não?
+   → Default: NÃO (repasse ANEEL sem desconto)
+
+3. Custo de disponibilidade: sempre cobrado ou só se consumo < mínimo?
+   → Default: SEMPRE cobrado
+
+4. Desconto retroativo: recalcula competências passadas ou congela snapshot?
+   → Default: NÃO recalcula (snapshot congela)
+
+═══════════════════════════════════════════════════════════════════════════
+DESCOBERTAS DURANTE DESENVOLVIMENTO
+═══════════════════════════════════════════════════════════════════════════
+
+PLANILHA ORIGINAL:
+  ✗ Bugs encontrados na planilha Excel original:
+    - SUM com ranges inconsistentes
+    - Célula K13 errada em dez/25 e out/25
+    - IP calculada errada em nov/25
+    - Preços TUSD digitados diferentes nos dois lados em fev/26
+
+SCEE/MMGD:
+  ✓ Identificadas 3 gerações de layout:
+    1. MMGD legado 2023-2024
+    2. MMGD transição (mesmo formato)
+    3. SCEE moderno 2025+ (novo layout)
+  ✓ Normalizer suporta os 3 layouts
+
+DESCONTO:
+  ✓ Desconto mudou ao longo do tempo:
+    - out/25 + nov/25: 80% (desconto 20%)
+    - dez/25+: 85% (desconto 15%)
+  ✓ Sistema de versionamento de contracts suporta isso
+
+═══════════════════════════════════════════════════════════════════════════
+ARQUIVOS IMPORTANTES DENTRO DOS TAR.GZ
+═══════════════════════════════════════════════════════════════════════════
+
+PR1 (02-backend-pr1/backoffice-billing-pr1.tar.gz):
+  - README.txt                         ← Leia primeiro
+  - backoffice-billing.bundle          ← Git bundle
+  - apply.sh                           ← Script automático
+  - services/backend-go/internal/app/BILLING_INTEGRATION.md
+
+PR2 (03-backend-pr2/backoffice-billing-pr2.tar.gz):
+  - README-PR2.txt                     ← Leia primeiro
+  - backoffice-billing-pr2.bundle      ← Git bundle
+  - apply-pr2.sh                       ← Script automático
+  - PR2_README.md                      ← Overview
+  - BILLING_INTEGRATION_PR2.md (está no bundle)
+
+PR3 (04-backend-pr3/backoffice-billing-pr3.tar.gz):
+  - README-PR3.txt                     ← Leia primeiro
+  - backoffice-billing-pr3.bundle      ← Git bundle
+  - apply-pr3.sh                       ← Script automático
+  - PR3_README.md                      ← Overview
+  - BILLING_INTEGRATION_PR3.md (está no bundle)
+
+═══════════════════════════════════════════════════════════════════════════
+SUPORTE E TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════
+
+Cada PR tem sua própria seção de troubleshooting. Consulte:
+
+PR1: README.txt dentro do tar.gz
+PR2: README-PR2.txt + BILLING_INTEGRATION_PR2.md
+PR3: README-PR3.txt + BILLING_INTEGRATION_PR3.md
+
+Problemas comuns já documentados:
+- Worker pool não processa jobs
+- PDF generation falha (chromium não encontrado)
+- SSE não recebe eventos
+- Bulk actions pula todas UCs
+- Migration falha (relation already exists)
+- Go module dependency errors
+
+═══════════════════════════════════════════════════════════════════════════
+CONTATO E FEEDBACK
+═══════════════════════════════════════════════════════════════════════════
+
+Este projeto foi desenvolvido em abril/2026 para Azi Dourado.
+
+Arquitetura:
+- Backend Go modular (monólito, não microserviços)
+- Frontend Next.js App Router
+- Banco Postgres único (schemas: core, billing)
+- SQLite auxiliar (integração Neoenergia, intocado)
+
+Para dúvidas sobre implementação específica, consulte os arquivos
+BILLING_INTEGRATION*.md dentro de cada PR.
+
+═══════════════════════════════════════════════════════════════════════════
+CHECKLIST FINAL ANTES DE COMEÇAR
+═══════════════════════════════════════════════════════════════════════════
+
+☐ Li este arquivo completo (00-LEIA-ME-PRIMEIRO.txt)
+☐ Tenho Go 1.22+ instalado
+☐ Tenho Postgres 14+ rodando
+☐ Criei database backoffice no Postgres
+☐ Configurei BACKOFFICE_PG_URL
+☐ Tenho golang-migrate instalado
+☐ Clone do repo 5g-energia-fatura existe
+☐ Entendi a ordem: PR1 → PR2 → PR3 (não pular)
+☐ Pronto para começar pelo PR1
+
+═══════════════════════════════════════════════════════════════════════════
+PRÓXIMOS PASSOS
+═══════════════════════════════════════════════════════════════════════════
+
+1. Extrair 02-backend-pr1/backoffice-billing-pr1.tar.gz
+2. Ler o README.txt de dentro dele
+3. Executar apply.sh
+4. Seguir BILLING_INTEGRATION.md passo a passo
+5. Testar endpoints básicos
+6. Repetir para PR2 e PR3
+7. Implementar frontend com prd-frontend-backoffice.md
+
+Boa implementação! 🚀
+
+═══════════════════════════════════════════════════════════════════════════
+FIM
+═══════════════════════════════════════════════════════════════════════════

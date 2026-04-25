@@ -5,14 +5,12 @@ services:
       BACKEND_HOST: "0.0.0.0"
       BACKEND_PORT: "8080"
       EXTRACTOR_BASE_URL: "http://doc-extractor:8090"
-      BACKEND_DATABASE_URL: "file:/data/backend-go.db"
+      BACKEND_INTEGRATION_PG_URL: "${BACKEND_INTEGRATION_PG_URL}"
       ARTIFACTS_DIR: "/data/artifacts"
       BACKEND_ENCRYPTION_KEY: ${BACKEND_ENCRYPTION_KEY}
       BOOTSTRAP_PYTHON_BIN: "python"
       BOOTSTRAP_SCRIPT_PATH: "/app/scripts/bootstrap_neoenergia_token.py"
       NEOENERGIA_API_BASE_URL: "https://apineprd.neoenergia.com"
-    volumes:
-      - backend_data:/data
     networks:
       - network_public
       - internal
@@ -62,9 +60,6 @@ services:
       timeout: 10s
       retries: 3
       start_period: 20s
-
-volumes:
-  backend_data:
 
 networks:
   network_public:

@@ -3,6 +3,10 @@
 import { useParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { ArrowLeft01Icon } from '@hugeicons/core-free-icons'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { SyncRunDetail } from '@/components/clientes/sync-run-detail'
 import { useSetBreadcrumbTitle } from '@/contexts/breadcrumb'
@@ -50,28 +54,46 @@ export default function SyncRunPage() {
   useSetBreadcrumbTitle(syncId, `Sync ${syncRun?.status ?? ''}`.trim())
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <div className="mb-1 text-sm text-muted-foreground">
-          <Link href={`/clientes/${id}/ucs`} className="hover:underline">
-            ← Unidades Consumidoras
+    <div className="flex flex-col gap-6 p-6">
+      <div>
+        <Button variant="outline" size="sm" asChild>
+          <Link href={`/clientes/${id}/ucs`}>
+            <HugeiconsIcon icon={ArrowLeft01Icon} strokeWidth={2} />
+            Unidades Consumidoras
           </Link>
-        </div>
+        </Button>
+      </div>
+
+      <div>
         <h1 className="text-2xl font-semibold">Auditoria de Sincronização</h1>
+        <p className="text-sm text-muted-foreground">
+          {ucCode ? `UC ${ucCode}` : 'Carregando...'}
+        </p>
       </div>
 
       {syncLoading ? (
-        <div className="space-y-4">
-          <Skeleton className="h-10 w-full rounded-md" />
-          <Skeleton className="h-32 w-full rounded-md" />
-        </div>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-48" />
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-32 w-full rounded-md" />
+          </CardContent>
+        </Card>
       ) : syncRun ? (
         <SyncRunDetail
           syncRun={syncRun}
           ucCode={ucCode}
           credentialId={credentialId}
         />
-      ) : null}
+      ) : (
+        <Card>
+          <CardContent className="py-12 text-center text-muted-foreground">
+            Registro de sincronização não encontrado.
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

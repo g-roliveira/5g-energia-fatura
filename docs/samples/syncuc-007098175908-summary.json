@@ -1,0 +1,143 @@
+{
+  "uc": "007098175908",
+  "documento": "03021937586",
+  "primeira_fatura": {
+    "numeroFatura": "339800707843",
+    "mesReferencia": "2026/04",
+    "statusFatura": "A Vencer",
+    "dataCompetencia": "2026-04-11",
+    "dataEmissao": "2026-04-14",
+    "dataPagamento": "0000-00-00",
+    "dataVencimento": "2026-05-06",
+    "dataInicioPeriodo": "2026-03-13",
+    "dataFimPeriodo": "2026-04-11",
+    "valorEmissao": "521.53",
+    "uc": "007098175908",
+    "tipoDoc": "FA",
+    "origemFatura": "FAT",
+    "tipoEntrega": "Entrega no Imóvel",
+    "tipoLeitura": "OSB",
+    "aceitaPix": "X"
+  },
+  "billing_record": {
+    "uc": "007098175908",
+    "numero_fatura": "339800707843",
+    "mes_referencia": "2026/04",
+    "status_fatura": "A Vencer",
+    "valor_total": "521.53",
+    "codigo_barras": "838700000052215300300078098175908215056066285939",
+    "data_emissao": "2026-04-14",
+    "data_vencimento": "2026-05-06",
+    "data_pagamento": null,
+    "data_inicio_periodo": "2026-03-13",
+    "data_fim_periodo": "2026-04-11",
+    "itens_fatura": [
+      {
+        "aliq_icms": "20,50",
+        "base_icms": "315,48",
+        "codigo": "",
+        "descricao": "Consumo-TUSD",
+        "icms": "64,67",
+        "quantidade": "418,00",
+        "quantidade_faturada": "",
+        "quantidade_residual": "",
+        "tarifa": "0,56",
+        "valor": "315,48",
+        "valor_total": "315,48"
+      },
+      {
+        "aliq_icms": "20,50",
+        "base_icms": "156,05",
+        "codigo": "",
+        "descricao": "Consumo-TE",
+        "icms": "31,99",
+        "quantidade": "418,00",
+        "quantidade_faturada": "",
+        "quantidade_residual": "",
+        "tarifa": "0,28",
+        "valor": "156,05",
+        "valor_total": "156,05"
+      },
+      {
+        "aliq_icms": "",
+        "base_icms": "",
+        "codigo": "",
+        "descricao": "Ilum. Púb. Municipal",
+        "icms": "",
+        "quantidade": "",
+        "quantidade_faturada": "",
+        "quantidade_residual": "",
+        "tarifa": "",
+        "valor": "50,00",
+        "valor_total": "50,00"
+      }
+    ],
+    "composicao_fornecimento": {
+      "distribuicao": "",
+      "encargos": "",
+      "energia": "",
+      "normalizado_distribuicao": null,
+      "normalizado_encargos": null,
+      "normalizado_energia": null,
+      "normalizado_perdas": null,
+      "normalizado_transmissao": null,
+      "normalizado_tributos": null,
+      "perdas": "",
+      "transmissao": "",
+      "tributos": ""
+    },
+    "nota_fiscal": {
+      "apresentacao_data": "11/04/2026",
+      "numero_serie": "Nº 953136547 Série 000"
+    },
+    "extractor_status": "partial",
+    "completeness": {
+      "status": "complete"
+    },
+    "source_map": {
+      "codigo_barras": "api",
+      "composicao_fornecimento": "extractor",
+      "data_emissao": "api",
+      "data_fim_periodo": "api",
+      "data_inicio_periodo": "api",
+      "data_pagamento": "api",
+      "data_vencimento": "api",
+      "itens_fatura": "pymupdf",
+      "mes_referencia": "api",
+      "nota_fiscal": "extractor",
+      "numero_fatura": "api",
+      "status_fatura": "api",
+      "uc": "api",
+      "valor_total": "api"
+    },
+    "confidence_map": {
+      "codigo_barras": 1,
+      "composicao_fornecimento": 0.8,
+      "data_emissao": 1,
+      "data_fim_periodo": 1,
+      "data_inicio_periodo": 1,
+      "data_pagamento": 1,
+      "data_vencimento": 1,
+      "itens_fatura": 0.9,
+      "mes_referencia": 1,
+      "nota_fiscal": 0.8,
+      "numero_fatura": 1,
+      "status_fatura": 1,
+      "uc": 1,
+      "valor_total": 1
+    },
+    "raw_source_availability": {
+      "api.dados_pagamento": true,
+      "api.fatura": true,
+      "api.historico_consumo": false,
+      "api.pdf": true,
+      "extractor.document_pdf": true
+    }
+  },
+  "extraction_status": "partial",
+  "persistence": {
+    "sync_run_id": "f6dad3140a5edf4c486fd59c5cfe1d7e",
+    "invoice_id": "dcbcf3862d8d4497f1027b7c25c25296",
+    "status": "succeeded"
+  }
+}

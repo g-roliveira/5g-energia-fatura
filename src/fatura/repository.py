@@ -49,8 +49,11 @@ class FaturaRepository(ABC):
     ) -> None: ...
 
 
-class SqliteFaturaRepository(FaturaRepository):
-    def __init__(self, db_url: str = "sqlite:///data/faturas.db"):
+class SQLAlchemyFaturaRepository(FaturaRepository):
+    def __init__(
+        self,
+        db_url: str = "postgresql+psycopg://backoffice:backoffice@127.0.0.1:5432/backoffice",
+    ):
         self._engine = create_engine(db_url, echo=False)
         Base.metadata.create_all(self._engine)
         self._ensure_runtime_columns()
@@ -488,3 +491,7 @@ class SqliteFaturaRepository(FaturaRepository):
             itens_fatura=itens,
             nota_fiscal=nota_fiscal,
         )
+
+
+# Backward-compatible alias for older imports/tests.
+SqliteFaturaRepository = SQLAlchemyFaturaRepository

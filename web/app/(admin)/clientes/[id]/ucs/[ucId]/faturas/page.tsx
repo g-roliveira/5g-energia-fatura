@@ -3,6 +3,10 @@
 import { useParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { ArrowLeft01Icon } from '@hugeicons/core-free-icons'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { InvoiceTable } from '@/components/clientes/invoice-table'
 import { useSetBreadcrumbTitle } from '@/contexts/breadcrumb'
 
@@ -49,40 +53,41 @@ export default function FaturasPage() {
   const invoiceList = invoices ?? []
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <div className="mb-1 text-sm text-muted-foreground">
-          <Link href={`/clientes/${id}`} className="hover:underline">
-            Cliente
+    <div className="flex flex-col gap-6 p-6">
+      <div>
+        <Button variant="outline" size="sm" asChild>
+          <Link href={`/clientes/${id}/ucs`}>
+            <HugeiconsIcon icon={ArrowLeft01Icon} strokeWidth={2} />
+            Unidades Consumidoras
           </Link>
-          {' / '}
-          <Link href={`/clientes/${id}/ucs`} className="hover:underline">
-            ← UCs
-          </Link>
-        </div>
-        <h1 className="text-2xl font-semibold">Faturas</h1>
+        </Button>
       </div>
 
-      {!isLoading && invoiceList.length === 0 ? (
-        <div className="py-12 text-center text-muted-foreground">
-          <p>Nenhuma fatura encontrada.</p>
-          <p className="mt-2 text-sm">
-            <Link
-              href={`/clientes/${id}/ucs`}
-              className="underline hover:text-foreground"
-            >
-              Sincronizar UC
-            </Link>
-          </p>
-        </div>
-      ) : (
-        <InvoiceTable
-          data={invoiceList}
-          isLoading={isLoading}
-          clientId={id}
-          ucId={ucId}
-        />
-      )}
+      <div>
+        <h1 className="text-2xl font-semibold">Faturas</h1>
+        <p className="text-sm text-muted-foreground">
+          {ucCode ? `UC ${ucCode}` : 'Carregando...'}
+        </p>
+      </div>
+
+      <Card>
+        <CardHeader>
+          <CardTitle>Histórico de faturas</CardTitle>
+          <CardDescription>
+            {isLoading
+              ? 'Carregando...'
+              : `${invoiceList.length} fatura${invoiceList.length !== 1 ? 's' : ''} encontrada${invoiceList.length !== 1 ? 's' : ''}`}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <InvoiceTable
+            data={invoiceList}
+            isLoading={isLoading}
+            clientId={id}
+            ucId={ucId}
+          />
+        </CardContent>
+      </Card>
     </div>
   )
 }

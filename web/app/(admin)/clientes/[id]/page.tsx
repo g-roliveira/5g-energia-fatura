@@ -33,7 +33,8 @@ import { StatusBadge } from '@/components/clientes/status-badge'
 import { UcList } from '@/components/clientes/uc-list'
 import { UcForm } from '@/components/clientes/uc-form'
 import { CredentialForm } from '@/components/clientes/credential-form'
-import type { CreateUcInput, CreateCredentialInput } from '@/types/clientes'
+import { DiscoveryStep } from '@/components/clientes/discovery-step'
+import type { CreateUcInput, CreateCredentialInput, GoDiscoveryResult } from '@/types/clientes'
 import { useSetBreadcrumbTitle } from '@/contexts/breadcrumb'
 
 // ─── Local types (avoids importing Prisma in a client component) ──────────────
@@ -134,6 +135,13 @@ export default function ClientDetailPage() {
   const [ucLoading, setUcLoading] = useState(false)
   const [credLoading, setCredLoading] = useState(false)
 
+  // ── Credential discovery dialog state ────────────────────────────────────────
+  const [credDialogStep, setCredDialogStep] = useState<'form' | 'discovery'>('form')
+  const [createdCredentialId, setCreatedCredentialId] = useState<string | null>(null)
+  const [discoveryData, setDiscoveryData] = useState<GoDiscoveryResult | null>(null)
+  const [discoveryLoading, setDiscoveryLoading] = useState(false)
+  const [discoveryError, setDiscoveryError] = useState<string | null>(null)
+
   const { data: client, isLoading } = useQuery<ClientDetail>({
     queryKey: ['client', id],
     queryFn: async () => {
@@ -172,10 +180,36 @@ export default function ClientDetailPage() {
         body: JSON.stringify({ ...data, client_id: id }),
       })
       if (!res.ok) throw new Error('Erro ao criar credencial')
+      const credential = await res.json()
       await queryClient.invalidateQueries({ queryKey: ['client', id] })
-      setCredSheetOpen(false)
+
+      // Transition to discovery step
+      setCreatedCredentialId(credential.id)
+      setCredDialogStep('discovery')
+      setDiscoveryLoading(true)
+      setDiscoveryError(null)
+
+      try {
+        const discRes = await fetch(`/api/integration/credentials/${credential.id}/discover`)
+        if (!discRes.ok) throw new Error('Erro ao consultar dados da concessionária')
+        setDiscoveryData(await discRes.json())
+      } catch (e) {
+        setDiscoveryError((e as Error).message)
+      } finally {
+        setDiscoveryLoading(false)
+      }
     } finally {
       setCredLoading(false)
+    }
+  }
+
+  function handleCredDialogClose(open: boolean) {
+    if (!open) {
+      setCredSheetOpen(false)
+      setCredDialogStep('form')
+      setCreatedCredentialId(null)
+      setDiscoveryData(null)
+      setDiscoveryError(null)
     }
   }
 
@@ -315,9 +349,16 @@ export default function ClientDetailPage() {
                   <CardTitle>Unidades consumidoras</CardTitle>
                   <CardDescription>UCs vinculadas a este cliente</CardDescription>
                 </div>
-                <Button size="sm" onClick={() => setUcSheetOpen(true)}>
-                  Adicionar UC
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href={`/clientes/${id}/ucs`}>
+                      Ver todas
+                    </Link>
+                  </Button>
+                  <Button size="sm" onClick={() => setUcSheetOpen(true)}>
+                    Adicionar UC
+                  </Button>
+                </div>
               </div>
             </CardHeader>
             <CardContent>
@@ -404,16 +445,59 @@ export default function ClientDetailPage() {
             </CardContent>
           </Card>
 
-          <Dialog open={credSheetOpen} onOpenChange={setCredSheetOpen}>
-            <DialogContent className="max-w-2xl">
+          <Dialog open={credSheetOpen} onOpenChange={handleCredDialogClose}>
+            <DialogContent className="max-w-3xl">
               <DialogHeader>
-                <DialogTitle>Adicionar Credencial</DialogTitle>
+                <DialogTitle>
+                  {credDialogStep === 'form' ? 'Adicionar Credencial' : 'Dados Descobertos'}
+                </DialogTitle>
               </DialogHeader>
-              <CredentialForm
-                clientId={id}
-                onSubmit={handleCreateCredential}
-                isLoading={credLoading}
-              />
+
+              {credDialogStep === 'form' && (
+                <CredentialForm
+                  clientId={id}
+                  onSubmit={handleCreateCredential}
+                  isLoading={credLoading}
+                />
+              )}
+
+              {credDialogStep === 'discovery' && (
+                <>
+                  {discoveryLoading && (
+                    <div className="space-y-3 py-10 text-center">
+                      <div className="space-y-2">
+                        <Skeleton className="mx-auto h-3 w-48" />
+                        <Skeleton className="mx-auto h-3 w-36" />
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Consultando a Neoenergia, aguarde...
+                      </p>
+                    </div>
+                  )}
+                  {discoveryError && !discoveryLoading && (
+                    <div className="space-y-4 py-4">
+                      <p className="text-sm text-destructive">{discoveryError}</p>
+                      <Button variant="outline" onClick={() => handleCredDialogClose(false)}>
+                        Fechar
+                      </Button>
+                    </div>
+                  )}
+                  {discoveryData && !discoveryLoading && (
+                    <DiscoveryStep
+                      clientId={id}
+                      credentialId={createdCredentialId!}
+                      discovery={discoveryData}
+                      currentClient={{
+                        nome_razao: client.nome_razao,
+                        email: client.email,
+                        telefone: client.telefone,
+                      }}
+                      onImportComplete={() => queryClient.invalidateQueries({ queryKey: ['client', id] })}
+                      onClose={() => handleCredDialogClose(false)}
+                    />
+                  )}
+                </>
+              )}
             </DialogContent>
           </Dialog>
         </TabsContent>
