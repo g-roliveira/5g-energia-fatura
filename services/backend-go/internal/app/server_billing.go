@@ -11,6 +11,7 @@ import (
 	"github.com/shopspring/decimal"
 
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/billing/contract"
+	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/billing/cycle"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/billing/repo"
 )
 
@@ -20,6 +21,7 @@ type BillingDeps struct {
 	Pool        *pgxpool.Pool
 	Contract    *contract.Service
 	Calculation *repo.CalculationRepo
+	Cycle       *cycle.Service
 }
 
 // NewBillingDeps wires the repos and services from a pgx pool.
@@ -31,6 +33,7 @@ func NewBillingDeps(pool *pgxpool.Pool) *BillingDeps {
 		Pool:        pool,
 		Contract:    contract.NewService(contractRepo),
 		Calculation: calcRepo,
+		Cycle:       cycle.NewService(pool),
 	}
 }
 
@@ -56,6 +59,9 @@ func RegisterBillingRoutes(
 	deps *BillingDeps,
 	logger *slog.Logger,
 ) {
+	// --- CYCLES ------------------------------------------------------
+	cycleHandler := cycle.NewHandler(deps.Cycle, logger)
+	cycleHandler.RegisterRoutes(mux)
 	// --- CONTRACTS ---------------------------------------------------
 
 	docs.add(http.MethodPost, "/v1/billing/contracts", "Create contract (nova versão fecha anterior)", []string{"billing", "contracts"}, http.StatusCreated)
