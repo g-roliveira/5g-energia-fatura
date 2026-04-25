@@ -84,20 +84,20 @@ func (s *TestSuite) Close() {
 func cleanAll(t *testing.T, pool *pgxpool.Pool) {
 	ctx := context.Background()
 	_, err := pool.Exec(ctx, `
-		DELETE FROM billing.manual_adjustment WHERE 1=1;
-		DELETE FROM billing.generated_document WHERE 1=1;
-		DELETE FROM billing.billing_calculation WHERE 1=1;
-		DELETE FROM billing.utility_invoice_scee WHERE 1=1;
-		DELETE FROM billing.utility_invoice_item WHERE 1=1;
-		DELETE FROM billing.utility_invoice_ref WHERE 1=1;
-		DELETE FROM billing.sync_job WHERE 1=1;
-		DELETE FROM billing.audit_log WHERE 1=1;
-		DELETE FROM billing.contract WHERE 1=1;
-		DELETE FROM billing.billing_cycle WHERE 1=1;
-		DELETE FROM core.credential_link WHERE 1=1;
-		DELETE FROM core.address WHERE 1=1;
-		DELETE FROM core.consumer_unit WHERE 1=1;
-		DELETE FROM core.customer WHERE 1=1;
+		DELETE FROM public.manual_adjustment WHERE 1=1;
+		DELETE FROM public.generated_document WHERE 1=1;
+		DELETE FROM public.billing_calculation WHERE 1=1;
+		DELETE FROM public.utility_invoice_scee WHERE 1=1;
+		DELETE FROM public.utility_invoice_item WHERE 1=1;
+		DELETE FROM public.utility_invoice_ref WHERE 1=1;
+		DELETE FROM public.sync_job WHERE 1=1;
+		DELETE FROM public.audit_log WHERE 1=1;
+		DELETE FROM public.contract WHERE 1=1;
+		DELETE FROM public.billing_cycle WHERE 1=1;
+		DELETE FROM public.credential_link WHERE 1=1;
+		DELETE FROM public.address WHERE 1=1;
+		DELETE FROM public.consumer_unit WHERE 1=1;
+		DELETE FROM public.customer WHERE 1=1;
 	`)
 	if err != nil {
 		t.Fatalf("clean all tables: %v", err)

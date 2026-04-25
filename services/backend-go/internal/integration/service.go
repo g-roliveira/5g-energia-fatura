@@ -7,7 +7,7 @@ import (
 	"github.com/google/uuid"
 )
 
-// Service expõe as operações do domínio integration.
+// Service expõe as operações do domínio integration (public schema).
 type Service struct {
 	store Store
 }

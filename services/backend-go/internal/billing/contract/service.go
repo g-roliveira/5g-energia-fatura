@@ -32,7 +32,7 @@ func NewService(r *repo.ContractRepo) *Service {
 }
 
 // CreateInput is what the HTTP handler / caller passes in to create a
-// new contract. Ends up in billing.contract.
+// new contract. Ends up in public.contract.
 type CreateInput struct {
 	CustomerID                        uuid.UUID
 	ConsumerUnitID                    uuid.UUID

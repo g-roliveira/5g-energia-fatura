@@ -17,7 +17,7 @@ var _ Store = (*pgxStore)(nil)
 
 func (s *pgxStore) CreateCustomer(ctx context.Context, c *Customer) error {
 	query := `
-		INSERT INTO core.customer (id, tipo_pessoa, nome_razao, nome_fantasia, cpf_cnpj, email, phone, status, tipo_cliente, notes, created_at, updated_at)
+		INSERT INTO public.customer (id, tipo_pessoa, nome_razao, nome_fantasia, cpf_cnpj, email, phone, status, tipo_cliente, notes, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 	`
 	_, err := s.pool.Exec(ctx, query,
@@ -31,7 +31,7 @@ func (s *pgxStore) CreateCustomer(ctx context.Context, c *Customer) error {
 func (s *pgxStore) GetCustomer(ctx context.Context, id uuid.UUID) (*Customer, error) {
 	query := `
 		SELECT id, tipo_pessoa, nome_razao, nome_fantasia, cpf_cnpj, email, phone, status, tipo_cliente, notes, created_at, updated_at, archived_at
-		FROM core.customer WHERE id = $1
+		FROM public.customer WHERE id = $1
 	`
 	row := s.pool.QueryRow(ctx, query, id.String())
 	return scanCustomer(row)
@@ -40,7 +40,7 @@ func (s *pgxStore) GetCustomer(ctx context.Context, id uuid.UUID) (*Customer, er
 func (s *pgxStore) GetCustomerByCPFCNPJ(ctx context.Context, cpfCnpj string) (*Customer, error) {
 	query := `
 		SELECT id, tipo_pessoa, nome_razao, nome_fantasia, cpf_cnpj, email, phone, status, tipo_cliente, notes, created_at, updated_at, archived_at
-		FROM core.customer WHERE cpf_cnpj = $1
+		FROM public.customer WHERE cpf_cnpj = $1
 	`
 	row := s.pool.QueryRow(ctx, query, cpfCnpj)
 	return scanCustomer(row)
@@ -79,7 +79,7 @@ func (s *pgxStore) ListCustomers(ctx context.Context, filter CustomerFilter) ([]
 
 	query := fmt.Sprintf(`
 		SELECT id, tipo_pessoa, nome_razao, nome_fantasia, cpf_cnpj, email, phone, status, tipo_cliente, notes, created_at, updated_at, archived_at
-		FROM core.customer
+		FROM public.customer
 		%s
 		ORDER BY id
 		LIMIT $%d
@@ -161,7 +161,7 @@ func (s *pgxStore) UpdateCustomer(ctx context.Context, id uuid.UUID, patch Custo
 	}
 
 	query := fmt.Sprintf(`
-		UPDATE core.customer
+		UPDATE public.customer
 		SET %s, updated_at = NOW()
 		WHERE id = $%d
 	`, strings.Join(sets, ", "), argNum)
@@ -172,7 +172,7 @@ func (s *pgxStore) UpdateCustomer(ctx context.Context, id uuid.UUID, patch Custo
 }
 
 func (s *pgxStore) ArchiveCustomer(ctx context.Context, id uuid.UUID) error {
-	query := `UPDATE core.customer SET status = 'archived', archived_at = NOW(), updated_at = NOW() WHERE id = $1`
+	query := `UPDATE public.customer SET status = 'archived', archived_at = NOW(), updated_at = NOW() WHERE id = $1`
 	_, err := s.pool.Exec(ctx, query, id.String())
 	return err
 }
@@ -181,7 +181,7 @@ func (s *pgxStore) ArchiveCustomer(ctx context.Context, id uuid.UUID) error {
 
 func (s *pgxStore) CreateUnit(ctx context.Context, u *ConsumerUnit) error {
 	query := `
-		INSERT INTO core.consumer_unit (id, customer_id, uc_code, distribuidora, apelido, classe_consumo, endereco_unidade, cidade, uf, ativa, sync_credential_id, created_at, updated_at)
+		INSERT INTO public.consumer_unit (id, customer_id, uc_code, distribuidora, apelido, classe_consumo, endereco_unidade, cidade, uf, ativa, sync_credential_id, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
 	`
 	_, err := s.pool.Exec(ctx, query,
@@ -195,7 +195,7 @@ func (s *pgxStore) CreateUnit(ctx context.Context, u *ConsumerUnit) error {
 func (s *pgxStore) GetUnit(ctx context.Context, id uuid.UUID) (*ConsumerUnit, error) {
 	query := `
 		SELECT id, customer_id, uc_code, distribuidora, apelido, classe_consumo, endereco_unidade, cidade, uf, ativa, sync_credential_id, created_at, updated_at
-		FROM core.consumer_unit WHERE id = $1
+		FROM public.consumer_unit WHERE id = $1
 	`
 	row := s.pool.QueryRow(ctx, query, id.String())
 	return scanConsumerUnit(row)
@@ -204,7 +204,7 @@ func (s *pgxStore) GetUnit(ctx context.Context, id uuid.UUID) (*ConsumerUnit, er
 func (s *pgxStore) GetUnitByCode(ctx context.Context, code string) (*ConsumerUnit, error) {
 	query := `
 		SELECT id, customer_id, uc_code, distribuidora, apelido, classe_consumo, endereco_unidade, cidade, uf, ativa, sync_credential_id, created_at, updated_at
-		FROM core.consumer_unit WHERE uc_code = $1
+		FROM public.consumer_unit WHERE uc_code = $1
 	`
 	row := s.pool.QueryRow(ctx, query, code)
 	return scanConsumerUnit(row)
@@ -248,7 +248,7 @@ func (s *pgxStore) ListUnits(ctx context.Context, filter UnitFilter) ([]Consumer
 
 	query := fmt.Sprintf(`
 		SELECT id, customer_id, uc_code, distribuidora, apelido, classe_consumo, endereco_unidade, cidade, uf, ativa, sync_credential_id, created_at, updated_at
-		FROM core.consumer_unit
+		FROM public.consumer_unit
 		%s
 		ORDER BY id
 		LIMIT $%d
@@ -283,7 +283,7 @@ func (s *pgxStore) ListUnits(ctx context.Context, filter UnitFilter) ([]Consumer
 func (s *pgxStore) ListUnitsByCustomer(ctx context.Context, customerID uuid.UUID) ([]ConsumerUnit, error) {
 	query := `
 		SELECT id, customer_id, uc_code, distribuidora, apelido, classe_consumo, endereco_unidade, cidade, uf, ativa, sync_credential_id, created_at, updated_at
-		FROM core.consumer_unit WHERE customer_id = $1 ORDER BY created_at DESC
+		FROM public.consumer_unit WHERE customer_id = $1 ORDER BY created_at DESC
 	`
 	rows, err := s.pool.Query(ctx, query, customerID.String())
 	if err != nil {
@@ -303,7 +303,7 @@ func (s *pgxStore) ListUnitsByCustomer(ctx context.Context, customerID uuid.UUID
 }
 
 func (s *pgxStore) LinkUnitToCustomer(ctx context.Context, unitID, customerID uuid.UUID) error {
-	query := `UPDATE core.consumer_unit SET customer_id = $1, updated_at = NOW() WHERE id = $2`
+	query := `UPDATE public.consumer_unit SET customer_id = $1, updated_at = NOW() WHERE id = $2`
 	_, err := s.pool.Exec(ctx, query, customerID.String(), unitID.String())
 	return err
 }
@@ -312,7 +312,7 @@ func (s *pgxStore) LinkUnitToCustomer(ctx context.Context, unitID, customerID uu
 
 func (s *pgxStore) CreateContract(ctx context.Context, c *Contract) error {
 	query := `
-		INSERT INTO billing.contract (id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, notes, status, created_at, created_by, updated_at)
+		INSERT INTO public.contract (id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, notes, status, created_at, created_by, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
 	`
 	_, err := s.pool.Exec(ctx, query,
@@ -327,7 +327,7 @@ func (s *pgxStore) CreateContract(ctx context.Context, c *Contract) error {
 func (s *pgxStore) GetContract(ctx context.Context, id uuid.UUID) (*Contract, error) {
 	query := `
 		SELECT id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, notes, status, created_at, created_by, updated_at
-		FROM billing.contract WHERE id = $1
+		FROM public.contract WHERE id = $1
 	`
 	row := s.pool.QueryRow(ctx, query, id)
 	return scanContract(row)
@@ -336,7 +336,7 @@ func (s *pgxStore) GetContract(ctx context.Context, id uuid.UUID) (*Contract, er
 func (s *pgxStore) GetActiveContract(ctx context.Context, unitID uuid.UUID) (*Contract, error) {
 	query := `
 		SELECT id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, notes, status, created_at, created_by, updated_at
-		FROM billing.contract
+		FROM public.contract
 		WHERE consumer_unit_id = $1 AND vigencia_fim IS NULL AND status = 'active'
 		ORDER BY vigencia_inicio DESC
 		LIMIT 1
@@ -366,7 +366,7 @@ func (s *pgxStore) ListContracts(ctx context.Context, filter ContractFilter) ([]
 
 	query := fmt.Sprintf(`
 		SELECT id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, notes, status, created_at, created_by, updated_at
-		FROM billing.contract
+		FROM public.contract
 		%s
 		ORDER BY vigencia_inicio DESC
 	`, where)
@@ -390,7 +390,7 @@ func (s *pgxStore) ListContracts(ctx context.Context, filter ContractFilter) ([]
 
 func (s *pgxStore) CloseContract(ctx context.Context, unitID uuid.UUID, closeDate interface{}) error {
 	query := `
-		UPDATE billing.contract
+		UPDATE public.contract
 		SET vigencia_fim = $1, status = 'ended', updated_at = NOW()
 		WHERE consumer_unit_id = $2 AND vigencia_fim IS NULL AND status = 'active'
 	`

@@ -14,7 +14,7 @@ import (
 // ErrNotFound é retornado quando a query não encontra registro.
 var ErrNotFound = errors.New("repo: not found")
 
-// ContractRepo encapsula todas as queries da tabela billing.contract.
+// ContractRepo encapsula todas as queries da tabela public.contract.
 type ContractRepo struct {
 	pool *pgxpool.Pool
 }
@@ -53,7 +53,7 @@ func scanContract(row pgx.Row) (*Contract, error) {
 // GetByID looks up a contract by its primary key.
 func (r *ContractRepo) GetByID(ctx context.Context, id uuid.UUID) (*Contract, error) {
 	row := r.pool.QueryRow(ctx,
-		`SELECT `+contractCols+` FROM billing.contract WHERE id = $1`, id)
+		`SELECT `+contractCols+` FROM public.contract WHERE id = $1`, id)
 	return scanContract(row)
 }
 
@@ -62,7 +62,7 @@ func (r *ContractRepo) GetByID(ctx context.Context, id uuid.UUID) (*Contract, er
 func (r *ContractRepo) GetActiveByConsumerUnit(ctx context.Context, ucID uuid.UUID) (*Contract, error) {
 	row := r.pool.QueryRow(ctx,
 		`SELECT `+contractCols+`
-		   FROM billing.contract
+		   FROM public.contract
 		  WHERE consumer_unit_id = $1
 		    AND vigencia_fim IS NULL
 		    AND status = 'active'`,
@@ -79,7 +79,7 @@ func (r *ContractRepo) GetByConsumerUnitAtDate(
 ) (*Contract, error) {
 	row := r.pool.QueryRow(ctx,
 		`SELECT `+contractCols+`
-		   FROM billing.contract
+		   FROM public.contract
 		  WHERE consumer_unit_id = $1
 		    AND vigencia_inicio <= $2
 		    AND (vigencia_fim IS NULL OR vigencia_fim >= $2)
@@ -95,7 +95,7 @@ func (r *ContractRepo) GetByConsumerUnitAtDate(
 func (r *ContractRepo) ListByConsumerUnit(ctx context.Context, ucID uuid.UUID) ([]*Contract, error) {
 	rows, err := r.pool.Query(ctx,
 		`SELECT `+contractCols+`
-		   FROM billing.contract
+		   FROM public.contract
 		  WHERE consumer_unit_id = $1
 		  ORDER BY vigencia_inicio DESC`,
 		ucID,
@@ -128,7 +128,7 @@ func (r *ContractRepo) Insert(ctx context.Context, tx pgx.Tx, c *Contract) error
 	}
 
 	_, err := tx.Exec(ctx,
-		`INSERT INTO billing.contract (
+		`INSERT INTO public.contract (
 		     id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim,
 		     desconto_percentual, ip_faturamento_mode, ip_faturamento_valor,
 		     ip_faturamento_percent, bandeira_com_desconto,
@@ -152,7 +152,7 @@ func (r *ContractRepo) CloseActive(
 	ctx context.Context, tx pgx.Tx, ucID uuid.UUID, endDate time.Time,
 ) error {
 	_, err := tx.Exec(ctx,
-		`UPDATE billing.contract
+		`UPDATE public.contract
 		    SET vigencia_fim = $2,
 		        status = 'ended',
 		        updated_at = NOW()

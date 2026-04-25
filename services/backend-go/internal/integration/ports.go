@@ -7,7 +7,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// Store define as operações de persistência do domínio integration.
+// Store define as operações de persistência do domínio integration (public schema).
 type Store interface {
 	// Credentials
 	InsertCredential(ctx context.Context, c *Credential) error

@@ -170,7 +170,7 @@ func (s *Service) CreateContract(ctx context.Context, input ContractInput) (*Con
 		// Fechar contrato vigente
 		closeDate := vigenciaInicio.AddDate(0, 0, -1)
 		if _, err := tx.Exec(ctx, `
-			UPDATE billing.contract
+			UPDATE public.contract
 			SET vigencia_fim = $1, status = 'ended', updated_at = NOW()
 			WHERE consumer_unit_id = $2 AND vigencia_fim IS NULL AND status = 'active'
 		`, closeDate, input.ConsumerUnitID); err != nil {
@@ -179,7 +179,7 @@ func (s *Service) CreateContract(ctx context.Context, input ContractInput) (*Con
 
 		// Inserir novo
 		if _, err := tx.Exec(ctx, `
-			INSERT INTO billing.contract (id, customer_id, consumer_unit_id, vigencia_inicio, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, notes, status, created_at, created_by, updated_at)
+			INSERT INTO public.contract (id, customer_id, consumer_unit_id, vigencia_inicio, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, notes, status, created_at, created_by, updated_at)
 			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
 		`,
 			contract.ID, contract.CustomerID, contract.ConsumerUnitID,

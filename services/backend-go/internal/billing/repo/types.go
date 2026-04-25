@@ -30,7 +30,7 @@ const (
 	ContractStatusEnded  ContractStatus = "ended"
 )
 
-// Contract is a row in billing.contract. Versioned by (vigencia_inicio,
+// Contract is a row in public.contract. Versioned by (vigencia_inicio,
 // vigencia_fim). Never UPDATE the business fields — always INSERT a new
 // row and close the previous (set vigencia_fim on the old one).
 type Contract struct {

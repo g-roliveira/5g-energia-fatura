@@ -21,7 +21,7 @@ type IntegrationPostgresAdapter struct {
 }
 
 // OpenIntegrationPostgres abre uma conexão ao Postgres e retorna um IntegrationStore
-// que usa o schema integration.*.
+// que usa o public schema with integration_ prefix.
 func OpenIntegrationPostgres(dsn string) (IntegrationStore, error) {
 	pool, err := pgxpool.New(context.Background(), dsn)
 	if err != nil {
@@ -185,7 +185,7 @@ func (a *IntegrationPostgresAdapter) GetInvoiceByID(id string) (*InvoiceView, er
 		return nil, err
 	}
 	view := toInvoiceView(*inv)
-	// Items: buscar de integration.raw_invoice_items
+	// Items: buscar de public.integration_raw_invoice_items
 	items, err := a.listInvoiceItems(id)
 	if err != nil {
 		return nil, err
@@ -206,7 +206,7 @@ func (a *IntegrationPostgresAdapter) GetLatestInvoiceByUC(uc string) (*InvoiceVi
 }
 
 func (a *IntegrationPostgresAdapter) listInvoiceItems(invoiceID string) ([]map[string]any, error) {
-	query := `SELECT raw_json FROM integration.raw_invoice_items WHERE raw_invoice_id = $1 ORDER BY order_index`
+	query := `SELECT raw_json FROM public.integration_raw_invoice_items WHERE raw_invoice_id = $1 ORDER BY order_index`
 	rows, err := a.pool.Query(context.Background(), query, invoiceID)
 	if err != nil {
 		return nil, err
@@ -281,7 +281,7 @@ func (a *IntegrationPostgresAdapter) PersistSyncResult(in PersistSyncInput) (Per
 	rawJSON, _ := json.Marshal(in.RawResponse)
 	errCtxJSON, _ := json.Marshal(map[string]any{"message": in.ErrorMessage})
 	_, err = tx.Exec(ctx, `
-		INSERT INTO integration.sync_runs (id, credential_id, documento, uc, status, step, error_message, error_context, raw_response_json, started_at, finished_at, created_at)
+		INSERT INTO public.integration_sync_runs (id, credential_id, documento, uc, status, step, error_message, error_context, raw_response_json, started_at, finished_at, created_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
 	`, syncRunID, credentialID, in.Documento, in.UC, status, "persist", nullableString(in.ErrorMessage), errCtxJSON, rawJSON, now, now, now)
 	if err != nil {
@@ -293,7 +293,7 @@ func (a *IntegrationPostgresAdapter) PersistSyncResult(in PersistSyncInput) (Per
 		enderecoJSON, _ := json.Marshal(in.UCRecord.Local)
 		imovelJSON, _ := json.Marshal(in.Imovel)
 		_, err = tx.Exec(ctx, `
-			INSERT INTO integration.consumer_units (uc, credential_id, status, nome_cliente, instalacao, contrato, grupo_tensao, endereco_json, imovel_json, created_at, updated_at)
+			INSERT INTO public.integration_consumer_units (uc, credential_id, status, nome_cliente, instalacao, contrato, grupo_tensao, endereco_json, imovel_json, created_at, updated_at)
 			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $10)
 			ON CONFLICT (uc) DO UPDATE SET
 				credential_id = EXCLUDED.credential_id,
@@ -333,7 +333,7 @@ func (a *IntegrationPostgresAdapter) PersistSyncResult(in PersistSyncInput) (Per
 	}
 
 	var existingID string
-	err = tx.QueryRow(ctx, `SELECT id::text FROM integration.raw_invoices WHERE uc = $1 AND numero_fatura = $2`, in.Fatura.UC, in.Fatura.NumeroFatura).Scan(&existingID)
+	err = tx.QueryRow(ctx, `SELECT id::text FROM public.integration_raw_invoices WHERE uc = $1 AND numero_fatura = $2`, in.Fatura.UC, in.Fatura.NumeroFatura).Scan(&existingID)
 	if err != nil && err != pgx.ErrNoRows {
 		return PersistSyncResult{}, err
 	}
@@ -344,7 +344,7 @@ func (a *IntegrationPostgresAdapter) PersistSyncResult(in PersistSyncInput) (Per
 	}
 
 	_, err = tx.Exec(ctx, `
-		INSERT INTO integration.raw_invoices (id, uc, numero_fatura, mes_referencia, status_fatura, valor_total, codigo_barras, data_emissao, data_vencimento, data_pagamento, data_inicio_periodo, data_fim_periodo, completeness_status, completeness_missing, billing_record_json, document_record_json, created_at, updated_at)
+		INSERT INTO public.integration_raw_invoices (id, uc, numero_fatura, mes_referencia, status_fatura, valor_total, codigo_barras, data_emissao, data_vencimento, data_pagamento, data_inicio_periodo, data_fim_periodo, completeness_status, completeness_missing, billing_record_json, document_record_json, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $17)
 		ON CONFLICT (uc, numero_fatura) DO UPDATE SET
 			mes_referencia = EXCLUDED.mes_referencia,
@@ -383,7 +383,7 @@ func (a *IntegrationPostgresAdapter) PersistSyncResult(in PersistSyncInput) (Per
 }
 
 func (a *IntegrationPostgresAdapter) replaceInvoiceItems(ctx context.Context, tx pgx.Tx, invoiceID string, in PersistSyncInput) error {
-	_, err := tx.Exec(ctx, `DELETE FROM integration.raw_invoice_items WHERE raw_invoice_id = $1`, invoiceID)
+	_, err := tx.Exec(ctx, `DELETE FROM public.integration_raw_invoice_items WHERE raw_invoice_id = $1`, invoiceID)
 	if err != nil {
 		return err
 	}
@@ -398,7 +398,7 @@ func (a *IntegrationPostgresAdapter) replaceInvoiceItems(ctx context.Context, tx
 		fmt.Sscan(asString(item["valor_total"]), &val)
 		rawJSON, _ := json.Marshal(item)
 		_, err = tx.Exec(ctx, `
-			INSERT INTO integration.raw_invoice_items (id, raw_invoice_id, type, description, quantidade, preco_unitario, valor_total, order_index, raw_json, created_at)
+			INSERT INTO public.integration_raw_invoice_items (id, raw_invoice_id, type, description, quantidade, preco_unitario, valor_total, order_index, raw_json, created_at)
 			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 		`, uuid.New().String(), invoiceID, inferItemType(descr), descr, qtd, pu, val, i, rawJSON, time.Now())
 		if err != nil {

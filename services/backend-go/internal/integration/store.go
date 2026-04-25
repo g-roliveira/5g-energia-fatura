@@ -22,7 +22,7 @@ func (s *pgxStore) InsertCredential(ctx context.Context, c *Credential) error {
 	c.UpdatedAt = now
 
 	query := `
-		INSERT INTO integration.credentials (id, label, documento_cipher, documento_nonce, senha_cipher, senha_nonce, uf, tipo_acesso, key_version, created_at, updated_at)
+		INSERT INTO public.integration_credentials (id, label, documento_cipher, documento_nonce, senha_cipher, senha_nonce, uf, tipo_acesso, key_version, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
 	`
 	_, err := s.pool.Exec(ctx, query,
@@ -35,7 +35,7 @@ func (s *pgxStore) InsertCredential(ctx context.Context, c *Credential) error {
 func (s *pgxStore) GetCredentialByID(ctx context.Context, id string) (*Credential, error) {
 	query := `
 		SELECT id, label, documento_cipher, documento_nonce, senha_cipher, senha_nonce, uf, tipo_acesso, key_version, created_at, updated_at
-		FROM integration.credentials WHERE id = $1
+		FROM public.integration_credentials WHERE id = $1
 	`
 	row := s.pool.QueryRow(ctx, query, id)
 	var c Credential
@@ -60,7 +60,7 @@ func (s *pgxStore) InsertSession(ctx context.Context, sess *Session) error {
 	sess.UpdatedAt = now
 
 	query := `
-		INSERT INTO integration.sessions (id, credential_id, bearer_token_cipher, bearer_token_nonce, created_at, updated_at)
+		INSERT INTO public.integration_sessions (id, credential_id, bearer_token_cipher, bearer_token_nonce, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6)
 	`
 	_, err := s.pool.Exec(ctx, query,
@@ -72,7 +72,7 @@ func (s *pgxStore) InsertSession(ctx context.Context, sess *Session) error {
 func (s *pgxStore) GetLatestSessionByCredentialID(ctx context.Context, credentialID string) (*Session, error) {
 	query := `
 		SELECT id, credential_id, bearer_token_cipher, bearer_token_nonce, created_at, updated_at
-		FROM integration.sessions WHERE credential_id = $1 ORDER BY created_at DESC LIMIT 1
+		FROM public.integration_sessions WHERE credential_id = $1 ORDER BY created_at DESC LIMIT 1
 	`
 	row := s.pool.QueryRow(ctx, query, credentialID)
 	var sess Session
@@ -92,7 +92,7 @@ func (s *pgxStore) UpsertConsumerUnit(ctx context.Context, u *ConsumerUnit) erro
 	imovelJSON, _ := json.Marshal(u.Imovel)
 
 	query := `
-		INSERT INTO integration.consumer_units (uc, credential_id, status, nome_cliente, instalacao, contrato, grupo_tensao, endereco_json, imovel_json, created_at, updated_at)
+		INSERT INTO public.integration_consumer_units (uc, credential_id, status, nome_cliente, instalacao, contrato, grupo_tensao, endereco_json, imovel_json, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, NOW(), NOW())
 		ON CONFLICT (uc) DO UPDATE SET
 			credential_id = EXCLUDED.credential_id,
@@ -116,7 +116,7 @@ func (s *pgxStore) ListConsumerUnits(ctx context.Context, limit int, status stri
 	if limit <= 0 {
 		limit = 100
 	}
-	query := `SELECT uc, credential_id, status, nome_cliente, instalacao, contrato, grupo_tensao, endereco_json, imovel_json, created_at, updated_at FROM integration.consumer_units`
+	query := `SELECT uc, credential_id, status, nome_cliente, instalacao, contrato, grupo_tensao, endereco_json, imovel_json, created_at, updated_at FROM public.integration_consumer_units`
 	args := []interface{}{}
 	argNum := 1
 	if status != "" {
@@ -145,7 +145,7 @@ func (s *pgxStore) ListConsumerUnits(ctx context.Context, limit int, status stri
 }
 
 func (s *pgxStore) GetConsumerUnitByUC(ctx context.Context, uc string) (*ConsumerUnit, error) {
-	query := `SELECT uc, credential_id, status, nome_cliente, instalacao, contrato, grupo_tensao, endereco_json, imovel_json, created_at, updated_at FROM integration.consumer_units WHERE uc = $1`
+	query := `SELECT uc, credential_id, status, nome_cliente, instalacao, contrato, grupo_tensao, endereco_json, imovel_json, created_at, updated_at FROM public.integration_consumer_units WHERE uc = $1`
 	row := s.pool.QueryRow(ctx, query, uc)
 	return scanConsumerUnit(row)
 }
@@ -157,7 +157,7 @@ func (s *pgxStore) UpsertRawInvoice(ctx context.Context, inv *RawInvoice) (*RawI
 	documentJSON, _ := json.Marshal(inv.DocumentRecordJSON)
 
 	var existingID uuid.UUID
-	err := s.pool.QueryRow(ctx, `SELECT id FROM integration.raw_invoices WHERE uc = $1 AND numero_fatura = $2`, inv.UC, inv.NumeroFatura).Scan(&existingID)
+	err := s.pool.QueryRow(ctx, `SELECT id FROM public.integration_raw_invoices WHERE uc = $1 AND numero_fatura = $2`, inv.UC, inv.NumeroFatura).Scan(&existingID)
 	if err != nil && err != pgx.ErrNoRows {
 		return nil, err
 	}
@@ -165,7 +165,7 @@ func (s *pgxStore) UpsertRawInvoice(ctx context.Context, inv *RawInvoice) (*RawI
 	if existingID != uuid.Nil {
 		inv.ID = existingID
 		query := `
-			UPDATE integration.raw_invoices SET
+			UPDATE public.integration_raw_invoices SET
 				mes_referencia = $1, status_fatura = $2, valor_total = $3, codigo_barras = $4,
 				data_emissao = $5, data_vencimento = $6, data_pagamento = $7,
 				data_inicio_periodo = $8, data_fim_periodo = $9, completeness_status = $10,
@@ -186,7 +186,7 @@ func (s *pgxStore) UpsertRawInvoice(ctx context.Context, inv *RawInvoice) (*RawI
 		inv.ID = uuid.New()
 	}
 	query := `
-		INSERT INTO integration.raw_invoices (id, uc, numero_fatura, mes_referencia, status_fatura, valor_total, codigo_barras, data_emissao, data_vencimento, data_pagamento, data_inicio_periodo, data_fim_periodo, completeness_status, completeness_missing, billing_record_json, document_record_json, pdf_bytes, created_at, updated_at)
+		INSERT INTO public.integration_raw_invoices (id, uc, numero_fatura, mes_referencia, status_fatura, valor_total, codigo_barras, data_emissao, data_vencimento, data_pagamento, data_inicio_periodo, data_fim_periodo, completeness_status, completeness_missing, billing_record_json, document_record_json, pdf_bytes, created_at, updated_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, NOW(), NOW())
 	`
 	_, err = s.pool.Exec(ctx, query,
@@ -199,13 +199,13 @@ func (s *pgxStore) UpsertRawInvoice(ctx context.Context, inv *RawInvoice) (*RawI
 }
 
 func (s *pgxStore) GetRawInvoiceByID(ctx context.Context, id uuid.UUID) (*RawInvoice, error) {
-	query := `SELECT id, uc, numero_fatura, mes_referencia, status_fatura, valor_total, codigo_barras, data_emissao, data_vencimento, data_pagamento, data_inicio_periodo, data_fim_periodo, completeness_status, completeness_missing, billing_record_json, document_record_json, pdf_bytes, created_at, updated_at FROM integration.raw_invoices WHERE id = $1`
+	query := `SELECT id, uc, numero_fatura, mes_referencia, status_fatura, valor_total, codigo_barras, data_emissao, data_vencimento, data_pagamento, data_inicio_periodo, data_fim_periodo, completeness_status, completeness_missing, billing_record_json, document_record_json, pdf_bytes, created_at, updated_at FROM public.integration_raw_invoices WHERE id = $1`
 	row := s.pool.QueryRow(ctx, query, id)
 	return scanRawInvoice(row)
 }
 
 func (s *pgxStore) GetLatestRawInvoiceByUC(ctx context.Context, uc string) (*RawInvoice, error) {
-	query := `SELECT id, uc, numero_fatura, mes_referencia, status_fatura, valor_total, codigo_barras, data_emissao, data_vencimento, data_pagamento, data_inicio_periodo, data_fim_periodo, completeness_status, completeness_missing, billing_record_json, document_record_json, pdf_bytes, created_at, updated_at FROM integration.raw_invoices WHERE uc = $1 ORDER BY updated_at DESC LIMIT 1`
+	query := `SELECT id, uc, numero_fatura, mes_referencia, status_fatura, valor_total, codigo_barras, data_emissao, data_vencimento, data_pagamento, data_inicio_periodo, data_fim_periodo, completeness_status, completeness_missing, billing_record_json, document_record_json, pdf_bytes, created_at, updated_at FROM public.integration_raw_invoices WHERE uc = $1 ORDER BY updated_at DESC LIMIT 1`
 	row := s.pool.QueryRow(ctx, query, uc)
 	return scanRawInvoice(row)
 }
@@ -214,7 +214,7 @@ func (s *pgxStore) ListRawInvoicesByUC(ctx context.Context, uc string, limit int
 	if limit <= 0 {
 		limit = 100
 	}
-	query := `SELECT id, uc, numero_fatura, mes_referencia, status_fatura, valor_total, codigo_barras, data_emissao, data_vencimento, data_pagamento, data_inicio_periodo, data_fim_periodo, completeness_status, completeness_missing, billing_record_json, document_record_json, pdf_bytes, created_at, updated_at FROM integration.raw_invoices WHERE uc = $1 ORDER BY updated_at DESC LIMIT $2`
+	query := `SELECT id, uc, numero_fatura, mes_referencia, status_fatura, valor_total, codigo_barras, data_emissao, data_vencimento, data_pagamento, data_inicio_periodo, data_fim_periodo, completeness_status, completeness_missing, billing_record_json, document_record_json, pdf_bytes, created_at, updated_at FROM public.integration_raw_invoices WHERE uc = $1 ORDER BY updated_at DESC LIMIT $2`
 	rows, err := s.pool.Query(ctx, query, uc, limit)
 	if err != nil {
 		return nil, err
@@ -242,7 +242,7 @@ func (s *pgxStore) InsertSyncRun(ctx context.Context, sr *SyncRun) error {
 	errCtx, _ := json.Marshal(sr.ErrorContext)
 
 	query := `
-		INSERT INTO integration.sync_runs (id, credential_id, documento, uc, status, step, error_message, error_context, raw_response_json, started_at, finished_at, created_at)
+		INSERT INTO public.integration_sync_runs (id, credential_id, documento, uc, status, step, error_message, error_context, raw_response_json, started_at, finished_at, created_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW())
 	`
 	_, err := s.pool.Exec(ctx, query,
@@ -253,13 +253,13 @@ func (s *pgxStore) InsertSyncRun(ctx context.Context, sr *SyncRun) error {
 }
 
 func (s *pgxStore) GetSyncRunByID(ctx context.Context, id string) (*SyncRun, error) {
-	query := `SELECT id, credential_id, documento, uc, status, step, error_message, error_context, raw_response_json, started_at, finished_at, created_at FROM integration.sync_runs WHERE id = $1`
+	query := `SELECT id, credential_id, documento, uc, status, step, error_message, error_context, raw_response_json, started_at, finished_at, created_at FROM public.integration_sync_runs WHERE id = $1`
 	row := s.pool.QueryRow(ctx, query, id)
 	return scanSyncRun(row)
 }
 
 func (s *pgxStore) GetLatestSyncRunByUC(ctx context.Context, uc string) (*SyncRun, error) {
-	query := `SELECT id, credential_id, documento, uc, status, step, error_message, error_context, raw_response_json, started_at, finished_at, created_at FROM integration.sync_runs WHERE uc = $1 ORDER BY created_at DESC LIMIT 1`
+	query := `SELECT id, credential_id, documento, uc, status, step, error_message, error_context, raw_response_json, started_at, finished_at, created_at FROM public.integration_sync_runs WHERE uc = $1 ORDER BY created_at DESC LIMIT 1`
 	row := s.pool.QueryRow(ctx, query, uc)
 	return scanSyncRun(row)
 }
@@ -279,7 +279,7 @@ func (s *pgxStore) EnqueueJob(ctx context.Context, jobType string, payload map[s
 	}
 
 	query := `
-		INSERT INTO integration.jobs (id, job_type, status, payload, retry_count, max_retries, created_at)
+		INSERT INTO public.integration_jobs (id, job_type, status, payload, retry_count, max_retries, created_at)
 		VALUES ($1, $2, $3, $4, $5, $6, $7)
 	`
 	_, err := s.pool.Exec(ctx, query, j.ID, j.JobType, j.Status, payloadJSON, j.RetryCount, j.MaxRetries, j.CreatedAt)
@@ -289,10 +289,10 @@ func (s *pgxStore) EnqueueJob(ctx context.Context, jobType string, payload map[s
 func (s *pgxStore) ClaimNextJob(ctx context.Context, workerID string) (*Job, error) {
 	// FOR UPDATE SKIP LOCKED: worker pool seguro sem concorrência
 	query := `
-		UPDATE integration.jobs
+		UPDATE public.integration_jobs
 		SET status = 'running', claimed_by = $1, claimed_at = NOW()
 		WHERE id = (
-			SELECT id FROM integration.jobs
+			SELECT id FROM public.integration_jobs
 			WHERE status = 'pending'
 			ORDER BY created_at ASC
 			FOR UPDATE SKIP LOCKED
@@ -307,7 +307,7 @@ func (s *pgxStore) ClaimNextJob(ctx context.Context, workerID string) (*Job, err
 func (s *pgxStore) CompleteJob(ctx context.Context, jobID uuid.UUID, result map[string]any) error {
 	resultJSON, _ := json.Marshal(result)
 	query := `
-		UPDATE integration.jobs
+		UPDATE public.integration_jobs
 		SET status = 'completed', result = $1, completed_at = NOW()
 		WHERE id = $2
 	`
@@ -317,7 +317,7 @@ func (s *pgxStore) CompleteJob(ctx context.Context, jobID uuid.UUID, result map[
 
 func (s *pgxStore) FailJob(ctx context.Context, jobID uuid.UUID, errMsg string) error {
 	query := `
-		UPDATE integration.jobs
+		UPDATE public.integration_jobs
 		SET status = 'failed', error_message = $1, retry_count = retry_count + 1
 		WHERE id = $2
 	`

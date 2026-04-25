@@ -31,9 +31,9 @@ func TestAdapterPersistAndGetInvoice(t *testing.T) {
 	pool := testPool(t)
 
 	// Cleanup
-	pool.Exec(ctx, "DELETE FROM integration.raw_invoice_items WHERE raw_invoice_id IN (SELECT id FROM integration.raw_invoices WHERE uc = 'TEST456')")
-	pool.Exec(ctx, "DELETE FROM integration.raw_invoices WHERE uc = 'TEST456'")
-	pool.Exec(ctx, "DELETE FROM integration.sync_runs WHERE uc = 'TEST456'")
+	pool.Exec(ctx, "DELETE FROM public.integration_raw_invoice_items WHERE raw_invoice_id IN (SELECT id FROM public.integration_raw_invoices WHERE uc = 'TEST456')")
+	pool.Exec(ctx, "DELETE FROM public.integration_raw_invoices WHERE uc = 'TEST456'")
+	pool.Exec(ctx, "DELETE FROM public.integration_sync_runs WHERE uc = 'TEST456'")
 
 	adapter, err := OpenIntegrationPostgres("postgresql://azi:azi@localhost:5434/azi_billing")
 	if err != nil {

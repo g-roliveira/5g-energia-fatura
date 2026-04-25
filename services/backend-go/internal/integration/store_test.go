@@ -30,12 +30,12 @@ func testPool(t *testing.T) *pgxpool.Pool {
 func cleanIntegration(t *testing.T, pool *pgxpool.Pool) {
 	ctx := context.Background()
 	_, err := pool.Exec(ctx, `
-		DELETE FROM integration.jobs WHERE 1=1;
-		DELETE FROM integration.sync_runs WHERE 1=1;
-		DELETE FROM integration.raw_invoices WHERE 1=1;
-		DELETE FROM integration.consumer_units WHERE 1=1;
-		DELETE FROM integration.sessions WHERE 1=1;
-		DELETE FROM integration.credentials WHERE 1=1;
+		DELETE FROM public.integration_jobs WHERE 1=1;
+		DELETE FROM public.integration_sync_runs WHERE 1=1;
+		DELETE FROM public.integration_raw_invoices WHERE 1=1;
+		DELETE FROM public.integration_consumer_units WHERE 1=1;
+		DELETE FROM public.integration_sessions WHERE 1=1;
+		DELETE FROM public.integration_credentials WHERE 1=1;
 	`)
 	if err != nil {
 		t.Fatalf("clean integration: %v", err)
@@ -256,7 +256,7 @@ func TestRawInvoiceNumericScan(t *testing.T) {
 	ctx := context.Background()
 	
 	// Cleanup
-	pool.Exec(ctx, "DELETE FROM integration.raw_invoices WHERE uc = 'TEST123'")
+	pool.Exec(ctx, "DELETE FROM public.integration_raw_invoices WHERE uc = 'TEST123'")
 	
 	inv := &RawInvoice{
 		UC:            "TEST123",
