@@ -351,6 +351,10 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 	}, nil
 }
 
+func (s *Server) Mux() http.Handler {
+	return s.mux
+}
+
 func (s *Server) Run() error {
 	addr := fmt.Sprintf("%s:%s", s.cfg.Host, s.cfg.Port)
 	s.logger.Info("server_start", "addr", addr, "extractor_base_url", s.cfg.ExtractorBaseURL)

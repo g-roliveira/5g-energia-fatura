@@ -112,12 +112,12 @@ func (s *pgxStore) ListCustomers(ctx context.Context, filter CustomerFilter) ([]
 }
 
 type CustomerPatch struct {
-	NomeRazao    *string
-	NomeFantasia *string
-	Email        *string
-	Telefone     *string
-	Status       *string
-	Notes  *string
+	NomeRazao    *string `json:"nome_razao,omitempty"`
+	NomeFantasia *string `json:"nome_fantasia,omitempty"`
+	Email        *string `json:"email,omitempty"`
+	Telefone     *string `json:"telefone,omitempty"`
+	Status       *string `json:"status,omitempty"`
+	Notes        *string `json:"notes,omitempty"`
 }
 
 func (s *pgxStore) UpdateCustomer(ctx context.Context, id uuid.UUID, patch CustomerPatch) error {

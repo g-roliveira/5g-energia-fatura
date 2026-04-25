@@ -31,7 +31,7 @@ func LoadConfigFromEnv() Config {
 			"BACKEND_INTEGRATION_PG_URL",
 			envOrDefault("INTEGRATION_PG_URL", ""),
 		),
-		EncryptionKey:      envOrDefault("BACKEND_ENCRYPTION_KEY", ""),
+		EncryptionKey:      envOrDefault("ENCRYPTION_KEY", ""),
 		BootstrapPythonBin: envOrDefault("BOOTSTRAP_PYTHON_BIN", "./.venv/bin/python"),
 		BootstrapScript:    envOrDefault("BOOTSTRAP_SCRIPT_PATH", "scripts/bootstrap_neoenergia_token.py"),
 	}

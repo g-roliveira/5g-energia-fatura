@@ -139,12 +139,17 @@ func (s *Service) CreateContract(ctx context.Context, input ContractInput) (*Con
 		return nil, fmt.Errorf("validation: %w", err)
 	}
 
+	vigenciaInicio, err := time.Parse("2006-01-02", input.VigenciaInicio)
+	if err != nil {
+		return nil, fmt.Errorf("vigencia_inicio inválida: %w", err)
+	}
+
 	now := time.Now()
 	contract := &Contract{
 		ID:                                uuid.New(),
 		CustomerID:                        input.CustomerID,
 		ConsumerUnitID:                    input.ConsumerUnitID,
-		VigenciaInicio:                    input.VigenciaInicio,
+		VigenciaInicio:                    vigenciaInicio,
 		DescontoPercentual:                input.DescontoPercentual,
 		IPFaturamentoMode:                 input.IPFaturamentoMode,
 		IPFaturamentoValor:                input.IPFaturamentoValor,
@@ -161,9 +166,9 @@ func (s *Service) CreateContract(ctx context.Context, input ContractInput) (*Con
 	}
 
 	// Fecha contrato anterior e insere novo numa transação
-	err := s.store.WithTx(ctx, func(tx pgx.Tx) error {
+	err = s.store.WithTx(ctx, func(tx pgx.Tx) error {
 		// Fechar contrato vigente
-		closeDate := input.VigenciaInicio.AddDate(0, 0, -1)
+		closeDate := vigenciaInicio.AddDate(0, 0, -1)
 		if _, err := tx.Exec(ctx, `
 			UPDATE billing.contract
 			SET vigencia_fim = $1, status = 'ended', updated_at = NOW()
@@ -210,14 +215,14 @@ func (s *Service) ListContracts(ctx context.Context, filter ContractFilter) ([]C
 // --- Input types ---
 
 type CustomerInput struct {
-	TipoPessoa   string
-	NomeRazao    string
-	NomeFantasia *string
-	CPFCNPJ      string
-	Email        *string
-	Telefone     *string
-	TipoCliente  string
-	Notes  *string
+	TipoPessoa   string  `json:"tipo_pessoa"`
+	NomeRazao    string  `json:"nome_razao"`
+	NomeFantasia *string `json:"nome_fantasia,omitempty"`
+	CPFCNPJ      string  `json:"cpf_cnpj"`
+	Email        *string `json:"email,omitempty"`
+	Telefone     *string `json:"telefone,omitempty"`
+	TipoCliente  string  `json:"tipo_cliente"`
+	Notes        *string `json:"notes,omitempty"`
 }
 
 func (i CustomerInput) Validate() error {
@@ -234,29 +239,29 @@ func (i CustomerInput) Validate() error {
 }
 
 type UnitInput struct {
-	CustomerID    uuid.UUID
-	UCCode        string
-	Distribuidora *string
-	Apelido       *string
-	ClasseConsumo *string
-	Endereco      *string
-	Cidade        *string
-	UF            *string
-	CredentialID  *string
+	CustomerID    uuid.UUID `json:"customer_id"`
+	UCCode        string    `json:"uc_code"`
+	Distribuidora *string   `json:"distribuidora,omitempty"`
+	Apelido       *string   `json:"apelido,omitempty"`
+	ClasseConsumo *string   `json:"classe_consumo,omitempty"`
+	Endereco      *string   `json:"endereco,omitempty"`
+	Cidade        *string   `json:"cidade,omitempty"`
+	UF            *string   `json:"uf,omitempty"`
+	CredentialID  *string   `json:"credential_id,omitempty"`
 }
 
 type ContractInput struct {
-	CustomerID                        uuid.UUID
-	ConsumerUnitID                    uuid.UUID
-	VigenciaInicio                    time.Time
-	DescontoPercentual                string
-	IPFaturamentoMode                 string
-	IPFaturamentoValor                string
-	IPFaturamentoPercent              string
-	BandeiraComDesconto               bool
-	CustoDisponibilidadeSempreCobrado bool
-	Notes                             *string
-	CreatedBy                         *uuid.UUID
+	CustomerID                        uuid.UUID  `json:"customer_id"`
+	ConsumerUnitID                    uuid.UUID  `json:"consumer_unit_id"`
+	VigenciaInicio                    string     `json:"vigencia_inicio"` // YYYY-MM-DD
+	DescontoPercentual                string     `json:"desconto_percentual"`
+	IPFaturamentoMode                 string     `json:"ip_faturamento_mode"`
+	IPFaturamentoValor                string     `json:"ip_faturamento_valor"`
+	IPFaturamentoPercent              string     `json:"ip_faturamento_percent"`
+	BandeiraComDesconto               bool       `json:"bandeira_com_desconto"`
+	CustoDisponibilidadeSempreCobrado bool       `json:"custo_disponibilidade_sempre_cobrado"`
+	Notes                             *string    `json:"notes,omitempty"`
+	CreatedBy                         *uuid.UUID `json:"created_by,omitempty"`
 }
 
 func (i ContractInput) Validate() error {
@@ -269,7 +274,7 @@ func (i ContractInput) Validate() error {
 	if i.IPFaturamentoMode != "fixed" && i.IPFaturamentoMode != "percent" {
 		return fmt.Errorf("ip_faturamento_mode must be fixed or percent")
 	}
-	if i.VigenciaInicio.IsZero() {
+	if i.VigenciaInicio == "" {
 		return fmt.Errorf("vigencia_inicio is required")
 	}
 	return nil

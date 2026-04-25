@@ -65,6 +65,7 @@ func RegisterHandlers(mux *http.ServeMux, svc *Service, logger *slog.Logger) {
 			return
 		}
 
+		// /v1/catalog/units/{id}
 		if len(parts) == 4 {
 			id, err := uuid.Parse(parts[3])
 			if err != nil {
@@ -77,9 +78,19 @@ func RegisterHandlers(mux *http.ServeMux, svc *Service, logger *slog.Logger) {
 			}
 		}
 
+		// /v1/catalog/units/{id}/link
 		if len(parts) == 5 && parts[4] == "link" {
 			if r.Method == http.MethodPost {
 				handleLinkUnit(w, r, svc, logger, parts[3])
+				return
+			}
+		}
+
+		// /v1/catalog/units/{ucCode}/active-contract
+		if len(parts) == 5 && parts[4] == "active-contract" {
+			if r.Method == http.MethodGet {
+				ucCode := parts[3]
+				handleGetActiveContract(w, r, svc, logger, ucCode)
 				return
 			}
 		}
@@ -112,21 +123,6 @@ func RegisterHandlers(mux *http.ServeMux, svc *Service, logger *slog.Logger) {
 			return
 		}
 		handleGetContract(w, r, svc, logger, id)
-	})
-
-	mux.HandleFunc("/v1/catalog/units/", func(w http.ResponseWriter, r *http.Request) {
-		parts := splitPath(r.URL.Path)
-		// /v1/catalog/units/{ucCode}/active-contract
-		if len(parts) != 5 || parts[0] != "v1" || parts[1] != "catalog" || parts[2] != "units" || parts[4] != "active-contract" {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-		if r.Method != http.MethodGet {
-			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
-		}
-		ucCode := parts[3]
-		handleGetActiveContract(w, r, svc, logger, ucCode)
 	})
 }
 
