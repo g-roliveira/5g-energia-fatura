@@ -249,3 +249,32 @@ func TestJobQueue(t *testing.T) {
 }
 
 func strPtr(s string) *string { return &s }
+
+func TestRawInvoiceNumericScan(t *testing.T) {
+	pool := testPool(t)
+	store := NewStore(pool)
+	ctx := context.Background()
+	
+	// Cleanup
+	pool.Exec(ctx, "DELETE FROM integration.raw_invoices WHERE uc = 'TEST123'")
+	
+	inv := &RawInvoice{
+		UC:            "TEST123",
+		NumeroFatura:  "999",
+		MesReferencia: "04/2026",
+		StatusFatura:  strPtr("A Vencer"),
+		ValorTotal:    strPtr("521.53"),
+	}
+	_, err := store.UpsertRawInvoice(ctx, inv)
+	if err != nil {
+		t.Fatalf("upsert: %v", err)
+	}
+	
+	got, err := store.GetRawInvoiceByID(ctx, inv.ID)
+	if err != nil {
+		t.Fatalf("get: %v", err)
+	}
+	if got.ValorTotal == nil || *got.ValorTotal != "521.53" {
+		t.Fatalf("valor_total = %v, want 521.53", got.ValorTotal)
+	}
+}

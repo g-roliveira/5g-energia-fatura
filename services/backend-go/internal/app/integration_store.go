@@ -12,18 +12,20 @@ func openIntegrationStore(cfg Config) (store.IntegrationStore, error) {
 	if dsn == "" {
 		dsn = strings.TrimSpace(cfg.DatabaseURL)
 	}
-
-	if strings.HasPrefix(dsn, "postgres://") || strings.HasPrefix(dsn, "postgresql://") {
-		pg, err := store.OpenIntegrationPostgres(dsn)
-		if err != nil {
-			return nil, fmt.Errorf("open integration postgres store: %w", err)
-		}
-		return pg, nil
+	if dsn == "" {
+		dsn = strings.TrimSpace(cfg.BackofficePGURL)
 	}
 
-	sqlite, err := store.OpenSQLite(dsn)
+	if dsn == "" {
+		return nil, fmt.Errorf("DATABASE_URL, INTEGRATION_PG_URL ou BACKOFFICE_PG_URL deve estar configurado")
+	}
+	if !strings.HasPrefix(dsn, "postgres://") && !strings.HasPrefix(dsn, "postgresql://") {
+		return nil, fmt.Errorf("integration store DSN deve ser PostgreSQL (got: %s)", dsn)
+	}
+
+	pg, err := store.OpenIntegrationPostgres(dsn)
 	if err != nil {
-		return nil, fmt.Errorf("open sqlite store: %w", err)
+		return nil, fmt.Errorf("open integration postgres store: %w", err)
 	}
-	return sqlite, nil
+	return pg, nil
 }

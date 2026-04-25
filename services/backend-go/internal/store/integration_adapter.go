@@ -363,8 +363,8 @@ func (a *IntegrationPostgresAdapter) PersistSyncResult(in PersistSyncInput) (Per
 			updated_at = EXCLUDED.updated_at
 	`, invoiceID, firstNonEmpty(in.Fatura.UC, in.UC), in.Fatura.NumeroFatura, in.Fatura.MesReferencia,
 		in.Fatura.StatusFatura, in.Fatura.ValorEmissao, codigoBarras,
-		in.Fatura.DataEmissao, in.Fatura.DataVencimento, emptyDateAsBlank(in.Fatura.DataPagamento),
-		in.Fatura.DataInicioPeriodo, in.Fatura.DataFimPeriodo,
+		nullableString(in.Fatura.DataEmissao), nullableString(in.Fatura.DataVencimento), nullableString(emptyDateAsBlank(in.Fatura.DataPagamento)),
+		nullableString(in.Fatura.DataInicioPeriodo), nullableString(in.Fatura.DataFimPeriodo),
 		asString(completeness["status"]), missingArr,
 		billing, in.DocumentRecord, now)
 	if err != nil {

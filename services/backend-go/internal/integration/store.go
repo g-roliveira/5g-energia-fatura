@@ -8,6 +8,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 // --- Credentials ---
@@ -348,16 +349,27 @@ func scanRawInvoice(row pgx.Row) (*RawInvoice, error) {
 	var idStr string
 	var billingJSON, documentJSON []byte
 	var missingArr []string
+	var statusFatura, valorTotal, codigoBarras, completenessStatus pgtype.Text
+	var dataEmissao, dataVencimento, dataPagamento, dataInicio, dataFim pgtype.Date
 
-	err := row.Scan(&idStr, &inv.UC, &inv.NumeroFatura, &inv.MesReferencia, &inv.StatusFatura,
-		&inv.ValorTotal, &inv.CodigoBarras, &inv.DataEmissao, &inv.DataVencimento,
-		&inv.DataPagamento, &inv.DataInicioPeriodo, &inv.DataFimPeriodo,
-		&inv.CompletenessStatus, &missingArr, &billingJSON, &documentJSON,
+	err := row.Scan(&idStr, &inv.UC, &inv.NumeroFatura, &inv.MesReferencia, &statusFatura,
+		&valorTotal, &codigoBarras, &dataEmissao, &dataVencimento,
+		&dataPagamento, &dataInicio, &dataFim,
+		&completenessStatus, &missingArr, &billingJSON, &documentJSON,
 		&inv.PDFBytes, &inv.CreatedAt, &inv.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}
 	inv.ID, _ = uuid.Parse(idStr)
+	inv.StatusFatura = pgTextPtr(statusFatura)
+	inv.ValorTotal = pgTextPtr(valorTotal)
+	inv.CodigoBarras = pgTextPtr(codigoBarras)
+	inv.DataEmissao = pgDatePtr(dataEmissao)
+	inv.DataVencimento = pgDatePtr(dataVencimento)
+	inv.DataPagamento = pgDatePtr(dataPagamento)
+	inv.DataInicioPeriodo = pgDatePtr(dataInicio)
+	inv.DataFimPeriodo = pgDatePtr(dataFim)
+	inv.CompletenessStatus = pgTextPtr(completenessStatus)
 	inv.CompletenessMissing = missingArr
 	if len(billingJSON) > 0 {
 		json.Unmarshal(billingJSON, &inv.BillingRecordJSON)
@@ -366,6 +378,22 @@ func scanRawInvoice(row pgx.Row) (*RawInvoice, error) {
 		json.Unmarshal(documentJSON, &inv.DocumentRecordJSON)
 	}
 	return &inv, nil
+}
+
+func pgTextPtr(t pgtype.Text) *string {
+	if !t.Valid {
+		return nil
+	}
+	s := t.String
+	return &s
+}
+
+func pgDatePtr(d pgtype.Date) *string {
+	if !d.Valid {
+		return nil
+	}
+	s := d.Time.Format("2006-01-02")
+	return &s
 }
 
 func scanSyncRun(row pgx.Row) (*SyncRun, error) {

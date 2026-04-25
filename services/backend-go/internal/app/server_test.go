@@ -14,13 +14,20 @@ import (
 	"testing"
 )
 
+func testDatabaseURL() string {
+	if u := os.Getenv("TEST_DATABASE_URL"); u != "" {
+		return u
+	}
+	return "postgresql://azi:azi@localhost:5434/azi_billing"
+}
+
 func TestDocsEndpoints(t *testing.T) {
 	cfg := Config{
 		Host:               "127.0.0.1",
 		Port:               "8080",
 		ExtractorBaseURL:   "http://127.0.0.1:8090",
 		NeoenergiaBaseURL:  "http://127.0.0.1:9999",
-		DatabaseURL:        "file::memory:?cache=shared",
+		DatabaseURL:        testDatabaseURL(),
 		EncryptionKey:      "test-secret",
 		BootstrapPythonBin: "/bin/false",
 		BootstrapScript:    "scripts/bootstrap_neoenergia_token.py",
@@ -79,7 +86,7 @@ func TestAPIKeyProtectionOnV1Endpoints(t *testing.T) {
 		APIKey:             "top-secret-key",
 		ExtractorBaseURL:   "http://127.0.0.1:8090",
 		NeoenergiaBaseURL:  "http://127.0.0.1:9999",
-		DatabaseURL:        "file::memory:?cache=shared",
+		DatabaseURL:        testDatabaseURL(),
 		EncryptionKey:      "test-secret",
 		BootstrapPythonBin: "/bin/false",
 		BootstrapScript:    "scripts/bootstrap_neoenergia_token.py",
@@ -168,7 +175,7 @@ func TestSyncUCEndpoint(t *testing.T) {
 		Port:               "8080",
 		ExtractorBaseURL:   "http://127.0.0.1:8090",
 		NeoenergiaBaseURL:  neoServer.URL,
-		DatabaseURL:        "file::memory:?cache=shared",
+		DatabaseURL:        testDatabaseURL(),
 		EncryptionKey:      "test-secret",
 		BootstrapPythonBin: "/bin/false",
 		BootstrapScript:    "scripts/bootstrap_neoenergia_token.py",
@@ -239,7 +246,7 @@ func TestCredentialAndSessionEndpointsDoNotExposeSecrets(t *testing.T) {
 		Port:               "8080",
 		ExtractorBaseURL:   "http://127.0.0.1:8090",
 		NeoenergiaBaseURL:  "http://127.0.0.1:9999",
-		DatabaseURL:        "file::memory:?cache=shared",
+		DatabaseURL:        testDatabaseURL(),
 		EncryptionKey:      "test-secret",
 		BootstrapPythonBin: pythonBin,
 		BootstrapScript:    scriptPath,
@@ -300,7 +307,7 @@ func TestCredentialActionRoutingStatusCodes(t *testing.T) {
 		Port:               "8080",
 		ExtractorBaseURL:   "http://127.0.0.1:8090",
 		NeoenergiaBaseURL:  "http://127.0.0.1:9999",
-		DatabaseURL:        "file::memory:?cache=shared",
+		DatabaseURL:        testDatabaseURL(),
 		EncryptionKey:      "test-secret",
 		BootstrapPythonBin: "/bin/false",
 		BootstrapScript:    "scripts/bootstrap_neoenergia_token.py",
@@ -370,7 +377,7 @@ func TestDiscoverEndpointSanitizesPartialUpstreamErrors(t *testing.T) {
 		Port:               "8080",
 		ExtractorBaseURL:   "http://127.0.0.1:8090",
 		NeoenergiaBaseURL:  neoServer.URL,
-		DatabaseURL:        "file::memory:?cache=shared",
+		DatabaseURL:        testDatabaseURL(),
 		EncryptionKey:      "test-secret",
 		BootstrapPythonBin: pythonBin,
 		BootstrapScript:    scriptPath,
@@ -516,7 +523,7 @@ func TestSyncUCEndpointWithExtraction(t *testing.T) {
 		Port:               "8080",
 		ExtractorBaseURL:   extractorServer.URL,
 		NeoenergiaBaseURL:  neoServer.URL,
-		DatabaseURL:        "file::memory:?cache=shared",
+		DatabaseURL:        testDatabaseURL(),
 		EncryptionKey:      "test-secret",
 		BootstrapPythonBin: "/bin/false",
 		BootstrapScript:    "scripts/bootstrap_neoenergia_token.py",
