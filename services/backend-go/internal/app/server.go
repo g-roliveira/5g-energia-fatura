@@ -11,6 +11,7 @@ import (
 
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/catalog"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/extractor"
+	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/integration"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/neoenergia"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/pgstore"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/security"
@@ -341,6 +342,13 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 
 		RegisterBillingRoutes(mux, docs, NewBillingDeps(pool), logger)
 		logger.Info("billing_module_enabled", "routes", "/v1/billing/*")
+
+		// Integration module (new domain)
+		integrationStore := integration.NewStore(pool)
+		integrationSvc := integration.NewService(integrationStore)
+		integrationHandler := integration.NewHandler(integrationSvc, logger)
+		integrationHandler.RegisterRoutes(mux)
+		logger.Info("integration_module_enabled", "routes", "/v1/integration/*")
 	}
 
 	rootHandler := withRequestLogging(logger, withOptionalAPIKeyAuth(cfg.APIKey, mux))

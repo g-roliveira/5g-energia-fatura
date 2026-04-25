@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -14,7 +15,6 @@ import (
 
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/app"
 	"github.com/jackc/pgx/v5/pgxpool"
-	"log/slog"
 )
 
 var testDBURL = func() string {
@@ -29,6 +29,7 @@ type TestSuite struct {
 	Server *httptest.Server
 	Pool   *pgxpool.Pool
 	Client *http.Client
+	Logger *slog.Logger
 }
 
 // NewTestSuite cria um servidor HTTP de teste com banco real.
@@ -72,6 +73,7 @@ func NewTestSuite(t *testing.T) *TestSuite {
 		Server: ts,
 		Pool:   pool,
 		Client: &http.Client{Timeout: 5 * time.Second},
+		Logger: logger,
 	}
 }
 
@@ -98,6 +100,13 @@ func cleanAll(t *testing.T, pool *pgxpool.Pool) {
 		DELETE FROM public.address WHERE 1=1;
 		DELETE FROM public.consumer_unit WHERE 1=1;
 		DELETE FROM public.customer WHERE 1=1;
+		DELETE FROM public.integration_raw_invoice_items WHERE 1=1;
+		DELETE FROM public.integration_raw_invoices WHERE 1=1;
+		DELETE FROM public.integration_sync_runs WHERE 1=1;
+		DELETE FROM public.integration_consumer_units WHERE 1=1;
+		DELETE FROM public.integration_sessions WHERE 1=1;
+		DELETE FROM public.integration_credentials WHERE 1=1;
+		DELETE FROM public.integration_jobs WHERE 1=1;
 	`)
 	if err != nil {
 		t.Fatalf("clean all tables: %v", err)
