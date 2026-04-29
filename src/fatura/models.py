@@ -105,6 +105,30 @@ class NotaFiscal(BaseModel):
     apresentacao_data: str | None = None
 
 
+class SceeSummary(BaseModel):
+    """Resumo SCEE/MMGD extraído do rodapé da fatura Coelba."""
+
+    excedente_kwh: Decimal | None = None
+    creditos_utilizados_kwh: Decimal | None = None
+    saldo_proximo_ciclo_kwh: Decimal | None = None
+    energia_injetada_kwh: Decimal | None = None
+    saldo_credito_kwh: Decimal | None = None
+    texto_original: str = ""
+    confianca: float = 1.0
+
+    @field_validator(
+        "excedente_kwh",
+        "creditos_utilizados_kwh",
+        "saldo_proximo_ciclo_kwh",
+        "energia_injetada_kwh",
+        "saldo_credito_kwh",
+        mode="before",
+    )
+    @classmethod
+    def parse_kwh(cls, v: str | Decimal | None) -> Decimal | None:
+        return normalizar_decimal_br(v)
+
+
 class ContaDistribuidora(BaseModel):
     """Fatura completa da distribuidora parseada."""
 
@@ -125,6 +149,7 @@ class ContaDistribuidora(BaseModel):
     historico_energia: list[HistoricoConsumo] = []
     composicao: ComposicaoFornecimento | None = None
     itens_fatura: list[ItemFatura] = []
+    scee_summary: SceeSummary | None = None
     pdf_path: str | None = None
     parsed_at: datetime | None = None
 
@@ -208,6 +233,13 @@ def conta_para_ocr_payload(conta: ContaDistribuidora) -> dict:
             "normalizado_perdas": float(composicao.perdas) if composicao else None,
         },
         "informacoes_gerais": conta.informacoes_gerais or "",
+        "scee_summary": {
+            "excedente_kwh": formatar_decimal_br(conta.scee_summary.excedente_kwh) if conta.scee_summary else "",
+            "creditados_utilizados_kwh": formatar_decimal_br(conta.scee_summary.creditos_utilizados_kwh) if conta.scee_summary else "",
+            "saldo_proximo_ciclo_kwh": formatar_decimal_br(conta.scee_summary.saldo_proximo_ciclo_kwh) if conta.scee_summary else "",
+            "energia_injetada_kwh": formatar_decimal_br(conta.scee_summary.energia_injetada_kwh) if conta.scee_summary else "",
+            "saldo_credito_kwh": formatar_decimal_br(conta.scee_summary.saldo_credito_kwh) if conta.scee_summary else "",
+        },
         "itens_fatura": [
             {
                 "codigo": item.codigo or "",

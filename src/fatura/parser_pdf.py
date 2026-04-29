@@ -12,6 +12,7 @@ from __future__ import annotations
 import hashlib
 import re
 import time
+import unicodedata
 from dataclasses import dataclass
 from datetime import date, datetime
 from decimal import Decimal
@@ -32,6 +33,7 @@ from fatura.models import (
     HistoricoConsumo,
     ItemFatura,
     NotaFiscal,
+    SceeSummary,
     normalizar_decimal_br,
 )
 
@@ -171,6 +173,7 @@ class CoelbaPdfParser:
         informacoes_gerais = self._extrair_informacoes_gerais(full_text)
         codigo_barras = self._extrair_codigo_barras(full_text)
         composicao = self._extrair_composicao(full_text)
+        scee_summary = self._extrair_scee_summary(full_text)
 
         valor = total_itens or header.get("valor_a_pagar") or Decimal("0")
         return ContaDistribuidora(
@@ -191,6 +194,7 @@ class CoelbaPdfParser:
             historico_energia=historico,
             composicao=composicao,
             itens_fatura=itens,
+            scee_summary=scee_summary,
             pdf_path=str(pdf_path),
             parsed_at=datetime.now(),
         )
@@ -220,6 +224,20 @@ class CoelbaPdfParser:
         # Usa normalizado_valor (float) como valor principal, depois tenta string
         valor = ocr_payload.get("normalizado_valor") or ocr_payload.get("valor") or "0"
 
+        scee_summary = None
+        if any([
+            ocr_payload.get("scee_excedente_kwh"),
+            ocr_payload.get("scee_creditos_utilizados_kwh"),
+            ocr_payload.get("scee_saldo_proximo_ciclo_kwh"),
+            ocr_payload.get("scee_energia_injetada_kwh"),
+        ]):
+            scee_summary = SceeSummary(
+                excedente_kwh=ocr_payload.get("scee_excedente_kwh"),
+                creditos_utilizados_kwh=ocr_payload.get("scee_creditos_utilizados_kwh"),
+                saldo_proximo_ciclo_kwh=ocr_payload.get("scee_saldo_proximo_ciclo_kwh"),
+                energia_injetada_kwh=ocr_payload.get("scee_energia_injetada_kwh"),
+            )
+
         conta = ContaDistribuidora(
             uc=uc,
             mes=ocr_payload.get("mes") or 0,
@@ -232,6 +250,7 @@ class CoelbaPdfParser:
             consumo=ocr_payload.get("consumo"),
             informacoes_gerais=ocr_payload.get("informacoes_gerais"),
             itens_fatura=ocr_payload.get("itens_fatura", []),
+            scee_summary=scee_summary,
             pdf_path=str(pdf_path),
             parsed_at=datetime.now(),
         )
@@ -639,7 +658,7 @@ class CoelbaPdfParser:
 
             for idx in range(header_idx + 1, len(table)):
                 flat = self._nonnone(table[idx])
-                if len(flat) >= 4 and re.search(r"Consumo|Ilum|Acrés|IPCA|Custo|UFER", flat[0], re.I):
+                if len(flat) >= 4 and re.search(r"Consumo|Ilum|Ilumin|Acrés|BANDEIRA|Injetada|Injeção|SCEE|MMGD|Compens|Reativ|Demanda|UFER|IPCA|Custo", flat[0], re.I):
                     return self._parsear_itens_row(flat)
         return []
 
@@ -761,6 +780,75 @@ class CoelbaPdfParser:
                 if normalized is not None:
                     extracted[field_name] = normalized
         return ComposicaoFornecimento(**extracted) if extracted else None
+
+    def _extrair_scee_summary(self, full_text: str) -> SceeSummary | None:
+        """Extrai resumo SCEE/MMGD do texto do rodapé da fatura."""
+        if not full_text:
+            return None
+
+        # Normalize text: uppercase, remove accents
+        text = full_text.upper()
+        text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode()
+
+        # Quick check: any SCEE/MMGD indicators present?
+        if "SCEE" not in text and "MMGD" not in text and "EXCEDENTE" not in text and "INJETADA" not in text:
+            return None
+
+        at_least_one = False
+        excedente = None
+        creditos = None
+        saldo = None
+        injetada = None
+        saldo_credito = None
+
+        # Helper: extract kWh value after keyword, returning Decimal or None
+        def _extract_kwh(pattern: str) -> Decimal | None:
+            m = re.search(pattern, text)
+            if m:
+                return normalizar_decimal_br(m.group(1))
+            return None
+
+        # Energia Injetada (KWH) / Energia Injetada SCEE
+        v = _extract_kwh(r"(?:ENERGIA\s+)?INJETADA\s+(?:SCEE\s+)?(?:\(?KWH\)?)?\s*[:\-\s]*\s*([\d.]+(?:,[\d]+)?)")
+        if v is not None:
+            injetada = v
+            at_least_one = True
+
+        # SCEE Excedente / Excedente
+        v = _extract_kwh(r"(?:SCEE\s+)?EXCEDENTE\s+(?:\(?KWH\)?)?\s*[:\-\s]*\s*([\d.]+(?:,[\d]+)?)")
+        if v is not None:
+            excedente = v
+            at_least_one = True
+
+        # Créditos Utilizados
+        v = _extract_kwh(r"CREDITO(?:S)?\s+UTILIZADO(?:S)?\s+(?:\(?KWH\)?)?\s*[:\-\s]*\s*([\d.]+(?:,[\d]+)?)")
+        if v is not None:
+            creditos = v
+            at_least_one = True
+
+        # Saldo Próximo Ciclo
+        v = _extract_kwh(r"SALDO\s+(?:DO\s+)?PROXIMO\s+CICLO\s+(?:\(?KWH\)?)?\s*[:\-\s]*\s*([\d.]+(?:,[\d]+)?)")
+        if v is not None:
+            saldo = v
+            at_least_one = True
+
+        # Saldo de Crédito / Saldo Total de Crédito
+        v = _extract_kwh(r"SALDO\s+(?:TOTAL\s+)?(?:DE\s+)?CREDITO\s+(?:\(?KWH\)?)?\s*[:\-\s]*\s*([\d.]+(?:,[\d]+)?)")
+        if v is not None:
+            saldo_credito = v
+            at_least_one = True
+
+        if not at_least_one:
+            return None
+
+        return SceeSummary(
+            excedente_kwh=excedente,
+            creditos_utilizados_kwh=creditos,
+            saldo_proximo_ciclo_kwh=saldo,
+            energia_injetada_kwh=injetada,
+            saldo_credito_kwh=saldo_credito,
+            texto_original="",
+        )
 
     @staticmethod
     def _nonnone(row: list) -> list[str]:
