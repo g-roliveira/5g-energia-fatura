@@ -187,7 +187,7 @@ func generateInvoicePDF(data *InvoicePDFData) ([]byte, error) {
 	colComDesc := 29.0
 
 	// Table header
-	headers := []string{"Item", "Qtd", "Tarifa (R$)", "Sem Desc. (R$)", "Com Desc. (R$)"}
+	headers := []string{"Item", "Qtd", "Tarifa (R$)", "Valor Ref. (R$)", "Repasse 5G (R$)"}
 	colWidths := []float64{colItem, colQtd, colTarifa, colSemDesc, colComDesc}
 
 	for i, h := range headers {
@@ -278,10 +278,10 @@ func generateInvoicePDF(data *InvoicePDFData) ([]byte, error) {
 	pdf.SetXY(lm+3, economyY+10)
 	pdf.SetFont("Helvetica", "", 9)
 	pdf.SetTextColor(40, 40, 40)
-	pdf.CellFormat(80, 6, "Total sem desconto:         R$ "+data.TotalSemDesconto, "", 1, "L", false, 0, "")
+	pdf.CellFormat(80, 6, "Valor de Referencia:         R$ "+data.TotalSemDesconto, "", 1, "L", false, 0, "")
 
 	pdf.SetXY(lm+3, economyY+16)
-	pdf.CellFormat(80, 6, "Total com desconto (5G):    R$ "+data.TotalComDesconto, "", 1, "L", false, 0, "")
+	pdf.CellFormat(80, 6, "Repasse 5G:    R$ "+data.TotalComDesconto, "", 1, "L", false, 0, "")
 
 	pdf.SetXY(lm+3, economyY+22)
 	pdf.SetFont("Helvetica", "B", 10)
