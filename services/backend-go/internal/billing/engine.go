@@ -1,150 +1,175 @@
 package billing
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/shopspring/decimal"
 )
 
 // Calculate é o motor determinístico de cálculo de faturamento de energia
-// compartilhada. Dada uma entrada canônica (contrato + itens normalizados),
-// produz um resultado em duas vertentes: "sem desconto" e "com desconto".
+// compartilhada no modelo de negócio 5G.
 //
-// Algoritmo:
+// Dada uma entrada canônica (contrato + itens normalizados da fatura Coelba),
+// produz um resultado em duas vertentes: "Sem Desconto" e "Com Desconto".
+// A diferença entre elas é a economia gerada para o cliente.
 //
-//  1. Coleta os itens por Type. TUSD fio + TUSD energia + energia injetada
-//     são tratados como preços unitários (R$/kWh). Bandeira e IP Coelba
-//     são valores fixos já em R$.
+// Algoritmo (modelo 5G):
 //
-//  2. Consumo líquido = Qtd(TUSD) - Qtd(EnergiaInjetada).
-//     Se negativo ou menor que ConsumoMinimoKWh (e
-//     CustoDisponibilidadeSempreCobrado=true), usa ConsumoMinimoKWh.
+//  1. Classifica os itens da fatura por Tipo.
+//     TUSD Fio + TUSD Energia formam o "Custo de Disponibilidade".
+//     Energia Injetada é tratada separadamente (kWh × tarifa).
+//     Bandeira e IP Coelba são valores fixos em R$.
 //
-//  3. Subtotal "sem desconto" = consumo_liquido * (tusd_fio + tusd_te).
-//     Subtotal "com desconto" = subtotal_sem_desconto * DescontoPct.
+//  2. Custo de Disponibilidade (TUSD) — IGUAL nos dois cenários:
+//     tusdFio.Qtde × tusdFio.Preco + tusdEnergia.Qtde × tusdEnergia.Preco
+//     NOTA: diferente do modelo anterior, NÃO há "consumo líquido".
+//     O TUSD da fatura Coelba é usado como está.
 //
-//  4. Bandeira: sempre somada em "sem desconto". Em "com desconto" só
-//     sofre desconto se BandeiraComDesconto=true.
+//  3. Energia Injetada:
+//     Sem desconto: valor cheio (kWh_injetados × tarifa_injeção)
+//     Com desconto: valor cheio × FatorRepasseEnergia (ex: 0,85 = 85%)
 //
-//  5. IP Coelba: sempre somada. Nunca tem desconto.
+//  4. Bandeira tarifária:
+//     Se BandeiraComDesconto=true: aplica FatorRepasseEnergia
+//     Se false: valor cheio (passthrough) — igual nos dois cenários
 //
-//  6. IP da Usina: não aparece na fatura Coelba. Adicionada apenas no
-//     lado "com desconto" conforme IPFaturamentoMode.
+//  5. Iluminação Pública (IP):
+//     Sem desconto: valor cheio da fatura Coelba
+//     Com desconto: valor contratual (ValorIPComDesconto)
 //
-//  7. Arredondamento: decimal.Decimal, sem perda. Arredondamento final
-//     é responsabilidade do caller (geralmente 2 casas no storage).
-func Calculate(in CalculationInput) (CalculationResult, error) {
-	if err := validate(in); err != nil {
-		return CalculationResult{}, err
+//  6. Economia = TotalSemDesconto - TotalComDesconto
+func Calculate(input CalcInput) (*CalcResult, error) {
+	if err := validate(input); err != nil {
+		return nil, err
 	}
 
-	tusdFio, tusdEnergia, injetada, bandeiras, ipCoelba := collectItems(in.Itens)
+	// 1. Classify items
+	tusdFio, tusdEnergia, injetada, ipCoelba, bandeiras := classifyItems(input.Itens)
 
 	if tusdFio == nil || tusdEnergia == nil {
-		return CalculationResult{}, errors.New("calc: TUSD fio e TUSD energia são obrigatórios")
+		return nil, fmt.Errorf("engine: TUSD fio e TUSD energia são obrigatórios")
 	}
 
-	// 2. Consumo líquido
-	consumoLiquido := tusdFio.Quantidade
+	// 2. Custo de disponibilidade (TUSD) — IGUAL nos dois cenários
+	custoDisponibilidade := tusdFio.Quantidade.Mul(tusdFio.PrecoUnitario).
+		Add(tusdEnergia.Quantidade.Mul(tusdEnergia.PrecoUnitario))
+
+	// 3. Valor da energia injetada
+	var valorEnergiaInjetada decimal.Decimal
+	var injQty, injPreco decimal.Decimal
 	if injetada != nil {
-		consumoLiquido = consumoLiquido.Sub(injetada.Quantidade)
+		valorEnergiaInjetada = injetada.Quantidade.Mul(injetada.PrecoUnitario)
+		injQty = injetada.Quantidade
+		injPreco = injetada.PrecoUnitario
 	}
 
-	warnings := []string{}
-	minKWh := decimal.NewFromFloat(in.ConsumoMinimoKWh)
-	if in.Contract.CustoDisponibilidadeSempreCobrado && consumoLiquido.LessThan(minKWh) {
-		warnings = append(warnings,
-			fmt.Sprintf("consumo líquido %s kWh menor que mínimo %s kWh — aplicado mínimo",
-				consumoLiquido.String(), minKWh.String()))
-		consumoLiquido = minKWh
-	}
-	if consumoLiquido.IsNegative() {
-		consumoLiquido = decimal.Zero
+	// 4. Bandeira (passthrough ou com fator)
+	totalBandeira := decimal.Zero
+	for _, b := range bandeiras {
+		totalBandeira = totalBandeira.Add(b.ValorTotal)
 	}
 
-	// 3. Subtotais de energia
-	precoUnitarioTotal := tusdFio.PrecoUnitario.Add(tusdEnergia.PrecoUnitario)
-	subtotalEnergiaSem := consumoLiquido.Mul(precoUnitarioTotal)
-	subtotalEnergiaCom := subtotalEnergiaSem.Mul(in.Contract.DescontoPct)
+	// 5. Iluminação pública
+	var ipSemDesconto decimal.Decimal
+	if ipCoelba != nil {
+		ipSemDesconto = ipCoelba.ValorTotal
+	}
+	ipComDesconto := input.Contract.ValorIPComDesconto
 
+	// 6. Totais — Sem Desconto
+	totalSemDesconto := custoDisponibilidade.
+		Add(valorEnergiaInjetada).
+		Add(totalBandeira).
+		Add(ipSemDesconto)
+
+	// 7. Totais — Com Desconto
+	valorComDesconto := valorEnergiaInjetada.Mul(input.Contract.FatorRepasseEnergia)
+
+	bandeiraComDesconto := totalBandeira
+	if input.Contract.BandeiraComDesconto {
+		bandeiraComDesconto = totalBandeira.Mul(input.Contract.FatorRepasseEnergia)
+	}
+
+	totalComDesconto := custoDisponibilidade.
+		Add(valorComDesconto).
+		Add(bandeiraComDesconto).
+		Add(ipComDesconto)
+
+	// 8. Economia
+	economia := totalSemDesconto.Sub(totalComDesconto)
+	economiaPct := decimal.Zero
+	if !totalSemDesconto.IsZero() {
+		economiaPct = economia.Div(totalSemDesconto)
+	}
+
+	// 9. Line breakdown
 	linhas := []LineBreakdown{
 		{
-			Label:         fmt.Sprintf("Energia (TUSD+TE) — %s kWh", consumoLiquido.String()),
-			Quantidade:    consumoLiquido,
-			PrecoUnitario: precoUnitarioTotal,
-			ValorSemDesc:  subtotalEnergiaSem,
-			ValorComDesc:  subtotalEnergiaCom,
+			Label: "Custo de Disponibilidade (TUSD)",
+			Quantidade: func() decimal.Decimal {
+				if tusdFio.Quantidade.Equal(tusdEnergia.Quantidade) {
+					return tusdFio.Quantidade
+				}
+				return decimal.Zero
+			}(),
+			PrecoUnitario: func() decimal.Decimal {
+				if tusdFio.Quantidade.Equal(tusdEnergia.Quantidade) {
+					return tusdFio.PrecoUnitario.Add(tusdEnergia.PrecoUnitario)
+				}
+				return decimal.Zero
+			}(),
+			ValorSemDesc: custoDisponibilidade,
+			ValorComDesc: custoDisponibilidade,
+		},
+		{
+			Label:         "Energia Injetada / Compensada",
+			Quantidade:    injQty,
+			PrecoUnitario: injPreco,
+			ValorSemDesc:  valorEnergiaInjetada,
+			ValorComDesc:  valorComDesconto,
 		},
 	}
 
-	totalSem := subtotalEnergiaSem
-	totalCom := subtotalEnergiaCom
-
-	// 4. Bandeiras
-	for _, b := range bandeiras {
-		totalSem = totalSem.Add(b.ValorTotal)
-		var valorCom decimal.Decimal
-		if in.Contract.BandeiraComDesconto {
-			valorCom = b.ValorTotal.Mul(in.Contract.DescontoPct)
-		} else {
-			valorCom = b.ValorTotal
-		}
-		totalCom = totalCom.Add(valorCom)
+	if totalBandeira.GreaterThan(decimal.Zero) {
 		linhas = append(linhas, LineBreakdown{
-			Label:        b.Description,
-			ValorSemDesc: b.ValorTotal,
-			ValorComDesc: valorCom,
+			Label:        "Bandeira Tarifária",
+			ValorSemDesc: totalBandeira,
+			ValorComDesc: bandeiraComDesconto,
 		})
 	}
 
-	// 5. IP Coelba (quando presente)
-	if !ipCoelba.IsZero() {
-		totalSem = totalSem.Add(ipCoelba)
-		totalCom = totalCom.Add(ipCoelba)
-		linhas = append(linhas, LineBreakdown{
-			Label:        "Ilum. Púb. Municipal (repasse Coelba)",
-			ValorSemDesc: ipCoelba,
-			ValorComDesc: ipCoelba,
-		})
+	linhas = append(linhas, LineBreakdown{
+		Label:        "Iluminação Pública",
+		ValorSemDesc: ipSemDesconto,
+		ValorComDesc: ipComDesconto,
+	})
+
+	// 10. Warnings
+	warnings := []string{}
+	if injetada == nil || valorEnergiaInjetada.IsZero() {
+		warnings = append(warnings, "Nenhuma energia injetada encontrada — verifique se a UC tem geração no período")
 	}
 
-	// 6. IP da Usina (só no lado "com desconto")
-	ipUsina := computeIPUsina(in.Contract, subtotalEnergiaCom)
-	if !ipUsina.IsZero() {
-		totalCom = totalCom.Add(ipUsina)
-		linhas = append(linhas, LineBreakdown{
-			Label:        "IP Usina (faturamento da usina)",
-			ValorSemDesc: decimal.Zero,
-			ValorComDesc: ipUsina,
-		})
-	}
-
-	// 7. Economia
-	economiaRS := totalSem.Sub(totalCom)
-	economiaPct := decimal.Zero
-	if !totalSem.IsZero() {
-		economiaPct = economiaRS.Div(totalSem)
-	}
-
-	return CalculationResult{
-		TotalSemDesconto: totalSem,
-		TotalComDesconto: totalCom,
-		EconomiaRS:       economiaRS,
+	return &CalcResult{
+		TotalSemDesconto: totalSemDesconto,
+		TotalComDesconto: totalComDesconto,
+		EconomiaRS:       economia,
 		EconomiaPct:      economiaPct,
 		Linhas:           linhas,
 		Warnings:         warnings,
 	}, nil
 }
 
-func collectItems(itens []UtilityInvoiceItem) (
-	tusdFio, tusdEnergia, injetada *UtilityInvoiceItem,
+// classifyItems percorre os itens e os classifica por tipo.
+// Retorna ponteiros para os itens de TUSD Fio, TUSD Energia, Injetada e IP Coelba,
+// além de um slice com todas as bandeiras.
+func classifyItems(itens []UtilityInvoiceItem) (
+	tusdFio, tusdEnergia, injetada, ipCoelba *UtilityInvoiceItem,
 	bandeiras []UtilityInvoiceItem,
-	ipCoelba decimal.Decimal,
 ) {
 	for i := range itens {
 		item := &itens[i]
-		switch item.Type {
+		switch item.Tipo {
 		case ItemTUSDFio:
 			tusdFio = item
 		case ItemTUSDEnergia:
@@ -152,37 +177,23 @@ func collectItems(itens []UtilityInvoiceItem) (
 		case ItemEnergiaInjetada:
 			injetada = item
 		case ItemBandeira:
-			bandeiras = append(bandeiras, *item)
+			bandeiras = append(bandeiras, itens[i])
 		case ItemIPCoelba:
-			ipCoelba = item.ValorTotal
+			ipCoelba = item
 		}
 	}
 	return
 }
 
-func computeIPUsina(c CalcContract, subtotalEnergiaCom decimal.Decimal) decimal.Decimal {
-	switch c.IPFaturamentoMode {
-	case IPModeFixed:
-		return c.IPFaturamentoValor
-	case IPModePercent:
-		if c.IPFaturamentoPct.IsZero() {
-			return decimal.Zero
-		}
-		return subtotalEnergiaCom.Mul(c.IPFaturamentoPct)
-	default:
-		return decimal.Zero
+func validate(input CalcInput) error {
+	if input.Contract.FatorRepasseEnergia.IsZero() {
+		return fmt.Errorf("engine: FatorRepasseEnergia do contrato não pode ser zero (use 1.0 para repasse integral)")
 	}
-}
-
-func validate(in CalculationInput) error {
-	if in.Contract.DescontoPct.IsZero() {
-		return errors.New("calc: DescontoPct do contrato não pode ser zero (use 1.0 para 'sem desconto')")
+	if input.Contract.FatorRepasseEnergia.GreaterThan(decimal.NewFromInt(1)) {
+		return fmt.Errorf("engine: FatorRepasseEnergia deve estar entre 0 e 1 (ex: 0.85 para cobrar 85%% do valor)")
 	}
-	if in.Contract.DescontoPct.GreaterThan(decimal.NewFromInt(1)) {
-		return errors.New("calc: DescontoPct deve estar entre 0 e 1 (ex: 0.85 para 15% de desconto)")
-	}
-	if len(in.Itens) == 0 {
-		return errors.New("calc: lista de itens vazia")
+	if len(input.Itens) == 0 {
+		return fmt.Errorf("engine: lista de itens vazia")
 	}
 	return nil
 }

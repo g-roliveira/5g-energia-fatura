@@ -6,47 +6,37 @@ import "github.com/shopspring/decimal"
 type ItemType string
 
 const (
-	ItemTUSDFio          ItemType = "tusd_fio"          // Consumo-TUSD (parte fio, R$/kWh)
-	ItemTUSDEnergia      ItemType = "tusd_energia"      // Consumo-TE (parte energia, R$/kWh)
-	ItemEnergiaInjetada  ItemType = "energia_injetada"  // kWh injetados (compensação SCEE/MMGD)
-	ItemBandeira         ItemType = "bandeira"          // acréscimo de bandeira tarifária (R$)
-	ItemIPCoelba         ItemType = "ip_coelba"         // Iluminação Pública Municipal (R$)
-	ItemReativoExcedente ItemType = "reativo_excedente" // não entra no cálculo
-	ItemTributoRetido    ItemType = "tributo_retido"    // IRRF etc — não entra no cálculo
+	ItemTUSDFio          ItemType = "tusd_fio"           // Consumo-TUSD (parte fio, R$/kWh)
+	ItemTUSDEnergia      ItemType = "tusd_energia"       // Consumo-TE (parte energia, R$/kWh)
+	ItemEnergiaInjetada  ItemType = "energia_injetada"   // kWh injetados (compensação SCEE/MMGD)
+	ItemBandeira         ItemType = "bandeira"           // acréscimo de bandeira tarifária (R$)
+	ItemIPCoelba         ItemType = "iluminacao_publica" // Iluminação Pública Municipal (R$)
+	ItemReativoExcedente ItemType = "reativo_excedente"  // não entra no cálculo
+	ItemTributoRetido    ItemType = "tributo_retido"     // IRRF etc — não entra no cálculo
 )
 
 // UtilityInvoiceItem é um item normalizado da fatura da distribuidora.
 type UtilityInvoiceItem struct {
-	Type          ItemType        `json:"type"`
-	Description   string          `json:"description"`
+	Tipo          ItemType        `json:"tipo"`
+	Descricao     string          `json:"descricao"`
 	Quantidade    decimal.Decimal `json:"quantidade"`
 	PrecoUnitario decimal.Decimal `json:"preco_unitario"`
 	ValorTotal    decimal.Decimal `json:"valor_total"`
 }
 
-// IPFaturamentoMode controla como a IP da usina é aplicada.
-type IPFaturamentoMode string
-
-const (
-	IPModeFixed   IPFaturamentoMode = "fixed"
-	IPModePercent IPFaturamentoMode = "percent"
-)
-
 // CalcContract é o snapshot imutável do contrato usado no cálculo.
 type CalcContract struct {
-	DescontoPct                       decimal.Decimal   `json:"desconto_pct"`
-	IPFaturamentoMode                 IPFaturamentoMode `json:"ip_faturamento_mode"`
-	IPFaturamentoValor                decimal.Decimal   `json:"ip_faturamento_valor"`
-	IPFaturamentoPct                  decimal.Decimal   `json:"ip_faturamento_pct"`
-	BandeiraComDesconto               bool              `json:"bandeira_com_desconto"`
-	CustoDisponibilidadeSempreCobrado bool              `json:"custo_disponibilidade_sempre_cobrado"`
+	FatorRepasseEnergia               decimal.Decimal `json:"fator_repasse_energia"`
+	ValorIPComDesconto                decimal.Decimal `json:"valor_ip_com_desconto"`
+	BandeiraComDesconto               bool            `json:"bandeira_com_desconto"`
+	CustoDisponibilidadeSempreCobrado bool            `json:"custo_disponibilidade_sempre_cobrado"`
+	ConsumoMinimoKWh                  decimal.Decimal `json:"consumo_minimo_kwh"`
 }
 
-// CalculationInput é a entrada completa do motor.
-type CalculationInput struct {
-	Contract         CalcContract         `json:"contract"`
-	Itens            []UtilityInvoiceItem `json:"itens"`
-	ConsumoMinimoKWh float64              `json:"consumo_minimo_kwh"`
+// CalcInput é a entrada completa do motor.
+type CalcInput struct {
+	Contract CalcContract         `json:"contract"`
+	Itens    []UtilityInvoiceItem `json:"itens"`
 }
 
 // LineBreakdown é uma linha do detalhamento do resultado.
@@ -58,8 +48,8 @@ type LineBreakdown struct {
 	ValorComDesc  decimal.Decimal `json:"valor_com_desconto"`
 }
 
-// CalculationResult é a saída determinística do motor.
-type CalculationResult struct {
+// CalcResult é a saída determinística do motor.
+type CalcResult struct {
 	TotalSemDesconto decimal.Decimal `json:"total_sem_desconto"`
 	TotalComDesconto decimal.Decimal `json:"total_com_desconto"`
 	EconomiaRS       decimal.Decimal `json:"economia_rs"`

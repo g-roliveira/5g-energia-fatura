@@ -89,20 +89,15 @@ func handleCalculate(deps *JobDeps) SyncJobHandler {
 		}
 
 		// 4. Montar input do motor
-		input := billing.CalculationInput{
+		input := billing.CalcInput{
 			Contract: billing.CalcContract{
-				DescontoPct:                       contract.DescontoPercentual,
-				IPFaturamentoMode:                 billing.IPFaturamentoMode(contract.IPFaturamentoMode),
-				IPFaturamentoValor:                contract.IPFaturamentoValor,
-				IPFaturamentoPct:                  contract.IPFaturamentoPercent,
+				FatorRepasseEnergia:               contract.FatorRepasseEnergia,
+				ValorIPComDesconto:                contract.ValorIPComDesconto,
 				BandeiraComDesconto:               contract.BandeiraComDesconto,
 				CustoDisponibilidadeSempreCobrado: contract.CustoDisponibilidadeSempreCobrado,
+				ConsumoMinimoKWh:                  contract.ConsumoMinimoKWh,
 			},
 			Itens: items,
-			ConsumoMinimoKWh: func() float64 {
-				f, _ := contract.ConsumoMinimoKWh.Float64()
-				return f
-			}(),
 		}
 
 		// 5. Calcular
@@ -246,7 +241,7 @@ func handleGeneratePDF(deps *JobDeps) SyncJobHandler {
 		}
 
 		// 2. Parse do result_snapshot_json → CalculationResult
-		var result billing.CalculationResult
+		var result billing.CalcResult
 		if err := json.Unmarshal(calc.ResultSnapshotJSON, &result); err != nil {
 			return fmt.Errorf("unmarshal result_snapshot_json: %w", err)
 		}
@@ -560,8 +555,8 @@ func extractItemsFromSnapshot(snapshot []byte) ([]billing.UtilityInvoiceItem, er
 		}
 
 		items = append(items, billing.UtilityInvoiceItem{
-			Type:          itemType,
-			Description:   desc,
+			Tipo:          itemType,
+			Descricao:     desc,
 			Quantidade:    qtd,
 			PrecoUnitario: pu,
 			ValorTotal:    valorTotal,
@@ -583,7 +578,7 @@ func classifyItem(desc string) billing.ItemType {
 		return billing.ItemBandeira
 	case strings.Contains(d, "ILUM") || strings.Contains(d, "IP") || strings.Contains(d, "PÚBLICA"):
 		return billing.ItemIPCoelba
-	case strings.Contains(d, "INJETADA") || strings.Contains(d, "INJEÇÃO") || strings.Contains(d, "GERAÇÃO"):
+	case strings.Contains(d, "INJETADA") || strings.Contains(d, "INJEÇÃO") || strings.Contains(d, "GERAÇÃO") || strings.Contains(d, "SCEE") || strings.Contains(d, "COMPENSA"):
 		return billing.ItemEnergiaInjetada
 	case strings.Contains(d, "REATIVO"):
 		return billing.ItemReativoExcedente

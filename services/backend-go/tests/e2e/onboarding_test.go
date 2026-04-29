@@ -43,7 +43,7 @@ func TestOnboarding(t *testing.T) {
 		"customer_id":                          customerID,
 		"consumer_unit_id":                     unitID,
 		"vigencia_inicio":                      "2025-10-01",
-		"desconto_percentual":                  "0.85",
+		"fator_repasse_energia":                  "0.85",
 		"ip_faturamento_mode":                  "fixed",
 		"ip_faturamento_valor":                 "10.00",
 		"ip_faturamento_percent":               "0",
@@ -55,8 +55,8 @@ func TestOnboarding(t *testing.T) {
 	t.Logf("✓ Contrato criado: %s", contractID)
 
 	// 5. Verificar contrato
-	if contract["desconto_percentual"] != "0.85" {
-		t.Errorf("desconto = %q, want 0.85", contract["desconto_percentual"])
+	if contract["fator_repasse_energia"] != "0.85" {
+		t.Errorf("desconto = %q, want 0.85", contract["fator_repasse_energia"])
 	}
 	if contract["status"] != "active" {
 		t.Errorf("status = %q, want active", contract["status"])
@@ -67,7 +67,7 @@ func TestOnboarding(t *testing.T) {
 		"customer_id":                          customerID,
 		"consumer_unit_id":                     unitID,
 		"vigencia_inicio":                      "2026-01-01",
-		"desconto_percentual":                  "0.80",
+		"fator_repasse_energia":                  "0.80",
 		"ip_faturamento_mode":                  "fixed",
 		"ip_faturamento_valor":                 "12.00",
 		"ip_faturamento_percent":               "0",

@@ -40,7 +40,7 @@ func TestBillingCycleSyncCalculateApprove(t *testing.T) {
 		"customer_id":                          customerID,
 		"consumer_unit_id":                     ucID,
 		"vigencia_inicio":                      "2025-01-01",
-		"desconto_percentual":                  "0.85",
+		"fator_repasse_energia":                  "0.85",
 		"ip_faturamento_mode":                  "fixed",
 		"ip_faturamento_valor":                 "10.00",
 		"bandeira_com_desconto":                true,
@@ -78,6 +78,7 @@ func TestBillingCycleSyncCalculateApprove(t *testing.T) {
 		"itens_fatura": [
 			{"descricao": "Consumo-TUSD", "quantidade": "100,00", "tarifa": "0,50", "valor": "50,00", "valor_total": "50,00"},
 			{"descricao": "Consumo-TE", "quantidade": "100,00", "tarifa": "0,30", "valor": "30,00", "valor_total": "30,00"},
+			{"descricao": "Energia Injetada SCEE", "quantidade": "200,00", "tarifa": "1,00", "valor": "200,00", "valor_total": "200,00"},
 			{"descricao": "BANDEIRA AMARELA", "valor": "5,00", "valor_total": "5,00"},
 			{"descricao": "Ilum. Púb. Municipal", "valor": "8,00", "valor_total": "8,00"}
 		]

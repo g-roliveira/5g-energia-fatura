@@ -36,7 +36,7 @@ func TestBillingCycleCRUD(t *testing.T) {
 		"customer_id":          customerID,
 		"consumer_unit_id":     uc["id"].(string),
 		"vigencia_inicio":      "2025-01-01",
-		"desconto_percentual":  "0.85",
+		"fator_repasse_energia":  "0.85",
 		"ip_faturamento_mode":  "fixed",
 		"ip_faturamento_valor": "10.00",
 	})
