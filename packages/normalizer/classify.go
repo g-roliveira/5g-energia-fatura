@@ -50,10 +50,23 @@ func classify(descricao string) (classification, bool) {
 	}
 
 	// 2) Reativo excedente — ignore
-	if containsAny(n, "cons.reat", "cons reat", "reativo excedente", "reat.exc", "reat exc") {
+	if containsAny(n,
+		"cons.reat", "cons reat", "reativo excedente", "reat.exc", "reat exc",
+		"cons.real.excedente", "cons.real.exced", "cons real exc", "cons.real exc",
+		"cons.real.exc.nponta", "cons.real exc.fponta", "cons.real.exc.fponta") {
 		return classification{
 			Type: calcengine.ItemReativoExcedente, Confidence: 0.95,
 			MatchedBy: "observed:Cons.Reat.Excedente", Ignore: true,
+		}, true
+	}
+
+	// 2.1) Demandas e impostos de grupo A — fora do cálculo atual.
+	// Mantemos como ignored para auditoria enquanto o motor de grupo A
+	// não estiver implementado.
+	if containsAny(n, "demanda ativa", "demanda reativa", "imp.som/dim-c/impost", "imp som/dim-c/impost") {
+		return classification{
+			Type: calcengine.ItemTributoRetido, Confidence: 0.85,
+			MatchedBy: "observed:grupoA_demanda_ou_imposto", Ignore: true,
 		}, true
 	}
 
@@ -76,6 +89,7 @@ func classify(descricao string) (classification, bool) {
 	if containsAny(n,
 		"bandeira amarela", "bandeira vermelha",
 		"acres. band", "acresc. band", "acres band",
+		"acres, band", "acres, bend", "acresc, bend", "acres bend",
 		"bandeira tarifaria", "adicional band") {
 		return classification{
 			Type: calcengine.ItemBandeira, Confidence: 0.95,
@@ -86,7 +100,8 @@ func classify(descricao string) (classification, bool) {
 	// 5) Iluminação Pública Municipal
 	if containsAny(n,
 		"ilum. pub", "ilum pub", "iluminacao publica",
-		"cip municipal", "contrib. ilum", "contribuicao ilum") {
+		"cip municipal", "contrib. ilum", "contribuicao ilum",
+		"hum. pub", "hum pub", "itum. pub", "itum pub") {
 		return classification{
 			Type: calcengine.ItemIPCoelba, Confidence: 0.95,
 			MatchedBy: "observed:Ilum. Púb. Municipal",

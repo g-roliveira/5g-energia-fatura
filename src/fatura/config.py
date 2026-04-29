@@ -48,7 +48,7 @@ class PortalConfig(BaseModel):
 
 
 class DatabaseConfig(BaseModel):
-    url: str = "sqlite:///data/faturas.db"
+    url: str = "postgresql+psycopg://backoffice:backoffice@127.0.0.1:5432/backoffice"
 
 
 class ParserConfig(BaseModel):

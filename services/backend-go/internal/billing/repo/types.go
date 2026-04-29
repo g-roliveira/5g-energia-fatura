@@ -30,7 +30,7 @@ const (
 	ContractStatusEnded  ContractStatus = "ended"
 )
 
-// Contract is a row in billing.contract. Versioned by (vigencia_inicio,
+// Contract is a row in public.contract. Versioned by (vigencia_inicio,
 // vigencia_fim). Never UPDATE the business fields — always INSERT a new
 // row and close the previous (set vigencia_fim on the old one).
 type Contract struct {
@@ -39,12 +39,14 @@ type Contract struct {
 	ConsumerUnitID                    uuid.UUID       `db:"consumer_unit_id"`
 	VigenciaInicio                    time.Time       `db:"vigencia_inicio"`
 	VigenciaFim                       *time.Time      `db:"vigencia_fim"`
-	DescontoPercentual                decimal.Decimal `db:"desconto_percentual"`
+	FatorRepasseEnergia                decimal.Decimal `db:"fator_repasse_energia"`
+	ValorIPComDesconto                decimal.Decimal `db:"valor_ip_com_desconto"`
 	IPFaturamentoMode                 IPMode          `db:"ip_faturamento_mode"`
 	IPFaturamentoValor                decimal.Decimal `db:"ip_faturamento_valor"`
 	IPFaturamentoPercent              decimal.Decimal `db:"ip_faturamento_percent"`
 	BandeiraComDesconto               bool            `db:"bandeira_com_desconto"`
 	CustoDisponibilidadeSempreCobrado bool            `db:"custo_disponibilidade_sempre_cobrado"`
+	ConsumoMinimoKWh                  decimal.Decimal `db:"consumo_minimo_kwh"`
 	Notes                             *string         `db:"notes"`
 	Status                            ContractStatus  `db:"status"`
 	CreatedAt                         time.Time       `db:"created_at"`

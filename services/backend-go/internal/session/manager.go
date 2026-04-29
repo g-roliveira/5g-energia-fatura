@@ -11,7 +11,7 @@ import (
 )
 
 type Manager struct {
-	store     *store.SQLiteStore
+	store     store.IntegrationStore
 	cipher    *security.Cipher
 	bootstrap BootstrapRunner
 }
@@ -44,7 +44,7 @@ type ResolvedSession struct {
 	Token     string
 }
 
-func NewManager(store *store.SQLiteStore, cipher *security.Cipher, bootstrap BootstrapRunner) *Manager {
+func NewManager(store store.IntegrationStore, cipher *security.Cipher, bootstrap BootstrapRunner) *Manager {
 	return &Manager{store: store, cipher: cipher, bootstrap: bootstrap}
 }
 

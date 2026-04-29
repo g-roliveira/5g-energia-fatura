@@ -2,6 +2,8 @@
 
 import * as React from 'react'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { StatusBadge } from './status-badge'
 import type { GoSyncRun } from '@/types/clientes'
 
@@ -28,42 +30,48 @@ export function SyncRunDetail({ syncRun, onReprocess }: SyncRunDetailProps) {
 
   return (
     <div className="space-y-4">
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <StatusBadge status={syncRun.status} />
-          <span className="text-sm text-muted-foreground">{createdAt}</span>
-        </div>
-        <span className="font-mono text-xs text-muted-foreground">{syncRun.id}</span>
-      </div>
+      <Card>
+        <CardHeader>
+          <CardTitle>Resumo</CardTitle>
+        </CardHeader>
+        <CardContent className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <StatusBadge status={syncRun.status} />
+            <span className="text-sm text-muted-foreground">{createdAt}</span>
+          </div>
+          <span className="font-mono text-xs text-muted-foreground">{syncRun.id}</span>
+        </CardContent>
+      </Card>
 
-      {/* Error */}
       {syncRun.error_message && (
-        <div className="rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm text-destructive">
-          <p className="font-medium">Erro</p>
-          <p className="mt-1">{syncRun.error_message}</p>
-        </div>
+        <Alert variant="destructive">
+          <AlertDescription>
+            <p className="font-medium">Erro</p>
+            <p className="mt-1">{syncRun.error_message}</p>
+          </AlertDescription>
+        </Alert>
       )}
 
-      {/* Raw response */}
       {syncRun.raw_response !== undefined && (
-        <div className="rounded-md border">
-          <button
-            onClick={() => setRawOpen((o) => !o)}
-            className="flex w-full items-center justify-between p-3 text-sm font-medium hover:bg-muted/50"
-          >
-            <span>Resposta bruta</span>
-            <span className="text-muted-foreground">{rawOpen ? '▲' : '▼'}</span>
-          </button>
+        <Card>
+          <CardHeader className="cursor-pointer" onClick={() => setRawOpen((o) => !o)}>
+            <div className="flex items-center justify-between">
+              <CardTitle>Resposta bruta</CardTitle>
+              <Button variant="ghost" size="sm" onClick={(e) => { e.stopPropagation(); setRawOpen((o) => !o) }}>
+                {rawOpen ? '▲' : '▼'}
+              </Button>
+            </div>
+          </CardHeader>
           {rawOpen && (
-            <pre className="overflow-x-auto border-t bg-muted/30 p-3 text-xs">
-              {JSON.stringify(syncRun.raw_response, null, 2)}
-            </pre>
+            <CardContent className="p-0">
+              <pre className="overflow-x-auto rounded-b-lg bg-muted/30 p-4 text-xs">
+                {JSON.stringify(syncRun.raw_response, null, 2)}
+              </pre>
+            </CardContent>
           )}
-        </div>
+        </Card>
       )}
 
-      {/* Reprocess CTA */}
       {syncRun.status === 'failed' && onReprocess && (
         <Button variant="outline" onClick={onReprocess}>
           Reprocessar

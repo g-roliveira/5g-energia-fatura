@@ -10,8 +10,8 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// CalculationRepo encapsula queries de billing.billing_calculation e
-// billing.manual_adjustment.
+// CalculationRepo encapsula queries de public.billing_calculation e
+// public.manual_adjustment.
 type CalculationRepo struct {
 	pool *pgxpool.Pool
 }
@@ -49,7 +49,7 @@ func scanCalc(row pgx.Row) (*BillingCalculation, error) {
 // GetByID retrieves a single calculation by its primary key.
 func (r *CalculationRepo) GetByID(ctx context.Context, id uuid.UUID) (*BillingCalculation, error) {
 	row := r.pool.QueryRow(ctx,
-		`SELECT `+calcCols+` FROM billing.billing_calculation WHERE id = $1`, id)
+		`SELECT `+calcCols+` FROM public.billing_calculation WHERE id = $1`, id)
 	return scanCalc(row)
 }
 
@@ -61,7 +61,7 @@ func (r *CalculationRepo) GetCurrentForInvoiceRef(
 ) (*BillingCalculation, error) {
 	row := r.pool.QueryRow(ctx,
 		`SELECT `+calcCols+`
-		   FROM billing.billing_calculation
+		   FROM public.billing_calculation
 		  WHERE utility_invoice_ref_id = $1
 		    AND status != 'superseded'
 		  ORDER BY version DESC
@@ -78,7 +78,7 @@ func (r *CalculationRepo) ListByCycle(
 ) ([]*BillingCalculation, error) {
 	rows, err := r.pool.Query(ctx,
 		`SELECT `+calcCols+`
-		   FROM billing.billing_calculation
+		   FROM public.billing_calculation
 		  WHERE billing_cycle_id = $1
 		    AND status != 'superseded'
 		  ORDER BY consumer_unit_id, version DESC`,
@@ -116,7 +116,7 @@ func (r *CalculationRepo) Insert(
 	}
 
 	_, err := tx.Exec(ctx,
-		`INSERT INTO billing.billing_calculation (
+		`INSERT INTO public.billing_calculation (
 		     id, utility_invoice_ref_id, billing_cycle_id, consumer_unit_id,
 		     contract_id, contract_snapshot_json, inputs_snapshot_json,
 		     result_snapshot_json, total_sem_desconto, total_com_desconto,
@@ -141,7 +141,7 @@ func (r *CalculationRepo) MarkSuperseded(
 	ctx context.Context, tx pgx.Tx, refID uuid.UUID,
 ) error {
 	_, err := tx.Exec(ctx,
-		`UPDATE billing.billing_calculation
+		`UPDATE public.billing_calculation
 		    SET status = 'superseded'
 		  WHERE utility_invoice_ref_id = $1
 		    AND status != 'superseded'`,
@@ -157,14 +157,23 @@ func (r *CalculationRepo) MarkSuperseded(
 func (r *CalculationRepo) Approve(
 	ctx context.Context, id uuid.UUID, approverID uuid.UUID,
 ) error {
-	ct, err := r.pool.Exec(ctx,
-		`UPDATE billing.billing_calculation
-		    SET status = 'approved',
-		        approved_at = NOW(),
-		        approved_by = $2
-		  WHERE id = $1 AND status != 'superseded'`,
-		id, approverID,
-	)
+	var query string
+	var args []any
+	if approverID == uuid.Nil {
+		query = `UPDATE public.billing_calculation
+			    SET status = 'approved',
+			        approved_at = NOW()
+			  WHERE id = $1 AND status != 'superseded'`
+		args = []any{id}
+	} else {
+		query = `UPDATE public.billing_calculation
+			    SET status = 'approved',
+			        approved_at = NOW(),
+			        approved_by = $2
+			  WHERE id = $1 AND status != 'superseded'`
+		args = []any{id, approverID}
+	}
+	ct, err := r.pool.Exec(ctx, query, args...)
 	if err != nil {
 		return fmt.Errorf("Approve: %w", err)
 	}
@@ -181,7 +190,7 @@ func (r *CalculationRepo) NextVersionFor(
 ) (int, error) {
 	var maxVersion *int
 	err := tx.QueryRow(ctx,
-		`SELECT MAX(version) FROM billing.billing_calculation
+		`SELECT MAX(version) FROM public.billing_calculation
 		  WHERE utility_invoice_ref_id = $1`,
 		refID,
 	).Scan(&maxVersion)

@@ -8,6 +8,7 @@ dependencies = [
     "pymupdf>=1.27",
     "pydantic>=2.9",
     "sqlalchemy>=2.0",
+    "psycopg[binary]>=3.2",
     "pyyaml>=6.0",
     "tenacity>=9.0",
     "structlog>=24.0",
@@ -49,4 +50,5 @@ testpaths = ["tests"]
 markers = [
     "real_portal: testes reais contra o portal Neoenergia",
     "real_api_e2e: teste ponta a ponta da API HTTP com portal real",
+    "real_mistral_e2e: teste ponta a ponta com chamada real ao Mistral OCR",
 ]

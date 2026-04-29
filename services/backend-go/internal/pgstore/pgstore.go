@@ -3,17 +3,16 @@
 //
 // The backend-go service has two stores:
 //
-//   - store.SQLiteStore (already existing) for the integration domain:
+//   - store.IntegrationStore for the integration domain:
 //     credentials, sessions, consumer_units fetched from the API, sync_runs,
-//     invoices from the Coelba.
+//     and invoices from the distributor.
 //
 //   - pgstore.Pool (this package) for the business domain: customer
 //     registry, contracts, billing cycles, calculations, generated PDFs.
 //
 // They don't share transactions on purpose. When a billing operation needs
-// data that lives in SQLite (e.g. the full PDF of a Coelba invoice), it
-// reads from SQLite in a separate call and holds the data in memory for
-// the duration of the Postgres transaction.
+// data from the integration domain (e.g. the full PDF of an invoice), it
+// reads that data first and then starts the Postgres transaction.
 package pgstore
 
 import (

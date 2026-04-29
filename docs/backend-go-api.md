@@ -40,7 +40,7 @@ cd services/backend-go
 BACKEND_HOST=127.0.0.1 \
 BACKEND_PORT=8088 \
 EXTRACTOR_BASE_URL=http://127.0.0.1:8090 \
-BACKEND_DATABASE_URL='file:data/backend-go.db' \
+BACKEND_INTEGRATION_PG_URL='postgres://backoffice:backoffice@127.0.0.1:5432/backoffice?sslmode=disable' \
 BACKEND_ENCRYPTION_KEY='troque-esta-chave' \
 BOOTSTRAP_PYTHON_BIN="$PWD/../../.venv/bin/python" \
 BOOTSTRAP_SCRIPT_PATH="$PWD/../../scripts/bootstrap_neoenergia_token.py" \

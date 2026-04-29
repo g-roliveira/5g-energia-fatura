@@ -9,13 +9,18 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
+# Copy root package (fatura module from src/) and its pyproject.toml
 COPY pyproject.toml ./
 COPY src ./src
-COPY services/doc-extractor-py ./services/doc-extractor-py
 
+# Install root package with OCR extras (includes mistralai)
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir ".[ocr]"
 
+# Copy and install doc-extractor-py service package
+COPY services/doc-extractor-py ./service
+RUN pip install --no-cache-dir "./service"
+
 EXPOSE 8090
 
-CMD ["python", "services/doc-extractor-py/app/main.py"]
+CMD ["python", "-m", "app.main"]

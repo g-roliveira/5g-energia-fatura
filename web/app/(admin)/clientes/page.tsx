@@ -1,6 +1,7 @@
 'use client'
 
-import Link from 'next/link'
+import { Suspense, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useSearchParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import { HugeiconsIcon } from '@hugeicons/react'
@@ -14,15 +15,35 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog'
 import { ClientTable } from '@/components/clientes/client-table'
+import { ClientFormMinimal } from '@/components/clientes/client-form-minimal'
+import type { CreateClientMinimalInput } from '@/types/clientes'
 
 export default function ClientesPage() {
+  return (
+    <Suspense fallback={<div className="flex flex-col gap-6 p-6"><div className="h-8 w-48 bg-muted rounded animate-pulse" /></div>}>
+      <ClientesContent />
+    </Suspense>
+  )
+}
+
+function ClientesContent() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const page = Number(searchParams.get('page') ?? 1)
   const pageSize = Number(searchParams.get('pageSize') ?? 20)
   const search = searchParams.get('search') ?? ''
   const status = searchParams.get('status') ?? ''
   const tipo_cliente = searchParams.get('tipo_cliente') ?? ''
+
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const [isCreating, setIsCreating] = useState(false)
 
   const { data, isLoading } = useQuery({
     queryKey: ['clients', { page, pageSize, search, status, tipo_cliente }],
@@ -40,6 +61,23 @@ export default function ClientesPage() {
     },
   })
 
+  async function handleCreateClient(data: CreateClientMinimalInput) {
+    setIsCreating(true)
+    try {
+      const res = await fetch('/api/clients', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      if (!res.ok) throw new Error('Erro ao criar cliente')
+      const result = await res.json()
+      setDialogOpen(false)
+      router.push(`/clientes/${result.id}`)
+    } finally {
+      setIsCreating(false)
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6 p-6">
       {/* Page header */}
@@ -54,11 +92,9 @@ export default function ClientesPage() {
             Importar CSV
             <Badge variant="secondary" className="ml-1 text-[10px]">Em breve</Badge>
           </Button>
-          <Button asChild>
-            <Link href="/clientes/novo">
-              <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
-              Novo cliente
-            </Link>
+          <Button onClick={() => setDialogOpen(true)}>
+            <HugeiconsIcon icon={PlusSignIcon} strokeWidth={2} />
+            Novo cliente
           </Button>
         </div>
       </div>
@@ -85,6 +121,16 @@ export default function ClientesPage() {
           />
         </CardContent>
       </Card>
+
+      {/* New client dialog */}
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Novo Cliente</DialogTitle>
+          </DialogHeader>
+          <ClientFormMinimal onSubmit={handleCreateClient} isLoading={isCreating} />
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

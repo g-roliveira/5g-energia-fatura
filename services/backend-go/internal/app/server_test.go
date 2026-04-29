@@ -14,13 +14,20 @@ import (
 	"testing"
 )
 
+func testDatabaseURL() string {
+	if u := os.Getenv("TEST_DATABASE_URL"); u != "" {
+		return u
+	}
+	return "postgresql://azi:azi@localhost:5434/azi_billing"
+}
+
 func TestDocsEndpoints(t *testing.T) {
 	cfg := Config{
 		Host:               "127.0.0.1",
 		Port:               "8080",
 		ExtractorBaseURL:   "http://127.0.0.1:8090",
 		NeoenergiaBaseURL:  "http://127.0.0.1:9999",
-		DatabaseURL:        "file::memory:?cache=shared",
+		DatabaseURL:        testDatabaseURL(),
 		EncryptionKey:      "test-secret",
 		BootstrapPythonBin: "/bin/false",
 		BootstrapScript:    "scripts/bootstrap_neoenergia_token.py",
@@ -72,6 +79,60 @@ func TestDocsEndpoints(t *testing.T) {
 	}
 }
 
+func TestAPIKeyProtectionOnV1Endpoints(t *testing.T) {
+	cfg := Config{
+		Host:               "127.0.0.1",
+		Port:               "8080",
+		APIKey:             "top-secret-key",
+		ExtractorBaseURL:   "http://127.0.0.1:8090",
+		NeoenergiaBaseURL:  "http://127.0.0.1:9999",
+		DatabaseURL:        testDatabaseURL(),
+		EncryptionKey:      "test-secret",
+		BootstrapPythonBin: "/bin/false",
+		BootstrapScript:    "scripts/bootstrap_neoenergia_token.py",
+	}
+	server, err := NewServer(cfg, slog.New(slog.NewTextHandler(io.Discard, nil)))
+	if err != nil {
+		t.Fatal(err)
+	}
+	apiServer := httptest.NewServer(server.mux)
+	defer apiServer.Close()
+
+	// Infra endpoint stays public.
+	healthResp, err := http.Get(apiServer.URL + "/healthz")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer healthResp.Body.Close()
+	if healthResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected public health endpoint, got %d", healthResp.StatusCode)
+	}
+
+	// /v1 endpoints require X-API-Key.
+	noKeyResp, err := http.Get(apiServer.URL + "/v1/consumer-units")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer noKeyResp.Body.Close()
+	if noKeyResp.StatusCode != http.StatusUnauthorized {
+		t.Fatalf("expected 401 without api key, got %d", noKeyResp.StatusCode)
+	}
+
+	req, err := http.NewRequest(http.MethodGet, apiServer.URL+"/v1/consumer-units", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	req.Header.Set("X-API-Key", "top-secret-key")
+	withKeyResp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer withKeyResp.Body.Close()
+	if withKeyResp.StatusCode != http.StatusOK {
+		t.Fatalf("expected 200 with api key, got %d", withKeyResp.StatusCode)
+	}
+}
+
 func TestSyncUCEndpoint(t *testing.T) {
 	neoServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
@@ -114,7 +175,7 @@ func TestSyncUCEndpoint(t *testing.T) {
 		Port:               "8080",
 		ExtractorBaseURL:   "http://127.0.0.1:8090",
 		NeoenergiaBaseURL:  neoServer.URL,
-		DatabaseURL:        "file::memory:?cache=shared",
+		DatabaseURL:        testDatabaseURL(),
 		EncryptionKey:      "test-secret",
 		BootstrapPythonBin: "/bin/false",
 		BootstrapScript:    "scripts/bootstrap_neoenergia_token.py",
@@ -185,7 +246,7 @@ func TestCredentialAndSessionEndpointsDoNotExposeSecrets(t *testing.T) {
 		Port:               "8080",
 		ExtractorBaseURL:   "http://127.0.0.1:8090",
 		NeoenergiaBaseURL:  "http://127.0.0.1:9999",
-		DatabaseURL:        "file::memory:?cache=shared",
+		DatabaseURL:        testDatabaseURL(),
 		EncryptionKey:      "test-secret",
 		BootstrapPythonBin: pythonBin,
 		BootstrapScript:    scriptPath,
@@ -246,7 +307,7 @@ func TestCredentialActionRoutingStatusCodes(t *testing.T) {
 		Port:               "8080",
 		ExtractorBaseURL:   "http://127.0.0.1:8090",
 		NeoenergiaBaseURL:  "http://127.0.0.1:9999",
-		DatabaseURL:        "file::memory:?cache=shared",
+		DatabaseURL:        testDatabaseURL(),
 		EncryptionKey:      "test-secret",
 		BootstrapPythonBin: "/bin/false",
 		BootstrapScript:    "scripts/bootstrap_neoenergia_token.py",
@@ -316,7 +377,7 @@ func TestDiscoverEndpointSanitizesPartialUpstreamErrors(t *testing.T) {
 		Port:               "8080",
 		ExtractorBaseURL:   "http://127.0.0.1:8090",
 		NeoenergiaBaseURL:  neoServer.URL,
-		DatabaseURL:        "file::memory:?cache=shared",
+		DatabaseURL:        testDatabaseURL(),
 		EncryptionKey:      "test-secret",
 		BootstrapPythonBin: pythonBin,
 		BootstrapScript:    scriptPath,
@@ -462,7 +523,7 @@ func TestSyncUCEndpointWithExtraction(t *testing.T) {
 		Port:               "8080",
 		ExtractorBaseURL:   extractorServer.URL,
 		NeoenergiaBaseURL:  neoServer.URL,
-		DatabaseURL:        "file::memory:?cache=shared",
+		DatabaseURL:        testDatabaseURL(),
 		EncryptionKey:      "test-secret",
 		BootstrapPythonBin: "/bin/false",
 		BootstrapScript:    "scripts/bootstrap_neoenergia_token.py",
@@ -595,5 +656,70 @@ func TestSyncUCEndpointWithExtraction(t *testing.T) {
 	}
 	if syncRunPayload["uc"] != "007098175908" {
 		t.Fatalf("unexpected sync run uc: %v", syncRunPayload["uc"])
+	}
+
+	latestInvoiceResp, err := http.Get(apiServer.URL + "/v1/consumer-units/007098175908/latest-invoice")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer latestInvoiceResp.Body.Close()
+	if latestInvoiceResp.StatusCode != http.StatusOK {
+		t.Fatalf("unexpected latest-invoice status: %d", latestInvoiceResp.StatusCode)
+	}
+	var latestInvoicePayload map[string]any
+	if err := json.NewDecoder(latestInvoiceResp.Body).Decode(&latestInvoicePayload); err != nil {
+		t.Fatal(err)
+	}
+	if latestInvoicePayload["numero_fatura"] != "339800707843" {
+		t.Fatalf("unexpected latest invoice numero_fatura: %v", latestInvoicePayload["numero_fatura"])
+	}
+
+	contractsResp, err := http.Get(apiServer.URL + "/v1/extractor/contracts")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer contractsResp.Body.Close()
+	if contractsResp.StatusCode != http.StatusOK {
+		t.Fatalf("unexpected extractor/contracts status: %d", contractsResp.StatusCode)
+	}
+	var contractsPayload map[string]any
+	if err := json.NewDecoder(contractsResp.Body).Decode(&contractsPayload); err != nil {
+		t.Fatal(err)
+	}
+	if contractsPayload["extractor_request"] == "" || contractsPayload["extractor_response"] == "" {
+		t.Fatalf("expected extractor contract paths, got: %v", contractsPayload)
+	}
+
+	consumerUnitsResp, err := http.Get(apiServer.URL + "/v1/consumer-units?limit=10&status=LIGADA")
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer consumerUnitsResp.Body.Close()
+	if consumerUnitsResp.StatusCode != http.StatusOK {
+		t.Fatalf("unexpected consumer-units list status: %d", consumerUnitsResp.StatusCode)
+	}
+	var consumerUnitsPayload map[string]any
+	if err := json.NewDecoder(consumerUnitsResp.Body).Decode(&consumerUnitsPayload); err != nil {
+		t.Fatal(err)
+	}
+	if len(consumerUnitsPayload["items"].([]any)) == 0 {
+		t.Fatalf("expected at least one consumer unit, got: %v", consumerUnitsPayload)
+	}
+
+	syncByPathBody := bytes.NewBufferString(`{"bearer_token":"abc","documento":"03021937586","include_pdf":false}`)
+	syncByPathResp, err := http.Post(apiServer.URL+"/v1/consumer-units/007098175908/sync", "application/json", syncByPathBody)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer syncByPathResp.Body.Close()
+	if syncByPathResp.StatusCode != http.StatusOK {
+		t.Fatalf("unexpected sync by path status: %d", syncByPathResp.StatusCode)
+	}
+	var syncByPathPayload map[string]any
+	if err := json.NewDecoder(syncByPathResp.Body).Decode(&syncByPathPayload); err != nil {
+		t.Fatal(err)
+	}
+	if syncByPathPayload["uc"] != "007098175908" {
+		t.Fatalf("unexpected uc in sync by path response: %v", syncByPathPayload["uc"])
 	}
 }

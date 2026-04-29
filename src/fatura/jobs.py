@@ -18,7 +18,7 @@ from fatura.exceptions import (
     SessionExpiredError,
 )
 from fatura.parser_pdf import CoelbaPdfParser
-from fatura.repository import SqliteFaturaRepository
+from fatura.repository import SQLAlchemyFaturaRepository
 from fatura.models import conta_para_ocr_payload, formatar_data_br
 from fatura.service_models import (
     BatchItemResult,
@@ -82,12 +82,12 @@ class BatchProcessor:
     def __init__(
         self,
         config: AppConfig,
-        repo: SqliteFaturaRepository | None = None,
+        repo: SQLAlchemyFaturaRepository | None = None,
         parser: CoelbaPdfParser | None = None,
         client_factory: type[CoelbaClient] = CoelbaClient,
     ) -> None:
         self._config = config
-        self._repo = repo or SqliteFaturaRepository(config.database.url)
+        self._repo = repo or SQLAlchemyFaturaRepository(config.database.url)
         self._parser = parser or CoelbaPdfParser(config=config.parser)
         self._client_factory = client_factory
 
@@ -273,11 +273,11 @@ class BatchProcessor:
 async def executar_job_persistido(
     config: AppConfig,
     job_id: str,
-    repo: SqliteFaturaRepository | None = None,
+    repo: SQLAlchemyFaturaRepository | None = None,
     client_factory: type[CoelbaClient] = CoelbaClient,
     request: FaturaJobRequest | None = None,
 ) -> BatchRunResult:
-    repo = repo or SqliteFaturaRepository(config.database.url)
+    repo = repo or SQLAlchemyFaturaRepository(config.database.url)
     request = request or repo.carregar_job_request(job_id)
     spec = BatchSpec(
         cpf_cnpj=request.cpf_cnpj,

@@ -3,6 +3,10 @@
 import { useParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
 import Link from 'next/link'
+import { HugeiconsIcon } from '@hugeicons/react'
+import { ArrowLeft01Icon } from '@hugeicons/core-free-icons'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
 import { InvoiceDetail } from '@/components/clientes/invoice-detail'
 import { useSetBreadcrumbTitle } from '@/contexts/breadcrumb'
@@ -46,27 +50,47 @@ export default function FaturaDetailPage() {
 
   useSetBreadcrumbTitle(id, clientData?.nome_razao)
   useSetBreadcrumbTitle(ucId, uc?.uc_code)
-  useSetBreadcrumbTitle(faturaId, invoice?.numero_fatura)
+  useSetBreadcrumbTitle(faturaId, invoice?.billing_record?.numero_fatura ?? invoice?.numero_fatura)
 
   return (
-    <div className="p-6">
-      <div className="mb-6">
-        <div className="mb-1 text-sm text-muted-foreground">
-          <Link href={`/clientes/${id}/ucs/${ucId}/faturas`} className="hover:underline">
-            ← Faturas
+    <div className="flex flex-col gap-6 p-6">
+      <div>
+        <Button variant="outline" size="sm" asChild>
+          <Link href={`/clientes/${id}/ucs/${ucId}/faturas`}>
+            <HugeiconsIcon icon={ArrowLeft01Icon} strokeWidth={2} />
+            Faturas
           </Link>
-        </div>
+        </Button>
+      </div>
+
+      <div>
         <h1 className="text-2xl font-semibold">Detalhe da Fatura</h1>
+        <p className="text-sm text-muted-foreground">
+          {uc?.uc_code ? `UC ${uc.uc_code}` : 'Carregando...'}
+        </p>
       </div>
 
       {isLoading ? (
-        <div className="space-y-4">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-64 w-full rounded-md" />
-        </div>
+        <Card>
+          <CardHeader>
+            <Skeleton className="h-6 w-48" />
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
+          </CardContent>
+        </Card>
       ) : invoice ? (
         <InvoiceDetail invoice={invoice} />
-      ) : null}
+      ) : (
+        <Card>
+          <CardContent className="py-12 text-center text-muted-foreground">
+            Fatura não encontrada.
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

@@ -9,7 +9,7 @@ portal:
   download_dir: "./downloads"
 
 database:
-  url: "sqlite:///data/faturas.db"
+  url: "postgresql+psycopg://backoffice:backoffice@127.0.0.1:5432/backoffice"
 
 parser:
   engine: "pymupdf"

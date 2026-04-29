@@ -84,11 +84,11 @@ type BillingCompleteness struct {
 type Service struct {
 	client    *neoenergia.Client
 	extractor *extractor.Client
-	store     *store.SQLiteStore
+	store     store.IntegrationStore
 }
 
-func NewService(client *neoenergia.Client, extractorClient *extractor.Client, sqliteStore *store.SQLiteStore) *Service {
-	return &Service{client: client, extractor: extractorClient, store: sqliteStore}
+func NewService(client *neoenergia.Client, extractorClient *extractor.Client, integrationStore store.IntegrationStore) *Service {
+	return &Service{client: client, extractor: extractorClient, store: integrationStore}
 }
 
 func (s *Service) SyncUC(ctx context.Context, in SyncUCRequest) SyncUCResponse {

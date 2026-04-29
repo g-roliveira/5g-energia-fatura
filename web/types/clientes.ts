@@ -185,3 +185,66 @@ export interface GoPersistence {
   invoice_id: string
   status: string
 }
+
+// ─── Discovery types ──────────────────────────────────────────────────────────
+
+export interface GoDiscoveryUCLocal {
+  endereco: string
+  bairro: string
+  municipio: string
+  cep: string
+  uf: string
+}
+
+export interface GoDiscoveryUC {
+  uc: string
+  status: string
+  nomeCliente: string
+  instalacao: string
+  grupoTensao: string
+  contrato: string
+  dt_inicio: string
+  dt_fim: string
+  local: GoDiscoveryUCLocal
+}
+
+export interface GoMinhaConta {
+  nome: string
+  usuarioAcesso: string
+  email: string
+  celular: string
+  dtUltimaAtualizacao: string
+}
+
+export interface GoMinhaContaLegado {
+  nomeTitular: string
+  dtNascimento: string
+  emailCadastro: string
+  telefoneContato: string
+}
+
+export interface GoDiscoveryResult {
+  minha_conta?: GoMinhaConta
+  minha_conta_legado?: GoMinhaContaLegado
+  ucs: GoDiscoveryUC[]
+  errors?: Record<string, string>
+}
+
+// ─── Minimal client schema ────────────────────────────────────────────────────
+
+export const CreateClientMinimalSchema = z.object({
+  tipo_pessoa: TipoPessoaEnum,
+  nome_razao: z.string().min(1, 'Nome é obrigatório'),
+  cpf_cnpj: z.string().min(1, 'CPF/CNPJ é obrigatório'),
+  tipo_cliente: TipoClienteEnum.default('outro'),
+  status: ClientStatusEnum.default('prospecto'),
+}).superRefine((data, ctx) => {
+  if (data.tipo_pessoa === 'PF' && data.cpf_cnpj.replace(/\D/g, '').length !== 11) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'CPF deve ter 11 dígitos', path: ['cpf_cnpj'] })
+  }
+  if (data.tipo_pessoa === 'PJ' && data.cpf_cnpj.replace(/\D/g, '').length !== 14) {
+    ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'CNPJ deve ter 14 dígitos', path: ['cpf_cnpj'] })
+  }
+})
+
+export type CreateClientMinimalInput = z.infer<typeof CreateClientMinimalSchema>

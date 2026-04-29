@@ -88,6 +88,10 @@ class OCRExtractionPayload(BaseModel):
     composicao_fornecimento: OCRComposicaoPayload | None = None
     informacoes_gerais: str | None = None
     itens_fatura: list[OCRItemPayload] = []
+    scee_excedente_kwh: str | None = None
+    scee_creditos_utilizados_kwh: str | None = None
+    scee_saldo_proximo_ciclo_kwh: str | None = None
+    scee_energia_injetada_kwh: str | None = None
 
 
 class OCRClientProtocol(Protocol):
@@ -138,7 +142,12 @@ class MistralOCRClient:
                 "Extraia os campos da fatura de energia em JSON. "
                 "Preserve datas no formato DD/MM/AAAA, valores monetários com vírgula, "
                 "e preencha apenas o que estiver claramente presente no documento. "
-                "Não invente código de barras ou composição do fornecimento quando ausentes."
+                "Não invente código de barras ou composição do fornecimento quando ausentes. "
+                "Inclua também informações de SCEE/MMGD (compensação de energia) se presentes: "
+                "scee_excedente_kwh (excedente em kWh), "
+                "scee_creditos_utilizados_kwh (créditos utilizados em kWh), "
+                "scee_saldo_proximo_ciclo_kwh (saldo para próximo ciclo em kWh), "
+                "scee_energia_injetada_kwh (energia injetada em kWh)."
             ),
             timeout_ms=self._config.mistral_timeout_ms,
         )

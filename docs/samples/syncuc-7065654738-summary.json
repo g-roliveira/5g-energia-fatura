@@ -1,0 +1,11 @@
+{
+  "uc": "7065654738",
+  "documento": "03021937586",
+  "primeira_fatura": null,
+  "billing_record": null,
+  "extraction_status": null,
+  "persistence": {
+    "sync_run_id": "10692c65c43ee1bd02b576215d2d28f5",
+    "status": "failed"
+  }
+}
