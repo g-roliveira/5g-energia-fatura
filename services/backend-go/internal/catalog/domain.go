@@ -8,19 +8,19 @@ import (
 
 // Customer (corresponde ao model Client no Prisma)
 type Customer struct {
-	ID            uuid.UUID
-	TipoPessoa    string // PF | PJ
-	NomeRazao     string
-	NomeFantasia  *string
-	CPFCNPJ       string
-	Email         *string
-	Telefone      *string
-	Status        string // ativo | inativo | prospecto | archived
-	TipoCliente   string // residencial | condominio | empresa | imobiliaria | outro
-	Notes   *string
-	CreatedAt     time.Time
-	UpdatedAt     time.Time
-	ArchivedAt    *time.Time
+	ID           uuid.UUID
+	TipoPessoa   string // PF | PJ
+	NomeRazao    string
+	NomeFantasia *string
+	CPFCNPJ      string
+	Email        *string
+	Telefone     *string
+	Status       string // ativo | inativo | prospecto | archived
+	TipoCliente  string // residencial | condominio | empresa | imobiliaria | outro
+	Notes        *string
+	CreatedAt    time.Time
+	UpdatedAt    time.Time
+	ArchivedAt   *time.Time
 }
 
 // Address (corresponde ao model ClientAddress no Prisma)
@@ -40,19 +40,19 @@ type Address struct {
 
 // ConsumerUnit (corresponde ao model ConsumerUnit no Prisma)
 type ConsumerUnit struct {
-	ID             uuid.UUID
-	CustomerID     uuid.UUID
-	UCCode         string
-	Distribuidora  *string
-	Apelido        *string
-	ClasseConsumo  *string
-	Endereco       *string
-	Cidade         *string
-	UF             *string
-	Ativa          bool
-	CredentialID   *string
-	CreatedAt      time.Time
-	UpdatedAt      time.Time
+	ID            uuid.UUID
+	CustomerID    uuid.UUID
+	UCCode        string
+	Distribuidora *string
+	Apelido       *string
+	ClasseConsumo *string
+	Endereco      *string
+	Cidade        *string
+	UF            *string
+	Ativa         bool
+	CredentialID  *string
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
 }
 
 // Contract (versionado — nunca editado, só criado e fechado)
@@ -68,6 +68,7 @@ type Contract struct {
 	IPFaturamentoPercent              string
 	BandeiraComDesconto               bool
 	CustoDisponibilidadeSempreCobrado bool
+	ConsumoMinimoKWh                  string
 	Notes                             *string
 	Status                            string // draft | active | ended
 	CreatedAt                         time.Time
@@ -90,10 +91,10 @@ type User struct {
 
 // CustomerFilter para listagem
 type CustomerFilter struct {
-	Status  *string
-	Query   *string
-	Limit   int
-	Cursor  *string
+	Status *string
+	Query  *string
+	Limit  int
+	Cursor *string
 }
 
 // ContractFilter para listagem

@@ -10,31 +10,31 @@ import (
 
 // Row representa uma linha do dashboard de ciclo (uma UC).
 type Row struct {
-	ConsumerUnitID     uuid.UUID  `json:"consumer_unit_id"`
-	UCCode             string     `json:"uc_code"`
-	CustomerName       string     `json:"customer_name"`
-	SyncStatus         string     `json:"sync_status"`
-	NumeroFatura       *string    `json:"numero_fatura,omitempty"`
-	MesReferencia      *string    `json:"mes_referencia,omitempty"`
-	CalculationStatus  *string    `json:"calculation_status,omitempty"`
+	ConsumerUnitID      uuid.UUID `json:"consumer_unit_id"`
+	UCCode              string    `json:"uc_code"`
+	CustomerName        string    `json:"customer_name"`
+	SyncStatus          string    `json:"sync_status"`
+	NumeroFatura        *string   `json:"numero_fatura,omitempty"`
+	MesReferencia       *string   `json:"mes_referencia,omitempty"`
+	CalculationStatus   *string   `json:"calculation_status,omitempty"`
 	ValorAziSemDesconto *float64  `json:"valor_azi_sem_desconto,omitempty"`
 	ValorAziComDesconto *float64  `json:"valor_azi_com_desconto,omitempty"`
-	EconomiaRS         *float64   `json:"economia_rs,omitempty"`
-	EconomiaPct        *float64   `json:"economia_pct,omitempty"`
-	PDFGenerated       bool       `json:"pdf_generated"`
-	NeedsReviewReasons []string   `json:"needs_review_reasons,omitempty"`
-	ErrorMessage       *string    `json:"error_message,omitempty"`
+	EconomiaRS          *float64  `json:"economia_rs,omitempty"`
+	EconomiaPct         *float64  `json:"economia_pct,omitempty"`
+	PDFGenerated        bool      `json:"pdf_generated"`
+	NeedsReviewReasons  []string  `json:"needs_review_reasons,omitempty"`
+	ErrorMessage        *string   `json:"error_message,omitempty"`
 }
 
 // ListRowsRequest filtros para o dashboard.
 type ListRowsRequest struct {
-	CycleID           uuid.UUID
-	Q                 string
-	SyncStatus        string
-	CalcStatus        string
-	NeedsReviewOnly   bool
-	Limit             int
-	Offset            int
+	CycleID         uuid.UUID
+	Q               string
+	SyncStatus      string
+	CalcStatus      string
+	NeedsReviewOnly bool
+	Limit           int
+	Offset          int
 }
 
 // ListRows retorna o dashboard de um ciclo.

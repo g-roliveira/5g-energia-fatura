@@ -44,6 +44,7 @@ type CreateInput struct {
 	BandeiraComDesconto               bool
 	CustoDisponibilidadeSempreCobrado bool
 	Notes                             *string
+	ConsumoMinimoKWh                  float64
 	CreatedBy                         *uuid.UUID
 }
 
@@ -102,6 +103,10 @@ func (s *Service) Create(ctx context.Context, in CreateInput) (*repo.Contract, e
 		return nil, err
 	}
 
+	cmk := in.ConsumoMinimoKWh
+	if cmk == 0 {
+		cmk = 30.0
+	}
 	c := &repo.Contract{
 		CustomerID:                        in.CustomerID,
 		ConsumerUnitID:                    in.ConsumerUnitID,
@@ -113,6 +118,7 @@ func (s *Service) Create(ctx context.Context, in CreateInput) (*repo.Contract, e
 		IPFaturamentoPercent:              in.IPFaturamentoPercent,
 		BandeiraComDesconto:               in.BandeiraComDesconto,
 		CustoDisponibilidadeSempreCobrado: in.CustoDisponibilidadeSempreCobrado,
+		ConsumoMinimoKWh:                  decimal.NewFromFloat(cmk),
 		Notes:                             in.Notes,
 		Status:                            repo.ContractStatusActive,
 		CreatedBy:                         in.CreatedBy,

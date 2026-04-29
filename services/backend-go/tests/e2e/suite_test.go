@@ -51,12 +51,12 @@ func NewTestSuite(t *testing.T) *TestSuite {
 	// Cria servidor
 	logger := slog.New(slog.NewTextHandler(io.Discard, nil))
 	cfg := app.Config{
-		Host:            "127.0.0.1",
-		Port:            "0",
-		BackofficePGURL: testDBURL,
-		ExtractorBaseURL: "http://127.0.0.1:8090",
-		NeoenergiaBaseURL: "https://apineprd.neoenergia.com",
-		EncryptionKey:   "test-key-32-bytes-long-for-aes!!",
+		Host:               "127.0.0.1",
+		Port:               "0",
+		BackofficePGURL:    testDBURL,
+		ExtractorBaseURL:   "http://127.0.0.1:8090",
+		NeoenergiaBaseURL:  "https://apineprd.neoenergia.com",
+		EncryptionKey:      "test-key-32-bytes-long-for-aes!!",
 		BootstrapPythonBin: "python3",
 		BootstrapScript:    "scripts/bootstrap_neoenergia_token.py",
 	}

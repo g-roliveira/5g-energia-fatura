@@ -312,13 +312,14 @@ func (s *pgxStore) LinkUnitToCustomer(ctx context.Context, unitID, customerID uu
 
 func (s *pgxStore) CreateContract(ctx context.Context, c *Contract) error {
 	query := `
-		INSERT INTO public.contract (id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, notes, status, created_at, created_by, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+		INSERT INTO public.contract (id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, consumo_minimo_kwh, notes, status, created_at, created_by, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
 	`
 	_, err := s.pool.Exec(ctx, query,
 		c.ID, c.CustomerID, c.ConsumerUnitID, c.VigenciaInicio, c.VigenciaFim,
 		c.DescontoPercentual, c.IPFaturamentoMode, c.IPFaturamentoValor,
 		c.IPFaturamentoPercent, c.BandeiraComDesconto, c.CustoDisponibilidadeSempreCobrado,
+		c.ConsumoMinimoKWh,
 		c.Notes, c.Status, c.CreatedAt, c.CreatedBy, c.UpdatedAt,
 	)
 	return err
@@ -326,7 +327,7 @@ func (s *pgxStore) CreateContract(ctx context.Context, c *Contract) error {
 
 func (s *pgxStore) GetContract(ctx context.Context, id uuid.UUID) (*Contract, error) {
 	query := `
-		SELECT id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, notes, status, created_at, created_by, updated_at
+		SELECT id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, consumo_minimo_kwh, notes, status, created_at, created_by, updated_at
 		FROM public.contract WHERE id = $1
 	`
 	row := s.pool.QueryRow(ctx, query, id)
@@ -335,7 +336,7 @@ func (s *pgxStore) GetContract(ctx context.Context, id uuid.UUID) (*Contract, er
 
 func (s *pgxStore) GetActiveContract(ctx context.Context, unitID uuid.UUID) (*Contract, error) {
 	query := `
-		SELECT id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, notes, status, created_at, created_by, updated_at
+		SELECT id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, consumo_minimo_kwh, notes, status, created_at, created_by, updated_at
 		FROM public.contract
 		WHERE consumer_unit_id = $1 AND vigencia_fim IS NULL AND status = 'active'
 		ORDER BY vigencia_inicio DESC
@@ -365,7 +366,7 @@ func (s *pgxStore) ListContracts(ctx context.Context, filter ContractFilter) ([]
 	}
 
 	query := fmt.Sprintf(`
-		SELECT id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, notes, status, created_at, created_by, updated_at
+		SELECT id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, consumo_minimo_kwh, notes, status, created_at, created_by, updated_at
 		FROM public.contract
 		%s
 		ORDER BY vigencia_inicio DESC
@@ -488,6 +489,7 @@ func scanContract(row pgx.Row) (*Contract, error) {
 		&c.ID, &c.CustomerID, &c.ConsumerUnitID, &c.VigenciaInicio, &c.VigenciaFim,
 		&c.DescontoPercentual, &c.IPFaturamentoMode, &c.IPFaturamentoValor,
 		&c.IPFaturamentoPercent, &c.BandeiraComDesconto, &c.CustoDisponibilidadeSempreCobrado,
+		&c.ConsumoMinimoKWh,
 		&c.Notes, &c.Status, &c.CreatedAt, &createdBy, &c.UpdatedAt,
 	)
 	if err != nil {
@@ -504,6 +506,7 @@ func scanContractRows(rows pgx.Rows) (*Contract, error) {
 		&c.ID, &c.CustomerID, &c.ConsumerUnitID, &c.VigenciaInicio, &c.VigenciaFim,
 		&c.DescontoPercentual, &c.IPFaturamentoMode, &c.IPFaturamentoValor,
 		&c.IPFaturamentoPercent, &c.BandeiraComDesconto, &c.CustoDisponibilidadeSempreCobrado,
+		&c.ConsumoMinimoKWh,
 		&c.Notes, &c.Status, &c.CreatedAt, &createdBy, &c.UpdatedAt,
 	)
 	if err != nil {

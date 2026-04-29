@@ -33,11 +33,11 @@ func TestBillingCycleCRUD(t *testing.T) {
 
 	// 3. Criar contrato ativo
 	respContract := suite.POST(t, "/v1/billing/contracts", map[string]any{
-		"customer_id":     customerID,
-		"consumer_unit_id": uc["id"].(string),
-		"vigencia_inicio": "2025-01-01",
-		"desconto_percentual": "0.85",
-		"ip_faturamento_mode": "fixed",
+		"customer_id":          customerID,
+		"consumer_unit_id":     uc["id"].(string),
+		"vigencia_inicio":      "2025-01-01",
+		"desconto_percentual":  "0.85",
+		"ip_faturamento_mode":  "fixed",
 		"ip_faturamento_valor": "10.00",
 	})
 	defer respContract.Body.Close()

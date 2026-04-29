@@ -267,13 +267,13 @@ func TestConsumerUnitStore(t *testing.T) {
 		}
 
 		u := &ConsumerUnit{
-			ID:         uuid.New(),
-			CustomerID: customer.ID,
+			ID:            uuid.New(),
+			CustomerID:    customer.ID,
 			UCCode:        "007085489033",
 			Distribuidora: strPtr("neoenergia_ba"),
-			Ativa:      true,
-			CreatedAt:  time.Now(),
-			UpdatedAt:  time.Now(),
+			Ativa:         true,
+			CreatedAt:     time.Now(),
+			UpdatedAt:     time.Now(),
 		}
 		if err := store.CreateUnit(ctx, u); err != nil {
 			t.Fatalf("create unit: %v", err)
@@ -295,13 +295,13 @@ func TestConsumerUnitStore(t *testing.T) {
 		}
 
 		u := &ConsumerUnit{
-			ID:         uuid.New(),
-			CustomerID: customer.ID,
+			ID:            uuid.New(),
+			CustomerID:    customer.ID,
 			UCCode:        "007085489034",
 			Distribuidora: strPtr("neoenergia_ba"),
-			Ativa:      true,
-			CreatedAt:  time.Now(),
-			UpdatedAt:  time.Now(),
+			Ativa:         true,
+			CreatedAt:     time.Now(),
+			UpdatedAt:     time.Now(),
 		}
 		if err := store.CreateUnit(ctx, u); err != nil {
 			t.Fatalf("create unit: %v", err)
@@ -357,13 +357,13 @@ func TestContractStore(t *testing.T) {
 	}
 
 	unit := &ConsumerUnit{
-		ID:         uuid.New(),
-		CustomerID: customer.ID,
+		ID:            uuid.New(),
+		CustomerID:    customer.ID,
 		UCCode:        "007085489035",
-			Distribuidora: strPtr("neoenergia_ba"),
-		Ativa:      true,
-		CreatedAt:  time.Now(),
-		UpdatedAt:  time.Now(),
+		Distribuidora: strPtr("neoenergia_ba"),
+		Ativa:         true,
+		CreatedAt:     time.Now(),
+		UpdatedAt:     time.Now(),
 	}
 	if err := store.CreateUnit(ctx, unit); err != nil {
 		t.Fatalf("create unit: %v", err)
@@ -371,17 +371,17 @@ func TestContractStore(t *testing.T) {
 
 	t.Run("create and get contract", func(t *testing.T) {
 		c := &Contract{
-			ID:                 uuid.New(),
-			CustomerID:         customer.ID,
-			ConsumerUnitID:     unit.ID,
-			VigenciaInicio:     time.Date(2025, 10, 1, 0, 0, 0, 0, time.UTC),
-			DescontoPercentual: "0.85",
-			IPFaturamentoMode:  "fixed",
-			IPFaturamentoValor: "10.00",
+			ID:                   uuid.New(),
+			CustomerID:           customer.ID,
+			ConsumerUnitID:       unit.ID,
+			VigenciaInicio:       time.Date(2025, 10, 1, 0, 0, 0, 0, time.UTC),
+			DescontoPercentual:   "0.85",
+			IPFaturamentoMode:    "fixed",
+			IPFaturamentoValor:   "10.00",
 			IPFaturamentoPercent: "0",
-			Status:             "active",
-			CreatedAt:          time.Now(),
-			UpdatedAt:          time.Now(),
+			Status:               "active",
+			CreatedAt:            time.Now(),
+			UpdatedAt:            time.Now(),
 		}
 
 		if err := store.CreateContract(ctx, c); err != nil {

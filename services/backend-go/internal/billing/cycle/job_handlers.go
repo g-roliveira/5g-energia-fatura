@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 
@@ -14,21 +15,27 @@ import (
 
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/billing"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/billing/repo"
+	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/session"
+	syncsvc "github.com/gustavo/5g-energia-fatura/services/backend-go/internal/sync"
 )
 
 // JobDeps holds dependencies for job handlers.
 type JobDeps struct {
-	Pool        *pgxpool.Pool
-	ContractRepo *repo.ContractRepo
-	CalcRepo    *repo.CalculationRepo
+	Pool           *pgxpool.Pool
+	ContractRepo   *repo.ContractRepo
+	CalcRepo       *repo.CalculationRepo
+	SyncService    *syncsvc.Service
+	SessionManager *session.Manager
 }
 
 // NewJobDeps creates job dependencies.
-func NewJobDeps(pool *pgxpool.Pool) *JobDeps {
+func NewJobDeps(pool *pgxpool.Pool, syncSvc *syncsvc.Service, sessMgr *session.Manager) *JobDeps {
 	return &JobDeps{
-		Pool:         pool,
-		ContractRepo: repo.NewContractRepo(pool),
-		CalcRepo:     repo.NewCalculationRepo(pool),
+		Pool:           pool,
+		ContractRepo:   repo.NewContractRepo(pool),
+		CalcRepo:       repo.NewCalculationRepo(pool),
+		SyncService:    syncSvc,
+		SessionManager: sessMgr,
 	}
 }
 
@@ -91,8 +98,11 @@ func handleCalculate(deps *JobDeps) SyncJobHandler {
 				BandeiraComDesconto:               contract.BandeiraComDesconto,
 				CustoDisponibilidadeSempreCobrado: contract.CustoDisponibilidadeSempreCobrado,
 			},
-			Itens:            items,
-			ConsumoMinimoKWh: 30, // default, pode vir do contrato no futuro
+			Itens: items,
+			ConsumoMinimoKWh: func() float64 {
+				f, _ := contract.ConsumoMinimoKWh.Float64()
+				return f
+			}(),
 		}
 
 		// 5. Calcular
@@ -217,61 +227,267 @@ func handleApprove(deps *JobDeps) SyncJobHandler {
 	}
 }
 
-// handleGeneratePDF gera PDF para um cálculo aprovado (stub).
+// handleGeneratePDF gera PDF para um cálculo aprovado.
 func handleGeneratePDF(deps *JobDeps) SyncJobHandler {
 	return func(ctx context.Context, job *SyncJob) error {
-		cycleID, _ := uuid.Parse(getString(job.Payload, "cycle_id"))
-		ucCode := getString(job.Payload, "uc_code")
+		calcID, err := uuid.Parse(getString(job.Payload, "calculation_id"))
+		if err != nil {
+			return fmt.Errorf("invalid calculation_id in payload: %w", err)
+		}
+		cycleID, err := uuid.Parse(getString(job.Payload, "cycle_id"))
+		if err != nil {
+			return fmt.Errorf("invalid cycle_id: %w", err)
+		}
 
-		// TODO: implementar geração real de PDF usando chromedp ou similar
-		// Por enquanto, apenas marca como gerado no cycle_consumer_unit
-		_, err := deps.Pool.Exec(ctx, `
+		// 1. Buscar cálculo com resultado
+		calc, err := deps.CalcRepo.GetByID(ctx, calcID)
+		if err != nil {
+			return fmt.Errorf("fetch calculation %s: %w", calcID, err)
+		}
+
+		// 2. Parse do result_snapshot_json → CalculationResult
+		var result billing.CalculationResult
+		if err := json.Unmarshal(calc.ResultSnapshotJSON, &result); err != nil {
+			return fmt.Errorf("unmarshal result_snapshot_json: %w", err)
+		}
+
+		// 3. Buscar UC + Customer + Cycle info
+		var ucCode, address, city, uf, customerName string
+		err = deps.Pool.QueryRow(ctx, `
+			SELECT cu.uc_code, COALESCE(cu.endereco_unidade, ''), COALESCE(cu.cidade, ''),
+			       COALESCE(cu.uf, ''), COALESCE(c.nome_razao, '')
+			FROM public.consumer_unit cu
+			LEFT JOIN public.customer c ON c.id = cu.customer_id
+			WHERE cu.id = $1
+		`, calc.ConsumerUnitID).Scan(&ucCode, &address, &city, &uf, &customerName)
+		if err != nil {
+			return fmt.Errorf("fetch consumer_unit %s: %w", calc.ConsumerUnitID, err)
+		}
+
+		var year, month int16
+		err = deps.Pool.QueryRow(ctx, `
+			SELECT year, month FROM public.billing_cycle WHERE id = $1
+		`, cycleID).Scan(&year, &month)
+		if err != nil {
+			return fmt.Errorf("fetch billing_cycle %s: %w", cycleID, err)
+		}
+
+		// 4. Montar InvoicePDFData
+		pdfData := &InvoicePDFData{
+			CustomerName:     customerName,
+			UCCode:           ucCode,
+			Address:          address,
+			City:             city,
+			UF:               uf,
+			ReferenceMonth:   fmt.Sprintf("%s/%d", monthName(month), year),
+			IssueDate:        time.Now().Format("02/01/2006"),
+			TotalSemDesconto: formatDecimal(calc.TotalSemDesconto),
+			TotalComDesconto: formatDecimal(calc.TotalComDesconto),
+			EconomiaRS:       formatDecimal(calc.EconomiaRS),
+			EconomiaPct:      formatDecimal(calc.EconomiaPct),
+		}
+
+		for _, line := range result.Linhas {
+			pdfData.Lines = append(pdfData.Lines, InvoicePDFLine{
+				Label:         line.Label,
+				Quantidade:    formatDecimal(line.Quantidade),
+				PrecoUnitario: formatDecimal(line.PrecoUnitario),
+				ValorSemDesc:  formatDecimal(line.ValorSemDesc),
+				ValorComDesc:  formatDecimal(line.ValorComDesc),
+			})
+		}
+
+		// 5. Determinar diretório de saída
+		outputDir := os.Getenv("PDF_OUTPUT_DIR")
+		if outputDir == "" {
+			outputDir = "./pdfs"
+		}
+
+		// 6. Gerar PDF (em buffer) + salvar em disco
+		pdfResult, err := GenerateAndSaveInvoicePDF(pdfData, outputDir)
+		if err != nil {
+			return fmt.Errorf("generate pdf: %w", err)
+		}
+
+		// 7. Inserir registro em generated_document
+		_, err = deps.Pool.Exec(ctx, `
+			INSERT INTO public.generated_document
+				(billing_calculation_id, type, file_path, checksum_sha256, version)
+			VALUES ($1, 'customer_invoice_pdf', $2, $3, 1)
+		`, calcID, pdfResult.FilePath, pdfResult.Checksum)
+		if err != nil {
+			return fmt.Errorf("insert generated_document: %w", err)
+		}
+
+		// 8. Atualizar cycle_consumer_unit
+		_, err = deps.Pool.Exec(ctx, `
 			UPDATE public.cycle_consumer_unit
 			SET pdf_generated = true, updated_at = NOW()
-			WHERE billing_cycle_id = $1 AND uc_code = $2
-		`, cycleID, ucCode)
+			WHERE billing_cycle_id = $1 AND consumer_unit_id = $2
+		`, cycleID, calc.ConsumerUnitID)
 		if err != nil {
-			return fmt.Errorf("mark pdf generated: %w", err)
+			return fmt.Errorf("update cycle_consumer_unit pdf_generated: %w", err)
 		}
 
 		return nil
 	}
 }
 
-// handleSyncUC executa sync para uma UC (stub — delega para integration worker).
+// handleSyncUC executa sync real para uma UC usando credenciais + API Neoenergia.
 func handleSyncUC(deps *JobDeps) SyncJobHandler {
 	return func(ctx context.Context, job *SyncJob) error {
-		cycleID, _ := uuid.Parse(getString(job.Payload, "cycle_id"))
-		ucID, _ := uuid.Parse(getString(job.Payload, "uc_id"))
+		cycleID, err := uuid.Parse(getString(job.Payload, "cycle_id"))
+		if err != nil {
+			return fmt.Errorf("cycle_id inválido: %w", err)
+		}
+		ucID, err := uuid.Parse(getString(job.Payload, "uc_id"))
+		if err != nil {
+			return fmt.Errorf("uc_id inválido: %w", err)
+		}
 		ucCode := getString(job.Payload, "uc_code")
+		if ucCode == "" {
+			return fmt.Errorf("uc_code é obrigatório no payload")
+		}
 
-		// TODO: implementar sync real usando credenciais + Playwright
-		// Por enquanto, apenas marca como synced
-		_, err := deps.Pool.Exec(ctx, `
+		// 1. Buscar sync_credential_id da consumer_unit
+		var syncCredentialID *string
+		err = deps.Pool.QueryRow(ctx, `
+			SELECT sync_credential_id FROM public.consumer_unit WHERE id = $1
+		`, ucID).Scan(&syncCredentialID)
+		if err != nil {
+			return fmt.Errorf("consumer_unit %s não encontrada: %w", ucID, err)
+		}
+
+		// 2. Determinar o credential_id a usar
+		credentialID, err := resolveCredentialID(ctx, deps.Pool, ucID, ucCode, syncCredentialID)
+		if err != nil {
+			return fmt.Errorf("resolver credencial para UC %s: %w", ucCode, err)
+		}
+
+		// 3. Resolver sessão (token bearer + documento)
+		resolved, err := deps.SessionManager.ResolveToken(ctx, credentialID)
+		if err != nil {
+			return fmt.Errorf("falha ao obter token de acesso para UC %s: %w", ucCode, err)
+		}
+
+		// 4. Executar sync completo via sync service
+		syncResult := deps.SyncService.SyncUC(ctx, syncsvc.SyncUCRequest{
+			BearerToken:       resolved.Token,
+			Documento:         resolved.Documento,
+			CredentialID:      credentialID,
+			UC:                ucCode,
+			IncludePDF:        true,
+			IncludeExtraction: false,
+		})
+
+		// 5. Verificar resultado do sync
+		if syncResult.BillingRecord == nil {
+			errMsg := "Nenhuma fatura encontrada para UC " + ucCode
+			if syncResult.Persistence != nil && syncResult.Persistence.Error != "" {
+				errMsg = syncResult.Persistence.Error
+			}
+			// Atualizar status para error
+			_, updateErr := deps.Pool.Exec(ctx, `
+				UPDATE public.cycle_consumer_unit
+				SET status = 'error', error_message = $1, updated_at = NOW()
+				WHERE billing_cycle_id = $2 AND consumer_unit_id = $3
+			`, errMsg, cycleID, ucID)
+			if updateErr != nil {
+				return fmt.Errorf("sync falhou para UC %s: %s (erro ao atualizar status: %s)", ucCode, errMsg, updateErr)
+			}
+			return fmt.Errorf("sync falhou para UC %s: %s", ucCode, errMsg)
+		}
+
+		// 6. Extrair dados do resultado sync
+		billingRecordJSON, err := json.Marshal(syncResult.BillingRecord)
+		if err != nil {
+			return fmt.Errorf("erro ao serializar billing record da UC %s: %w", ucCode, err)
+		}
+
+		invoiceID := ""
+		syncRunID := ""
+		if syncResult.Persistence != nil {
+			invoiceID = syncResult.Persistence.InvoiceID
+			syncRunID = syncResult.Persistence.SyncRunID
+		}
+
+		// 7. Criar/atualizar utility_invoice_ref
+		var nfArg, mrArg any
+		if syncResult.BillingRecord.NumeroFatura != "" {
+			nfArg = syncResult.BillingRecord.NumeroFatura
+		}
+		if syncResult.BillingRecord.MesReferencia != "" {
+			mrArg = syncResult.BillingRecord.MesReferencia
+		}
+		var srArg any
+		if syncRunID != "" {
+			srArg = syncRunID
+		}
+
+		_, err = deps.Pool.Exec(ctx, `
+			INSERT INTO public.utility_invoice_ref (
+				id, consumer_unit_id, billing_cycle_id, sync_invoice_id, sync_run_id,
+				numero_fatura, mes_referencia, billing_record_snapshot, synced_at,
+				created_at, updated_at
+			) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW(), NOW())
+			ON CONFLICT (consumer_unit_id, billing_cycle_id) DO UPDATE SET
+				sync_invoice_id = EXCLUDED.sync_invoice_id,
+				sync_run_id = EXCLUDED.sync_run_id,
+				numero_fatura = EXCLUDED.numero_fatura,
+				mes_referencia = EXCLUDED.mes_referencia,
+				billing_record_snapshot = EXCLUDED.billing_record_snapshot,
+				synced_at = EXCLUDED.synced_at,
+				updated_at = NOW()
+		`, uuid.New(), ucID, cycleID, invoiceID, srArg,
+			nfArg, mrArg, billingRecordJSON)
+		if err != nil {
+			return fmt.Errorf("erro ao salvar utility_invoice_ref para UC %s: %w", ucCode, err)
+		}
+
+		// 8. Marcar UC como synced no ciclo
+		_, err = deps.Pool.Exec(ctx, `
 			UPDATE public.cycle_consumer_unit
 			SET status = 'synced', synced_at = NOW(), updated_at = NOW()
 			WHERE billing_cycle_id = $1 AND consumer_unit_id = $2
 		`, cycleID, ucID)
 		if err != nil {
-			return fmt.Errorf("mark synced: %w", err)
-		}
-
-		// Criar um utility_invoice_ref stub para permitir cálculo
-		_, err = deps.Pool.Exec(ctx, `
-			INSERT INTO public.utility_invoice_ref (
-				id, consumer_unit_id, billing_cycle_id, numero_fatura,
-				mes_referencia, billing_record_snapshot, synced_at, created_at, updated_at
-			) VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW(), NOW())
-			ON CONFLICT DO NOTHING
-		`, uuid.New(), ucID, cycleID, "STUB-"+ucCode, "2024/01",
-			[]byte(`{"itens_fatura":[]}`),
-		)
-		if err != nil {
-			return fmt.Errorf("insert stub invoice ref: %w", err)
+			return fmt.Errorf("erro ao atualizar status da UC %s no ciclo: %w", ucCode, err)
 		}
 
 		return nil
 	}
+}
+
+// resolveCredentialID busca o credential_id para uma UC, tentando fontes em ordem.
+func resolveCredentialID(ctx context.Context, pool *pgxpool.Pool, ucID uuid.UUID, ucCode string, syncCredentialID *string) (string, error) {
+	// Fonte 1: sync_credential_id direto na consumer_unit
+	if syncCredentialID != nil && *syncCredentialID != "" {
+		return *syncCredentialID, nil
+	}
+
+	// Fonte 2: integration_consumer_units (mapeamento UC -> credential)
+	var credentialID string
+	err := pool.QueryRow(ctx, `
+		SELECT credential_id::text FROM public.integration_consumer_units
+		WHERE uc = $1 AND credential_id IS NOT NULL
+	`, ucCode).Scan(&credentialID)
+	if err == nil {
+		return credentialID, nil
+	}
+
+	// Fonte 3: credential_link via customer da UC
+	err = pool.QueryRow(ctx, `
+		SELECT cl.go_credential_id
+		FROM public.credential_link cl
+		JOIN public.consumer_unit cu ON cu.customer_id = cl.customer_id
+		WHERE cu.id = $1
+		LIMIT 1
+	`, ucID).Scan(&credentialID)
+	if err == nil {
+		return credentialID, nil
+	}
+
+	return "", fmt.Errorf("nenhuma credencial de integração encontrada")
 }
 
 // -------------------------------------------------------------------
@@ -392,4 +608,38 @@ func parseDecimal(s string) decimal.Decimal {
 		return decimal.Zero
 	}
 	return d
+}
+
+// formatDecimal converte decimal.Decimal para string no formato brasileiro
+// (ex: "1.234,56"). Usado para exibição em PDFs.
+func formatDecimal(d decimal.Decimal) string {
+	if d.IsZero() {
+		return "0,00"
+	}
+
+	// Separar parte inteira e centavos
+	// Multiplica por 100 e trunca para obter o valor em centavos
+	cents := d.Mul(decimal.NewFromInt(100)).IntPart()
+	signal := ""
+	if cents < 0 {
+		signal = "-"
+		cents = -cents
+	}
+
+	intPart := cents / 100
+	fracPart := cents % 100
+
+	// Formatar parte inteira com separador de milhar (ponto)
+	intStr := fmt.Sprintf("%d", intPart)
+	var parts []string
+	for i := len(intStr); i > 0; i -= 3 {
+		start := i - 3
+		if start < 0 {
+			start = 0
+		}
+		parts = append([]string{intStr[start:i]}, parts...)
+	}
+	formattedInt := strings.Join(parts, ".")
+
+	return fmt.Sprintf("%s%s,%02d", signal, formattedInt, fracPart)
 }

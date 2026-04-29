@@ -25,9 +25,11 @@ services:
   # Sidecar Python para extração de PDF (doc-extractor)
   extractor:
     build:
-      context: ./services/doc-extractor-py
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: services/doc-extractor-py/Dockerfile
     container_name: azi-extractor
+    env_file:
+      - .env
     environment:
       DOC_EXTRACTOR_HOST: 0.0.0.0
       DOC_EXTRACTOR_PORT: 8090

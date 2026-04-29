@@ -13,13 +13,14 @@ import (
 
 // Handler expõe endpoints HTTP para ciclos de faturamento.
 type Handler struct {
-	svc    *Service
-	logger *slog.Logger
+	svc         *Service
+	logger      *slog.Logger
+	eventBroker *CycleEventBroker
 }
 
 // NewHandler cria um novo Handler.
-func NewHandler(svc *Service, logger *slog.Logger) *Handler {
-	return &Handler{svc: svc, logger: logger}
+func NewHandler(svc *Service, logger *slog.Logger, eventBroker *CycleEventBroker) *Handler {
+	return &Handler{svc: svc, logger: logger, eventBroker: eventBroker}
 }
 
 // RegisterRoutes registra as rotas de ciclo no mux.
@@ -213,8 +214,8 @@ func (h *Handler) getCycleRows(w http.ResponseWriter, r *http.Request, cycleID u
 		return
 	}
 	writeJSON(w, http.StatusOK, map[string]any{
-		"items":   rows,
-		"count":   len(rows),
+		"items":    rows,
+		"count":    len(rows),
 		"cycle_id": cycleID.String(),
 	})
 }
@@ -271,7 +272,11 @@ func (h *Handler) handleSSE(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Simples SSE com polling (LISTEN/NOTIFY vem depois)
+	if h.eventBroker == nil {
+		writeError(w, http.StatusInternalServerError, "SSE não disponível")
+		return
+	}
+
 	w.Header().Set("Content-Type", "text/event-stream")
 	w.Header().Set("Cache-Control", "no-cache")
 	w.Header().Set("Connection", "keep-alive")
@@ -281,12 +286,25 @@ func (h *Handler) handleSSE(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	cycleIDStr := cycleID.String()
+	ch := h.eventBroker.Subscribe(cycleIDStr)
+	defer h.eventBroker.Unsubscribe(cycleIDStr, ch)
+
 	// Enviar evento inicial
-	fmt.Fprintf(w, "event: connected\ndata: %s\n\n", fmt.Sprintf(`{"cycle_id":"%s"}`, cycleID))
+	fmt.Fprintf(w, "event: connected\ndata: %s\n\n", fmt.Sprintf(`{"cycle_id":"%s"}`, cycleIDStr))
 	flusher.Flush()
 
-	// TODO: implementar LISTEN/NOTIFY realtime
-	// Por enquanto, o cliente deve reconectar para obter atualizações
-	fmt.Fprintf(w, "event: done\ndata: {}\n\n")
-	flusher.Flush()
+	// Forward real-time notifications until client disconnects
+	for {
+		select {
+		case <-r.Context().Done():
+			return
+		case data, ok := <-ch:
+			if !ok {
+				return
+			}
+			fmt.Fprintf(w, "event: job_update\ndata: %s\n\n", string(data))
+			flusher.Flush()
+		}
+	}
 }

@@ -340,7 +340,7 @@ func NewServer(cfg Config, logger *slog.Logger) (*Server, error) {
 		catalog.RegisterHandlers(mux, catalogSvc, logger)
 		logger.Info("catalog_module_enabled", "routes", "/v1/catalog/*")
 
-		billingDeps := NewBillingDeps(pool, logger)
+		billingDeps := NewBillingDeps(pool, logger, syncService, sessionManager, cfg.BackofficePGURL)
 		RegisterBillingRoutes(mux, docs, billingDeps, logger)
 		billingDeps.SyncJobPool.Start(context.Background())
 		logger.Info("billing_module_enabled", "routes", "/v1/billing/*")

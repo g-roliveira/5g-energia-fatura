@@ -69,11 +69,16 @@ class CoelbaPdfParser:
         started_at = time.perf_counter()
         snapshots = self._carregar_snapshot(pdf_path)
         first_page = snapshots[0]
+
+        # Se PDF escaneado e Mistral disponível, vai direto para OCR
         if len(first_page.text) < MIN_TEXT_LENGTH and not first_page.tables:
-            raise ParserError(
-                f"PDF sem texto extraível ({len(first_page.text)} chars) e sem tabelas. "
-                "Configure Mistral OCR para fallback semântico."
-            )
+            if not self._config.enable_mistral_fallback:
+                raise ParserError(
+                    f"PDF sem texto extraível ({len(first_page.text)} chars) e sem tabelas. "
+                    "Configure Mistral OCR para fallback semântico."
+                )
+            logger.info("pdf_parse_sem_texto_ocr_fallback", path=str(pdf_path))
+            return self._parse_with_ocr_only(pdf_path)
 
         conta = self._parse_with_pymupdf(pdf_path, snapshots)
         missing_fields = self._missing_fields(conta, first_page)
@@ -189,6 +194,49 @@ class CoelbaPdfParser:
             pdf_path=str(pdf_path),
             parsed_at=datetime.now(),
         )
+
+
+    def _parse_with_ocr_only(self, pdf_path: Path) -> ContaDistribuidora:
+        """Usa Mistral OCR diretamente em PDFs escaneados (sem texto extraível)."""
+        if self._ocr_client is None:
+            raise ParserError(
+                "OCR fallback requisitado mas cliente OCR não configurado. "
+                "Verifique MISTRAL_API_KEY."
+            )
+
+        try:
+            ocr_payload = self._ocr_client.extract_with_mistral(pdf_path)
+        except Exception as exc:
+            raise ParserError(f"OCR fallback falhou: {exc}") from exc
+
+        cliente_payload = ocr_payload.get("cliente") or {}
+        uc = cliente_payload.get("codigo") or ""
+        vencimento_raw = ocr_payload.get("vencimento")
+        try:
+            vencimento = _parse_date(vencimento_raw) if vencimento_raw else None
+        except Exception:
+            vencimento = None
+
+        # Usa normalizado_valor (float) como valor principal, depois tenta string
+        valor = ocr_payload.get("normalizado_valor") or ocr_payload.get("valor") or "0"
+
+        conta = ContaDistribuidora(
+            uc=uc,
+            mes=ocr_payload.get("mes") or 0,
+            ano=ocr_payload.get("ano") or 0,
+            valor=valor,
+            vencimento=vencimento or date.today(),
+            emissao_data=ocr_payload.get("emissao_data"),
+            codigo_barras=ocr_payload.get("codigo_barras"),
+            cliente=cliente_payload,
+            consumo=ocr_payload.get("consumo"),
+            informacoes_gerais=ocr_payload.get("informacoes_gerais"),
+            itens_fatura=ocr_payload.get("itens_fatura", []),
+            pdf_path=str(pdf_path),
+            parsed_at=datetime.now(),
+        )
+        logger.info("pdf_parse_ocr_only_concluido", path=str(pdf_path))
+        return conta
 
     def _maybe_enrich_with_ocr(
         self,

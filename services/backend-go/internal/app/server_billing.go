@@ -1,13 +1,16 @@
 package app
 
 import (
+	"context"
 	"encoding/json"
 	"errors"
 	"log/slog"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/shopspring/decimal"
 
@@ -15,6 +18,8 @@ import (
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/billing/contract"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/billing/cycle"
 	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/billing/repo"
+	"github.com/gustavo/5g-energia-fatura/services/backend-go/internal/session"
+	syncsvc "github.com/gustavo/5g-energia-fatura/services/backend-go/internal/sync"
 )
 
 // BillingDeps holds the Postgres-backed dependencies that the billing
@@ -26,19 +31,29 @@ type BillingDeps struct {
 	Cycle       *cycle.Service
 	Adjustment  *adjustment.Service
 	SyncJobPool *cycle.WorkerPool
+	EventBroker *cycle.CycleEventBroker
 }
 
 // NewBillingDeps wires the repos and services from a pgx pool.
 // Call this from NewServer after pgstore.Open succeeds.
-func NewBillingDeps(pool *pgxpool.Pool, logger *slog.Logger) *BillingDeps {
+func NewBillingDeps(pool *pgxpool.Pool, logger *slog.Logger, syncSvc *syncsvc.Service, sessMgr *session.Manager, pgURL string) *BillingDeps {
 	contractRepo := repo.NewContractRepo(pool)
 	calcRepo := repo.NewCalculationRepo(pool)
 
 	// Worker pool para processar jobs de sync_job
 	syncJobStore := cycle.NewSyncJobStore(pool)
 	syncJobPool := cycle.NewWorkerPool(syncJobStore, 3, 2*time.Second, logger)
-	jobDeps := cycle.NewJobDeps(pool)
+	jobDeps := cycle.NewJobDeps(pool, syncSvc, sessMgr)
 	cycle.BuildHandlers(syncJobPool, jobDeps)
+
+	// SSE event broker via Postgres LISTEN/NOTIFY
+	var eventBroker *cycle.CycleEventBroker
+	listenConn, err := pgx.Connect(context.Background(), pgURL)
+	if err != nil {
+		logger.Warn("sse_listener_conn_failed", "error", err)
+	} else {
+		eventBroker = cycle.NewCycleEventBroker(listenConn, logger)
+	}
 
 	return &BillingDeps{
 		Pool:        pool,
@@ -47,6 +62,7 @@ func NewBillingDeps(pool *pgxpool.Pool, logger *slog.Logger) *BillingDeps {
 		Cycle:       cycle.NewService(pool),
 		Adjustment:  adjustment.NewService(pool),
 		SyncJobPool: syncJobPool,
+		EventBroker: eventBroker,
 	}
 }
 
@@ -73,9 +89,8 @@ func RegisterBillingRoutes(
 	logger *slog.Logger,
 ) {
 	// --- CYCLES ------------------------------------------------------
-	cycleHandler := cycle.NewHandler(deps.Cycle, logger)
+	cycleHandler := cycle.NewHandler(deps.Cycle, logger, deps.EventBroker)
 	cycleHandler.RegisterRoutes(mux)
-
 
 	// --- CONTRACTS ---------------------------------------------------
 
@@ -239,6 +254,7 @@ type createContractBody struct {
 	IPFaturamentoPercent              string `json:"ip_faturamento_percent"`
 	BandeiraComDesconto               bool   `json:"bandeira_com_desconto"`
 	CustoDisponibilidadeSempreCobrado bool   `json:"custo_disponibilidade_sempre_cobrado"`
+	ConsumoMinimoKWh                  string `json:"consumo_minimo_kwh"`
 	Notes                             string `json:"notes"`
 	CreatedBy                         string `json:"created_by"`
 }
@@ -292,6 +308,11 @@ func handleContractCreate(w http.ResponseWriter, r *http.Request, deps *BillingD
 	}
 	if body.Notes != "" {
 		in.Notes = &body.Notes
+	}
+	if body.ConsumoMinimoKWh != "" {
+		if v, err := strconv.ParseFloat(body.ConsumoMinimoKWh, 64); err == nil {
+			in.ConsumoMinimoKWh = v
+		}
 	}
 	if body.CreatedBy != "" {
 		if u, err := uuid.Parse(body.CreatedBy); err == nil {
@@ -349,6 +370,7 @@ func contractView(c *repo.Contract) map[string]any {
 		"ip_faturamento_percent":               c.IPFaturamentoPercent.String(),
 		"bandeira_com_desconto":                c.BandeiraComDesconto,
 		"custo_disponibilidade_sempre_cobrado": c.CustoDisponibilidadeSempreCobrado,
+		"consumo_minimo_kwh":                   c.ConsumoMinimoKWh.String(),
 		"status":                               string(c.Status),
 		"created_at":                           c.CreatedAt,
 		"updated_at":                           c.UpdatedAt,

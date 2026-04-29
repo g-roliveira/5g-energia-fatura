@@ -10,17 +10,17 @@ import (
 
 // BulkActionRequest define uma ação em massa.
 type BulkActionRequest struct {
-	Action    string     `json:"action"`              // sync, recalculate, generate_pdf, approve
-	UCCodes   []string   `json:"uc_codes,omitempty"`  // vazio = todas
-	ForceAll  bool       `json:"force_all"`           // ignora checks
+	Action    string     `json:"action"`             // sync, recalculate, generate_pdf, approve
+	UCCodes   []string   `json:"uc_codes,omitempty"` // vazio = todas
+	ForceAll  bool       `json:"force_all"`          // ignora checks
 	CreatedBy *uuid.UUID `json:"created_by,omitempty"`
 }
 
 // BulkActionResult retorna o resultado.
 type BulkActionResult struct {
-	JobsCreated     int      `json:"jobs_created"`
-	JobsSkipped     int      `json:"jobs_skipped"`
-	SkippedReasons  []string `json:"skipped_reasons,omitempty"`
+	JobsCreated    int      `json:"jobs_created"`
+	JobsSkipped    int      `json:"jobs_skipped"`
+	SkippedReasons []string `json:"skipped_reasons,omitempty"`
 }
 
 // Bulk executa uma ação em massa nas UCs de um ciclo.

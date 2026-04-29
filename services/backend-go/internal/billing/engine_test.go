@@ -17,7 +17,7 @@ func TestCalculate_HappyPath(t *testing.T) {
 			BandeiraComDesconto:               false,
 			CustoDisponibilidadeSempreCobrado: true,
 		},
-		ConsumoMinimoKWh: 100,
+		ConsumoMinimoKWh: 100.0,
 		Itens: []UtilityInvoiceItem{
 			{
 				Type:          ItemTUSDFio,
@@ -83,7 +83,7 @@ func TestCalculate_CustoDisponibilidade(t *testing.T) {
 			IPFaturamentoValor:                decimal.Zero,
 			CustoDisponibilidadeSempreCobrado: true,
 		},
-		ConsumoMinimoKWh: 100,
+		ConsumoMinimoKWh: 100.0,
 		Itens: []UtilityInvoiceItem{
 			{
 				Type:          ItemTUSDFio,
@@ -127,7 +127,7 @@ func TestCalculate_BandeiraComDesconto(t *testing.T) {
 			IPFaturamentoMode:   IPModeFixed,
 			BandeiraComDesconto: true,
 		},
-		ConsumoMinimoKWh: 100,
+		ConsumoMinimoKWh: 100.0,
 		Itens: []UtilityInvoiceItem{
 			{Type: ItemTUSDFio, Quantidade: decimal.NewFromInt(100), PrecoUnitario: decimal.NewFromInt(1)},
 			{Type: ItemTUSDEnergia, Quantidade: decimal.NewFromInt(100), PrecoUnitario: decimal.Zero},

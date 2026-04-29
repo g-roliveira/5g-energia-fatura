@@ -46,7 +46,7 @@ type CalcContract struct {
 type CalculationInput struct {
 	Contract         CalcContract         `json:"contract"`
 	Itens            []UtilityInvoiceItem `json:"itens"`
-	ConsumoMinimoKWh int                  `json:"consumo_minimo_kwh"`
+	ConsumoMinimoKWh float64              `json:"consumo_minimo_kwh"`
 }
 
 // LineBreakdown é uma linha do detalhamento do resultado.

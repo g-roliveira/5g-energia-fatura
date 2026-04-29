@@ -42,7 +42,7 @@ func (s *Service) CreateCustomer(ctx context.Context, input CustomerInput) (*Cus
 		Telefone:     input.Telefone,
 		Status:       "prospect",
 		TipoCliente:  input.TipoCliente,
-		Notes:  input.Notes,
+		Notes:        input.Notes,
 		CreatedAt:    now,
 		UpdatedAt:    now,
 	}
@@ -156,6 +156,7 @@ func (s *Service) CreateContract(ctx context.Context, input ContractInput) (*Con
 		IPFaturamentoPercent:              input.IPFaturamentoPercent,
 		BandeiraComDesconto:               input.BandeiraComDesconto,
 		CustoDisponibilidadeSempreCobrado: input.CustoDisponibilidadeSempreCobrado,
+		ConsumoMinimoKWh:                  defaultString(input.ConsumoMinimoKWh, "30.0"),
 		Notes:                             input.Notes,
 		Status:                            "active",
 		CreatedAt:                         now,
@@ -179,14 +180,14 @@ func (s *Service) CreateContract(ctx context.Context, input ContractInput) (*Con
 
 		// Inserir novo
 		if _, err := tx.Exec(ctx, `
-			INSERT INTO public.contract (id, customer_id, consumer_unit_id, vigencia_inicio, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, notes, status, created_at, created_by, updated_at)
-			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+			INSERT INTO public.contract (id, customer_id, consumer_unit_id, vigencia_inicio, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, consumo_minimo_kwh, notes, status, created_at, created_by, updated_at)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
 		`,
 			contract.ID, contract.CustomerID, contract.ConsumerUnitID,
 			contract.VigenciaInicio, contract.DescontoPercentual,
 			contract.IPFaturamentoMode, contract.IPFaturamentoValor,
 			contract.IPFaturamentoPercent, contract.BandeiraComDesconto,
-			contract.CustoDisponibilidadeSempreCobrado, contract.Notes,
+			contract.CustoDisponibilidadeSempreCobrado, contract.ConsumoMinimoKWh, contract.Notes,
 			contract.Status, contract.CreatedAt, contract.CreatedBy, contract.UpdatedAt,
 		); err != nil {
 			return fmt.Errorf("insert contract: %w", err)
@@ -260,6 +261,7 @@ type ContractInput struct {
 	IPFaturamentoPercent              string     `json:"ip_faturamento_percent"`
 	BandeiraComDesconto               bool       `json:"bandeira_com_desconto"`
 	CustoDisponibilidadeSempreCobrado bool       `json:"custo_disponibilidade_sempre_cobrado"`
+	ConsumoMinimoKWh                  string     `json:"consumo_minimo_kwh,omitempty"`
 	Notes                             *string    `json:"notes,omitempty"`
 	CreatedBy                         *uuid.UUID `json:"created_by,omitempty"`
 }
@@ -278,4 +280,12 @@ func (i ContractInput) Validate() error {
 		return fmt.Errorf("vigencia_inicio is required")
 	}
 	return nil
+}
+
+// defaultString retorna def se s for vazio, senão retorna s.
+func defaultString(s, def string) string {
+	if s == "" {
+		return def
+	}
+	return s
 }

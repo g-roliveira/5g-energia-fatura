@@ -27,7 +27,7 @@ const contractCols = `
     id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim,
     desconto_percentual, ip_faturamento_mode, ip_faturamento_valor,
     ip_faturamento_percent, bandeira_com_desconto,
-    custo_disponibilidade_sempre_cobrado, notes, status,
+    custo_disponibilidade_sempre_cobrado, consumo_minimo_kwh, notes, status,
     created_at, created_by, updated_at
 `
 
@@ -38,7 +38,7 @@ func scanContract(row pgx.Row) (*Contract, error) {
 		&c.ID, &c.CustomerID, &c.ConsumerUnitID, &c.VigenciaInicio, &c.VigenciaFim,
 		&c.DescontoPercentual, &c.IPFaturamentoMode, &c.IPFaturamentoValor,
 		&c.IPFaturamentoPercent, &c.BandeiraComDesconto,
-		&c.CustoDisponibilidadeSempreCobrado, &c.Notes, &c.Status,
+		&c.CustoDisponibilidadeSempreCobrado, &c.ConsumoMinimoKWh, &c.Notes, &c.Status,
 		&c.CreatedAt, &c.CreatedBy, &c.UpdatedAt,
 	)
 	if errors.Is(err, pgx.ErrNoRows) {
@@ -132,12 +132,12 @@ func (r *ContractRepo) Insert(ctx context.Context, tx pgx.Tx, c *Contract) error
 		     id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim,
 		     desconto_percentual, ip_faturamento_mode, ip_faturamento_valor,
 		     ip_faturamento_percent, bandeira_com_desconto,
-		     custo_disponibilidade_sempre_cobrado, notes, status, created_by
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
+		     custo_disponibilidade_sempre_cobrado, consumo_minimo_kwh, notes, status, created_by
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`,
 		c.ID, c.CustomerID, c.ConsumerUnitID, c.VigenciaInicio, c.VigenciaFim,
 		c.DescontoPercentual, c.IPFaturamentoMode, c.IPFaturamentoValor,
 		c.IPFaturamentoPercent, c.BandeiraComDesconto,
-		c.CustoDisponibilidadeSempreCobrado, c.Notes, c.Status, c.CreatedBy,
+		c.CustoDisponibilidadeSempreCobrado, c.ConsumoMinimoKWh, c.Notes, c.Status, c.CreatedBy,
 	)
 	if err != nil {
 		return fmt.Errorf("ContractRepo.Insert: %w", err)

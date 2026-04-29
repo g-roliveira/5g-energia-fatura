@@ -25,23 +25,23 @@ func NewService(pool *pgxpool.Pool) *Service {
 
 // ManualAdjustment representa um ajuste manual registrado.
 type ManualAdjustment struct {
-	ID                 uuid.UUID       `json:"id"`
-	BillingCalculationID uuid.UUID   `json:"billing_calculation_id"`
-	FieldPath          string          `json:"field_path"`
-	OldValue           any             `json:"old_value,omitempty"`
-	NewValue           any             `json:"new_value"`
-	Reason             string          `json:"reason"`
-	CreatedBy          uuid.UUID       `json:"created_by"`
-	CreatedAt          time.Time       `json:"created_at"`
+	ID                   uuid.UUID `json:"id"`
+	BillingCalculationID uuid.UUID `json:"billing_calculation_id"`
+	FieldPath            string    `json:"field_path"`
+	OldValue             any       `json:"old_value,omitempty"`
+	NewValue             any       `json:"new_value"`
+	Reason               string    `json:"reason"`
+	CreatedBy            uuid.UUID `json:"created_by"`
+	CreatedAt            time.Time `json:"created_at"`
 }
 
 // ApplyRequest define um ajuste a ser aplicado.
 type ApplyRequest struct {
 	CalculationID uuid.UUID `json:"calculation_id"`
-	FieldPath     string    `json:"field_path"`    // ex: "total_com_desconto", "economia_rs"
-	NewValue      any       `json:"new_value"`     // novo valor (number, string, bool)
-	Reason        string    `json:"reason"`        // motivo do ajuste
-	CreatedBy     uuid.UUID `json:"created_by"`    // quem fez o ajuste
+	FieldPath     string    `json:"field_path"` // ex: "total_com_desconto", "economia_rs"
+	NewValue      any       `json:"new_value"`  // novo valor (number, string, bool)
+	Reason        string    `json:"reason"`     // motivo do ajuste
+	CreatedBy     uuid.UUID `json:"created_by"` // quem fez o ajuste
 }
 
 // Apply aplica um ajuste manual, criando uma nova versão do cálculo.
@@ -141,14 +141,14 @@ func (s *Service) Apply(ctx context.Context, req ApplyRequest) (*ManualAdjustmen
 
 	// 6. Registrar ajuste manual
 	adj := &ManualAdjustment{
-		ID:                 uuid.New(),
+		ID:                   uuid.New(),
 		BillingCalculationID: newCalcID,
-		FieldPath:          req.FieldPath,
-		OldValue:           oldValue,
-		NewValue:           req.NewValue,
-		Reason:             req.Reason,
-		CreatedBy:          req.CreatedBy,
-		CreatedAt:          time.Now(),
+		FieldPath:            req.FieldPath,
+		OldValue:             oldValue,
+		NewValue:             req.NewValue,
+		Reason:               req.Reason,
+		CreatedBy:            req.CreatedBy,
+		CreatedAt:            time.Now(),
 	}
 	oldJSON, _ := json.Marshal(oldValue)
 	newJSON, _ := json.Marshal(req.NewValue)

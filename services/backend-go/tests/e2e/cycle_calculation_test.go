@@ -45,6 +45,7 @@ func TestBillingCycleSyncCalculateApprove(t *testing.T) {
 		"ip_faturamento_valor":                 "10.00",
 		"bandeira_com_desconto":                true,
 		"custo_disponibilidade_sempre_cobrado": false,
+		"consumo_minimo_kwh":                   "30.0",
 	})
 	defer respContract.Body.Close()
 	if respContract.StatusCode != http.StatusCreated {

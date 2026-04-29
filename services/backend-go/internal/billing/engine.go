@@ -52,7 +52,7 @@ func Calculate(in CalculationInput) (CalculationResult, error) {
 	}
 
 	warnings := []string{}
-	minKWh := decimal.NewFromInt(int64(in.ConsumoMinimoKWh))
+	minKWh := decimal.NewFromFloat(in.ConsumoMinimoKWh)
 	if in.Contract.CustoDisponibilidadeSempreCobrado && consumoLiquido.LessThan(minKWh) {
 		warnings = append(warnings,
 			fmt.Sprintf("consumo líquido %s kWh menor que mínimo %s kWh — aplicado mínimo",

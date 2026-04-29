@@ -119,11 +119,14 @@ func (p *WorkerPool) worker(ctx context.Context, workerID string) {
 		}
 
 		p.logger.Info("sync_job_started", "worker", workerID, "job_id", job.ID, "job_type", job.Type)
+		NotifyJobEvent(ctx, p.store.pool, p.logger, job, "running", "Processando "+job.Type)
 		if err := handler(ctx, job); err != nil {
 			p.logger.Error("sync_job_failed", "worker", workerID, "job_id", job.ID, "error", err)
+			NotifyJobEvent(ctx, p.store.pool, p.logger, job, "failed", err.Error())
 			p.store.FailJob(ctx, job.ID, err.Error())
 		} else {
 			p.logger.Info("sync_job_completed", "worker", workerID, "job_id", job.ID)
+			NotifyJobEvent(ctx, p.store.pool, p.logger, job, "success", job.Type+" concluído")
 			p.store.CompleteJob(ctx, job.ID, nil)
 		}
 	}
@@ -155,10 +158,13 @@ func (p *WorkerPool) RunOne(ctx context.Context, jobID uuid.UUID) error {
 		return fmt.Errorf("no handler for job type %s", job.Type)
 	}
 
+	NotifyJobEvent(ctx, p.store.pool, p.logger, job, "running", "Processando "+job.Type)
 	if err := handler(ctx, job); err != nil {
+		NotifyJobEvent(ctx, p.store.pool, p.logger, job, "failed", err.Error())
 		p.store.FailJob(ctx, job.ID, err.Error())
 		return err
 	}
+	NotifyJobEvent(ctx, p.store.pool, p.logger, job, "success", job.Type+" concluído")
 	p.store.CompleteJob(ctx, job.ID, nil)
 	return nil
 }

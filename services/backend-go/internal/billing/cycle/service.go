@@ -36,19 +36,19 @@ type Cycle struct {
 	ClosedAt      *time.Time `json:"closed_at,omitempty"`
 	ClosedBy      *uuid.UUID `json:"closed_by,omitempty"`
 	// Aggregated counts (populated by List/Get)
-	TotalUCs       int `json:"total_ucs,omitempty"`
-	SyncedCount    int `json:"synced_count,omitempty"`
+	TotalUCs        int `json:"total_ucs,omitempty"`
+	SyncedCount     int `json:"synced_count,omitempty"`
 	CalculatedCount int `json:"calculated_count,omitempty"`
-	ApprovedCount  int `json:"approved_count,omitempty"`
+	ApprovedCount   int `json:"approved_count,omitempty"`
 }
 
 // CreateRequest cria um novo ciclo.
 type CreateRequest struct {
-	Year           int16      `json:"year"`
-	Month          int16      `json:"month"`
-	IncludeAllActive bool     `json:"include_all_active"`
-	UCIDs          []uuid.UUID `json:"uc_ids,omitempty"`
-	CreatedBy      *uuid.UUID  `json:"created_by,omitempty"`
+	Year             int16       `json:"year"`
+	Month            int16       `json:"month"`
+	IncludeAllActive bool        `json:"include_all_active"`
+	UCIDs            []uuid.UUID `json:"uc_ids,omitempty"`
+	CreatedBy        *uuid.UUID  `json:"created_by,omitempty"`
 }
 
 // Create cria um billing_cycle e associa consumer units.

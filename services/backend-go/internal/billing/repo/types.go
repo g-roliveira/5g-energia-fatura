@@ -45,6 +45,7 @@ type Contract struct {
 	IPFaturamentoPercent              decimal.Decimal `db:"ip_faturamento_percent"`
 	BandeiraComDesconto               bool            `db:"bandeira_com_desconto"`
 	CustoDisponibilidadeSempreCobrado bool            `db:"custo_disponibilidade_sempre_cobrado"`
+	ConsumoMinimoKWh                  decimal.Decimal `db:"consumo_minimo_kwh"`
 	Notes                             *string         `db:"notes"`
 	Status                            ContractStatus  `db:"status"`
 	CreatedAt                         time.Time       `db:"created_at"`

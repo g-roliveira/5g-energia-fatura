@@ -363,12 +363,12 @@ func customerView(c *Customer) map[string]any {
 
 func unitView(u *ConsumerUnit) map[string]any {
 	v := map[string]any{
-		"id":            u.ID.String(),
-		"customer_id":   u.CustomerID.String(),
-		"uc_code":       u.UCCode,
-		"ativa":         u.Ativa,
-		"created_at":    u.CreatedAt,
-		"updated_at":    u.UpdatedAt,
+		"id":          u.ID.String(),
+		"customer_id": u.CustomerID.String(),
+		"uc_code":     u.UCCode,
+		"ativa":       u.Ativa,
+		"created_at":  u.CreatedAt,
+		"updated_at":  u.UpdatedAt,
 	}
 	if u.Distribuidora != nil {
 		v["distribuidora"] = *u.Distribuidora
@@ -397,6 +397,7 @@ func contractView(c *Contract) map[string]any {
 		"ip_faturamento_percent":               c.IPFaturamentoPercent,
 		"bandeira_com_desconto":                c.BandeiraComDesconto,
 		"custo_disponibilidade_sempre_cobrado": c.CustoDisponibilidadeSempreCobrado,
+		"consumo_minimo_kwh":                   c.ConsumoMinimoKWh,
 		"status":                               c.Status,
 		"created_at":                           c.CreatedAt,
 	}
