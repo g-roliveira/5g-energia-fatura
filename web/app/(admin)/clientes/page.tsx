@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSearchParams } from 'next/navigation'
 import { useQuery } from '@tanstack/react-query'
@@ -26,6 +26,14 @@ import { ClientFormMinimal } from '@/components/clientes/client-form-minimal'
 import type { CreateClientMinimalInput } from '@/types/clientes'
 
 export default function ClientesPage() {
+  return (
+    <Suspense fallback={<div className="flex flex-col gap-6 p-6"><div className="h-8 w-48 bg-muted rounded animate-pulse" /></div>}>
+      <ClientesContent />
+    </Suspense>
+  )
+}
+
+function ClientesContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const page = Number(searchParams.get('page') ?? 1)

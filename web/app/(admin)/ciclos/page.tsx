@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSearchParams } from 'next/navigation'
 import { HugeiconsIcon } from '@hugeicons/react'
@@ -62,6 +62,14 @@ function statusBadgeVariant(status: string) {
 }
 
 export default function CiclosPage() {
+  return (
+    <Suspense fallback={<div className="flex flex-col gap-6 p-6"><div className="h-8 w-48 bg-muted rounded animate-pulse" /></div>}>
+      <CiclosContent />
+    </Suspense>
+  )
+}
+
+function CiclosContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const yearFilter = searchParams.get('year') ? Number(searchParams.get('year')) : undefined

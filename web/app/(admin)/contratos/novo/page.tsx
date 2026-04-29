@@ -36,6 +36,7 @@ export default function NovoContratoPage() {
   const [ucId, setUcId] = useState('')
   const [vigenciaInicio, setVigenciaInicio] = useState('')
   const [desconto, setDesconto] = useState('0.85')
+  const [valorIpComDesc, setValorIpComDesc] = useState('13.35')
   const [ipMode, setIpMode] = useState<'fixed' | 'percent'>('fixed')
   const [ipValor, setIpValor] = useState('10.00')
   const [ipPercent, setIpPercent] = useState('0.10')
@@ -74,7 +75,8 @@ export default function NovoContratoPage() {
         customer_id: clientId,
         consumer_unit_id: ucId,
         vigencia_inicio: vigenciaInicio,
-        desconto_percentual: desconto,
+        fator_repasse_energia: desconto,
+	valor_ip_com_desconto: valorIpComDesc,
         ip_faturamento_mode: ipMode,
         ip_faturamento_valor: ipMode === 'fixed' ? ipValor : undefined,
         ip_faturamento_percent: ipMode === 'percent' ? ipPercent : undefined,
@@ -153,7 +155,7 @@ export default function NovoContratoPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="desconto">Desconto Percentual *</Label>
+                <Label htmlFor="desconto">Fator de Repasse *</Label>
                 <Input
                   id="desconto"
                   type="number"
@@ -164,7 +166,7 @@ export default function NovoContratoPage() {
                   onChange={(e) => setDesconto(e.target.value)}
                   required
                 />
-                <p className="text-xs text-muted-foreground">Ex: 0.85 = 15% de desconto</p>
+                <p className="text-xs text-muted-foreground">Ex: 0.85 = repasse de 85% (5G fica com a diferença)</p>
               </div>
             </div>
 

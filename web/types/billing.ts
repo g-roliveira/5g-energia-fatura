@@ -56,7 +56,8 @@ export const CreateContractSchema = z.object({
   customer_id: z.string().uuid(),
   consumer_unit_id: z.string().uuid(),
   vigencia_inicio: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, 'Formato YYYY-MM-DD'),
-  desconto_percentual: z.string(),
+  fator_repasse_energia: z.string(),
+  valor_ip_com_desconto: z.string().optional(),
   ip_faturamento_mode: IPModeEnum,
   ip_faturamento_valor: z.string().optional(),
   ip_faturamento_percent: z.string().optional(),
@@ -127,7 +128,8 @@ export interface GoContract {
   consumer_unit_id: string
   vigencia_inicio: string
   vigencia_fim?: string
-  desconto_percentual: string
+  fator_repasse_energia: string
+  valor_ip_com_desconto: string
   ip_faturamento_mode: string
   ip_faturamento_valor: string
   ip_faturamento_percent: string

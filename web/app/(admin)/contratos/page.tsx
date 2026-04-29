@@ -163,7 +163,7 @@ export default function ContratosPage() {
                     </div>
                     <div>
                       <p className="font-medium">
-                        Desconto {Math.round(Number(c.desconto_percentual) * 100)}%
+                        Desconto {Math.round(Number(c.fator_repasse_energia) * 100)}%
                         {' '}
                         {c.ip_faturamento_mode === 'fixed'
                           ? `— IP R$ ${c.ip_faturamento_valor}`

@@ -67,8 +67,8 @@ export function CycleRowTable({ rows, isLoading }: CycleRowTableProps) {
           <TableHead>Cliente</TableHead>
           <TableHead>Sync</TableHead>
           <TableHead>Cálculo</TableHead>
-          <TableHead className="text-right">Sem Desconto</TableHead>
-          <TableHead className="text-right">Com Desconto</TableHead>
+          <TableHead className="text-right">Valor Ref. (R$)</TableHead>
+          <TableHead className="text-right">Repasse 5G (R$)</TableHead>
           <TableHead className="text-right">Economia</TableHead>
           <TableHead className="w-[100px]">Ações</TableHead>
         </TableRow>
