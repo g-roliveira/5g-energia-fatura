@@ -25,6 +25,7 @@ import {
   LayersIcon,
   GridIcon,
   CommandIcon,
+  InvoiceIcon,
 } from "@hugeicons/core-free-icons"
 
 import {
@@ -241,6 +242,54 @@ function TeamSwitcher() {
 const clientesNav = [
   { title: "Todos os clientes", url: "/clientes" },
 ]
+
+const billingNav = [
+  { title: "Ciclos de faturamento", url: "/ciclos" },
+  { title: "Contratos", url: "/contratos" },
+]
+
+function NavBilling() {
+  const pathname = usePathname()
+
+  return (
+    <SidebarGroup>
+      <SidebarGroupLabel>Faturamento</SidebarGroupLabel>
+      <SidebarGroupContent>
+        <SidebarMenu>
+          <Collapsible defaultOpen>
+            <SidebarMenuItem>
+              <SidebarMenuButton asChild isActive={pathname.startsWith("/ciclos") || pathname.startsWith("/contratos")} tooltip="Faturamento">
+                <Link href="/ciclos">
+                  <HugeiconsIcon icon={InvoiceIcon} strokeWidth={2} />
+                  <span>Faturamento</span>
+                </Link>
+              </SidebarMenuButton>
+              <CollapsibleTrigger asChild>
+                <SidebarMenuAction className="data-open:rotate-90 transition-transform">
+                  <HugeiconsIcon icon={ArrowRight01Icon} strokeWidth={2} />
+                  <span className="sr-only">Expandir</span>
+                </SidebarMenuAction>
+              </CollapsibleTrigger>
+              <CollapsibleContent>
+                <SidebarMenuSub>
+                  {billingNav.map((item) => (
+                    <SidebarMenuSubItem key={item.title}>
+                      <SidebarMenuSubButton asChild isActive={pathname === item.url}>
+                        <Link href={item.url}>
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuSubButton>
+                    </SidebarMenuSubItem>
+                  ))}
+                </SidebarMenuSub>
+              </CollapsibleContent>
+            </SidebarMenuItem>
+          </Collapsible>
+        </SidebarMenu>
+      </SidebarGroupContent>
+    </SidebarGroup>
+  )
+}
 
 function NavClientes() {
   const pathname = usePathname()
@@ -513,6 +562,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarSeparator />
       <SidebarContent>
         <NavClientes />
+        <SidebarSeparator />
+        <NavBilling />
         <SidebarSeparator />
         <NavMain />
         <SidebarSeparator />
