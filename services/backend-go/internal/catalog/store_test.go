@@ -375,10 +375,12 @@ func TestContractStore(t *testing.T) {
 			CustomerID:           customer.ID,
 			ConsumerUnitID:       unit.ID,
 			VigenciaInicio:       time.Date(2025, 10, 1, 0, 0, 0, 0, time.UTC),
-			DescontoPercentual:   "0.85",
+			FatorRepasseEnergia:   "0.85",
+			ValorIPComDesconto:    "50.00",
 			IPFaturamentoMode:    "fixed",
 			IPFaturamentoValor:   "10.00",
 			IPFaturamentoPercent: "0",
+			ConsumoMinimoKWh:     "30.0",
 			Status:               "active",
 			CreatedAt:            time.Now(),
 			UpdatedAt:            time.Now(),
@@ -393,8 +395,8 @@ func TestContractStore(t *testing.T) {
 			t.Fatalf("get contract: %v", err)
 		}
 		// Postgres NUMERIC pode adicionar zeros à direita
-		if got.DescontoPercentual != c.DescontoPercentual && got.DescontoPercentual != c.DescontoPercentual+"00" {
-			t.Errorf("desconto = %q, want %q", got.DescontoPercentual, c.DescontoPercentual)
+		if got.FatorRepasseEnergia != c.FatorRepasseEnergia && got.FatorRepasseEnergia != c.FatorRepasseEnergia+"00" {
+			t.Errorf("desconto = %q, want %q", got.FatorRepasseEnergia, c.FatorRepasseEnergia)
 		}
 	})
 

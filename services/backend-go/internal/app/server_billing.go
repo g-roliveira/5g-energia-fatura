@@ -248,7 +248,8 @@ type createContractBody struct {
 	CustomerID                        string `json:"customer_id"`
 	ConsumerUnitID                    string `json:"consumer_unit_id"`
 	VigenciaInicio                    string `json:"vigencia_inicio"` // YYYY-MM-DD
-	DescontoPercentual                string `json:"desconto_percentual"`
+	FatorRepasseEnergia                string `json:"fator_repasse_energia"`
+		ValorIPComDesconto                string `json:"valor_ip_com_desconto"`
 	IPFaturamentoMode                 string `json:"ip_faturamento_mode"`
 	IPFaturamentoValor                string `json:"ip_faturamento_valor"`
 	IPFaturamentoPercent              string `json:"ip_faturamento_percent"`
@@ -281,9 +282,15 @@ func handleContractCreate(w http.ResponseWriter, r *http.Request, deps *BillingD
 		writeClientError(w, http.StatusBadRequest, "vigencia_inicio deve estar em YYYY-MM-DD")
 		return
 	}
-	desc, err := decimal.NewFromString(body.DescontoPercentual)
+	desc, err := decimal.NewFromString(body.FatorRepasseEnergia)
+	var descIP decimal.Decimal
+	if body.ValorIPComDesconto != "" {
+		if v, err := decimal.NewFromString(body.ValorIPComDesconto); err == nil {
+			descIP = v
+		}
+	}
 	if err != nil {
-		writeClientError(w, http.StatusBadRequest, "desconto_percentual inválido")
+		writeClientError(w, http.StatusBadRequest, "fator_repasse_energia inválido")
 		return
 	}
 
@@ -291,7 +298,8 @@ func handleContractCreate(w http.ResponseWriter, r *http.Request, deps *BillingD
 		CustomerID:                        customerID,
 		ConsumerUnitID:                    ucID,
 		VigenciaInicio:                    vig,
-		DescontoPercentual:                desc,
+		FatorRepasseEnergia:                desc,
+		ValorIPComDesconto:                descIP,
 		IPFaturamentoMode:                 repo.IPMode(body.IPFaturamentoMode),
 		BandeiraComDesconto:               body.BandeiraComDesconto,
 		CustoDisponibilidadeSempreCobrado: body.CustoDisponibilidadeSempreCobrado,
@@ -364,7 +372,8 @@ func contractView(c *repo.Contract) map[string]any {
 		"customer_id":                          c.CustomerID.String(),
 		"consumer_unit_id":                     c.ConsumerUnitID.String(),
 		"vigencia_inicio":                      c.VigenciaInicio.Format("2006-01-02"),
-		"desconto_percentual":                  c.DescontoPercentual.String(),
+		"fator_repasse_energia":                  c.FatorRepasseEnergia.String(),
+		"valor_ip_com_desconto":              c.ValorIPComDesconto.String(),
 		"ip_faturamento_mode":                  string(c.IPFaturamentoMode),
 		"ip_faturamento_valor":                 c.IPFaturamentoValor.String(),
 		"ip_faturamento_percent":               c.IPFaturamentoPercent.String(),

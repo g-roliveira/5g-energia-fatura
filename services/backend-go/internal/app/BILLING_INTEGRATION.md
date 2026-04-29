@@ -129,7 +129,7 @@ cd services/backend-go && go mod tidy
         "customer_id": "...uuid do customer...",
         "consumer_unit_id": "...uuid da UC...",
         "vigencia_inicio": "2025-10-01",
-        "desconto_percentual": "0.85",
+        "fator_repasse_energia": "0.85",
         "ip_faturamento_mode": "fixed",
         "ip_faturamento_valor": "10.00",
         "bandeira_com_desconto": false,

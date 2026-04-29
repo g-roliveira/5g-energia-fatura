@@ -150,7 +150,8 @@ func (s *Service) CreateContract(ctx context.Context, input ContractInput) (*Con
 		CustomerID:                        input.CustomerID,
 		ConsumerUnitID:                    input.ConsumerUnitID,
 		VigenciaInicio:                    vigenciaInicio,
-		DescontoPercentual:                input.DescontoPercentual,
+		FatorRepasseEnergia:               input.FatorRepasseEnergia,
+		ValorIPComDesconto:                defaultString(input.ValorIPComDesconto, "0"),
 		IPFaturamentoMode:                 input.IPFaturamentoMode,
 		IPFaturamentoValor:                input.IPFaturamentoValor,
 		IPFaturamentoPercent:              input.IPFaturamentoPercent,
@@ -180,14 +181,20 @@ func (s *Service) CreateContract(ctx context.Context, input ContractInput) (*Con
 
 		// Inserir novo
 		if _, err := tx.Exec(ctx, `
-			INSERT INTO public.contract (id, customer_id, consumer_unit_id, vigencia_inicio, desconto_percentual, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, consumo_minimo_kwh, notes, status, created_at, created_by, updated_at)
-			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
+			INSERT INTO public.contract (id, customer_id, consumer_unit_id, vigencia_inicio, fator_repasse_energia, valor_ip_com_desconto, ip_faturamento_mode, ip_faturamento_valor, ip_faturamento_percent, bandeira_com_desconto, custo_disponibilidade_sempre_cobrado, consumo_minimo_kwh, notes, status, created_at, created_by, updated_at)
+			VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
 		`,
 			contract.ID, contract.CustomerID, contract.ConsumerUnitID,
-			contract.VigenciaInicio, contract.DescontoPercentual,
-			contract.IPFaturamentoMode, contract.IPFaturamentoValor,
-			contract.IPFaturamentoPercent, contract.BandeiraComDesconto,
-			contract.CustoDisponibilidadeSempreCobrado, contract.ConsumoMinimoKWh, contract.Notes,
+			contract.VigenciaInicio,
+			numericOrNil(contract.FatorRepasseEnergia),
+			numericOrNil(contract.ValorIPComDesconto),
+			contract.IPFaturamentoMode,
+			numericOrNil(contract.IPFaturamentoValor),
+			numericOrNil(contract.IPFaturamentoPercent),
+			contract.BandeiraComDesconto,
+			contract.CustoDisponibilidadeSempreCobrado,
+			numericOrNil(contract.ConsumoMinimoKWh),
+			contract.Notes,
 			contract.Status, contract.CreatedAt, contract.CreatedBy, contract.UpdatedAt,
 		); err != nil {
 			return fmt.Errorf("insert contract: %w", err)
@@ -255,7 +262,8 @@ type ContractInput struct {
 	CustomerID                        uuid.UUID  `json:"customer_id"`
 	ConsumerUnitID                    uuid.UUID  `json:"consumer_unit_id"`
 	VigenciaInicio                    string     `json:"vigencia_inicio"` // YYYY-MM-DD
-	DescontoPercentual                string     `json:"desconto_percentual"`
+	FatorRepasseEnergia               string     `json:"fator_repasse_energia"`
+	ValorIPComDesconto                string     `json:"valor_ip_com_desconto,omitempty"`
 	IPFaturamentoMode                 string     `json:"ip_faturamento_mode"`
 	IPFaturamentoValor                string     `json:"ip_faturamento_valor"`
 	IPFaturamentoPercent              string     `json:"ip_faturamento_percent"`
@@ -270,8 +278,8 @@ func (i ContractInput) Validate() error {
 	if i.ConsumerUnitID == uuid.Nil {
 		return fmt.Errorf("consumer_unit_id is required")
 	}
-	if i.DescontoPercentual == "" {
-		return fmt.Errorf("desconto_percentual is required")
+	if i.FatorRepasseEnergia == "" {
+		return fmt.Errorf("fator_repasse_energia is required")
 	}
 	if i.IPFaturamentoMode != "fixed" && i.IPFaturamentoMode != "percent" {
 		return fmt.Errorf("ip_faturamento_mode must be fixed or percent")
@@ -286,6 +294,16 @@ func (i ContractInput) Validate() error {
 func defaultString(s, def string) string {
 	if s == "" {
 		return def
+	}
+	return s
+}
+
+// numericOrNil converte string vazia em nil para campos NUMERIC do PostgreSQL.
+// Isso evita erro "invalid input syntax for type numeric: ''" quando o campo
+// é opcional e não foi informado.
+func numericOrNil(s string) interface{} {
+	if s == "" {
+		return nil
 	}
 	return s
 }

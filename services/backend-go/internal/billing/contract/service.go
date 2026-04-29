@@ -6,7 +6,7 @@
 //
 // This versioning is what makes billing_calculation.contract_snapshot_json
 // meaningful: we can always reconstruct exactly which rules were applied
-// for any past competência, even if the customer's contract has changed
+// for any past competencia, even if the customer's contract has changed
 // several times since.
 package contract
 
@@ -37,7 +37,8 @@ type CreateInput struct {
 	CustomerID                        uuid.UUID
 	ConsumerUnitID                    uuid.UUID
 	VigenciaInicio                    time.Time
-	DescontoPercentual                decimal.Decimal
+	FatorRepasseEnergia               decimal.Decimal
+	ValorIPComDesconto                decimal.Decimal
 	IPFaturamentoMode                 repo.IPMode
 	IPFaturamentoValor                decimal.Decimal
 	IPFaturamentoPercent              decimal.Decimal
@@ -51,17 +52,17 @@ type CreateInput struct {
 // Validate checks business invariants before we touch the database.
 func (in *CreateInput) Validate() error {
 	if in.CustomerID == uuid.Nil {
-		return errors.New("customer_id é obrigatório")
+		return errors.New("customer_id e obrigatorio")
 	}
 	if in.ConsumerUnitID == uuid.Nil {
-		return errors.New("consumer_unit_id é obrigatório")
+		return errors.New("consumer_unit_id e obrigatorio")
 	}
 	if in.VigenciaInicio.IsZero() {
-		return errors.New("vigencia_inicio é obrigatória")
+		return errors.New("vigencia_inicio e obrigatoria")
 	}
-	if in.DescontoPercentual.LessThanOrEqual(decimal.Zero) ||
-		in.DescontoPercentual.GreaterThan(decimal.NewFromInt(1)) {
-		return errors.New("desconto_percentual deve estar no intervalo (0, 1]")
+	if in.FatorRepasseEnergia.LessThanOrEqual(decimal.Zero) ||
+		in.FatorRepasseEnergia.GreaterThan(decimal.NewFromInt(1)) {
+		return errors.New("fator_repasse_energia deve estar no intervalo (0, 1]")
 	}
 	switch in.IPFaturamentoMode {
 	case repo.IPModeFixed, repo.IPModePercent:
@@ -69,7 +70,7 @@ func (in *CreateInput) Validate() error {
 	case "":
 		// default applied later
 	default:
-		return fmt.Errorf("ip_faturamento_mode inválido: %q", in.IPFaturamentoMode)
+		return fmt.Errorf("ip_faturamento_mode invalido: %q", in.IPFaturamentoMode)
 	}
 	if in.IPFaturamentoMode == repo.IPModePercent &&
 		(in.IPFaturamentoPercent.IsZero() || in.IPFaturamentoPercent.GreaterThan(decimal.NewFromInt(1))) {
@@ -97,7 +98,7 @@ func (s *Service) Create(ctx context.Context, in CreateInput) (*repo.Contract, e
 	defer func() { _ = tx.Rollback(ctx) }() // no-op after Commit
 
 	// Close the previous active contract on the day before the new starts.
-	// This guarantees no overlap in vigência.
+	// This guarantees no overlap in vigencia.
 	endOfPrevious := in.VigenciaInicio.AddDate(0, 0, -1)
 	if err := s.repo.CloseActive(ctx, tx, in.ConsumerUnitID, endOfPrevious); err != nil {
 		return nil, err
@@ -112,7 +113,8 @@ func (s *Service) Create(ctx context.Context, in CreateInput) (*repo.Contract, e
 		ConsumerUnitID:                    in.ConsumerUnitID,
 		VigenciaInicio:                    in.VigenciaInicio,
 		VigenciaFim:                       nil, // new contract is open-ended
-		DescontoPercentual:                in.DescontoPercentual,
+		FatorRepasseEnergia:               in.FatorRepasseEnergia,
+		ValorIPComDesconto:                in.ValorIPComDesconto,
 		IPFaturamentoMode:                 in.IPFaturamentoMode,
 		IPFaturamentoValor:                in.IPFaturamentoValor,
 		IPFaturamentoPercent:              in.IPFaturamentoPercent,
@@ -144,8 +146,8 @@ func (s *Service) GetActiveForUC(ctx context.Context, ucID uuid.UUID) (*repo.Con
 }
 
 // GetForUCAtDate returns the contract that was in force at a specific date.
-// Used by the billing engine when (re)calculating a past competência —
-// it must use the contract as it existed *at the time of the competência*,
+// Used by the billing engine when (re)calculating a past competencia —
+// it must use the contract as it existed *at the time of the competencia*,
 // not today's contract.
 func (s *Service) GetForUCAtDate(
 	ctx context.Context, ucID uuid.UUID, asOf time.Time,

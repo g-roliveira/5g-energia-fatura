@@ -62,7 +62,8 @@ type Contract struct {
 	ConsumerUnitID                    uuid.UUID
 	VigenciaInicio                    time.Time
 	VigenciaFim                       *time.Time
-	DescontoPercentual                string // decimal como string para precisão
+	FatorRepasseEnergia               string // decimal como string para precisão
+	ValorIPComDesconto                string // decimal; valor contratual da IP no cenário COM repasse
 	IPFaturamentoMode                 string // fixed | percent
 	IPFaturamentoValor                string
 	IPFaturamentoPercent              string

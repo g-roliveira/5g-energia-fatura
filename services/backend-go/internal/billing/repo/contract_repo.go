@@ -25,7 +25,7 @@ func NewContractRepo(pool *pgxpool.Pool) *ContractRepo {
 
 const contractCols = `
     id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim,
-    desconto_percentual, ip_faturamento_mode, ip_faturamento_valor,
+    fator_repasse_energia, valor_ip_com_desconto, ip_faturamento_mode, ip_faturamento_valor,
     ip_faturamento_percent, bandeira_com_desconto,
     custo_disponibilidade_sempre_cobrado, consumo_minimo_kwh, notes, status,
     created_at, created_by, updated_at
@@ -36,7 +36,7 @@ func scanContract(row pgx.Row) (*Contract, error) {
 	var c Contract
 	err := row.Scan(
 		&c.ID, &c.CustomerID, &c.ConsumerUnitID, &c.VigenciaInicio, &c.VigenciaFim,
-		&c.DescontoPercentual, &c.IPFaturamentoMode, &c.IPFaturamentoValor,
+		&c.FatorRepasseEnergia, &c.ValorIPComDesconto, &c.IPFaturamentoMode, &c.IPFaturamentoValor,
 		&c.IPFaturamentoPercent, &c.BandeiraComDesconto,
 		&c.CustoDisponibilidadeSempreCobrado, &c.ConsumoMinimoKWh, &c.Notes, &c.Status,
 		&c.CreatedAt, &c.CreatedBy, &c.UpdatedAt,
@@ -130,12 +130,12 @@ func (r *ContractRepo) Insert(ctx context.Context, tx pgx.Tx, c *Contract) error
 	_, err := tx.Exec(ctx,
 		`INSERT INTO public.contract (
 		     id, customer_id, consumer_unit_id, vigencia_inicio, vigencia_fim,
-		     desconto_percentual, ip_faturamento_mode, ip_faturamento_valor,
+		     fator_repasse_energia, valor_ip_com_desconto, ip_faturamento_mode, ip_faturamento_valor,
 		     ip_faturamento_percent, bandeira_com_desconto,
 		     custo_disponibilidade_sempre_cobrado, consumo_minimo_kwh, notes, status, created_by
-		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15)`,
+		) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16)`,
 		c.ID, c.CustomerID, c.ConsumerUnitID, c.VigenciaInicio, c.VigenciaFim,
-		c.DescontoPercentual, c.IPFaturamentoMode, c.IPFaturamentoValor,
+			c.FatorRepasseEnergia, c.ValorIPComDesconto, c.IPFaturamentoMode, c.IPFaturamentoValor,
 		c.IPFaturamentoPercent, c.BandeiraComDesconto,
 		c.CustoDisponibilidadeSempreCobrado, c.ConsumoMinimoKWh, c.Notes, c.Status, c.CreatedBy,
 	)
