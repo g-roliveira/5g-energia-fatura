@@ -10,12 +10,11 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /app
 
 COPY pyproject.toml ./
-COPY src ./src
-COPY services/doc-extractor-py ./services/doc-extractor-py
+COPY app ./app
 
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir ".[ocr]"
+    pip install --no-cache-dir "."
 
 EXPOSE 8090
 
-CMD ["python", "services/doc-extractor-py/app/main.py"]
+CMD ["python", "-m", "app.main"]

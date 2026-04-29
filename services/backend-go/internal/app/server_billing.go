@@ -5,6 +5,7 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -24,19 +25,28 @@ type BillingDeps struct {
 	Calculation *repo.CalculationRepo
 	Cycle       *cycle.Service
 	Adjustment  *adjustment.Service
+	SyncJobPool *cycle.WorkerPool
 }
 
 // NewBillingDeps wires the repos and services from a pgx pool.
 // Call this from NewServer after pgstore.Open succeeds.
-func NewBillingDeps(pool *pgxpool.Pool) *BillingDeps {
+func NewBillingDeps(pool *pgxpool.Pool, logger *slog.Logger) *BillingDeps {
 	contractRepo := repo.NewContractRepo(pool)
 	calcRepo := repo.NewCalculationRepo(pool)
+
+	// Worker pool para processar jobs de sync_job
+	syncJobStore := cycle.NewSyncJobStore(pool)
+	syncJobPool := cycle.NewWorkerPool(syncJobStore, 3, 2*time.Second, logger)
+	jobDeps := cycle.NewJobDeps(pool)
+	cycle.BuildHandlers(syncJobPool, jobDeps)
+
 	return &BillingDeps{
 		Pool:        pool,
 		Contract:    contract.NewService(contractRepo),
 		Calculation: calcRepo,
 		Cycle:       cycle.NewService(pool),
 		Adjustment:  adjustment.NewService(pool),
+		SyncJobPool: syncJobPool,
 	}
 }
 
@@ -70,13 +80,17 @@ func RegisterBillingRoutes(
 	// --- CONTRACTS ---------------------------------------------------
 
 	docs.add(http.MethodPost, "/v1/billing/contracts", "Create contract (nova versão fecha anterior)", []string{"billing", "contracts"}, http.StatusCreated)
+	docs.add(http.MethodGet, "/v1/billing/contracts", "List contracts by consumer unit", []string{"billing", "contracts"}, http.StatusOK)
 	docs.add(http.MethodGet, "/v1/billing/contracts/{id}", "Get contract by id", []string{"billing", "contracts"}, http.StatusOK)
 	mux.HandleFunc("/v1/billing/contracts", func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != http.MethodPost {
+		switch r.Method {
+		case http.MethodPost:
+			handleContractCreate(w, r, deps, logger)
+		case http.MethodGet:
+			handleContractList(w, r, deps, logger)
+		default:
 			w.WriteHeader(http.StatusMethodNotAllowed)
-			return
 		}
-		handleContractCreate(w, r, deps, logger)
 	})
 	mux.HandleFunc("/v1/billing/contracts/", func(w http.ResponseWriter, r *http.Request) {
 		parts := splitPath(r.URL.Path)
@@ -292,6 +306,31 @@ func handleContractCreate(w http.ResponseWriter, r *http.Request, deps *BillingD
 		return
 	}
 	writeJSON(w, http.StatusCreated, contractView(c))
+}
+
+func handleContractList(w http.ResponseWriter, r *http.Request, deps *BillingDeps, logger *slog.Logger) {
+	ucIDStr := r.URL.Query().Get("uc_id")
+	if ucIDStr == "" {
+		writeClientError(w, http.StatusBadRequest, "uc_id é obrigatório")
+		return
+	}
+	ucID, err := uuid.Parse(ucIDStr)
+	if err != nil {
+		writeClientError(w, http.StatusBadRequest, "uc_id inválido")
+		return
+	}
+
+	contracts, err := deps.Contract.ListForUC(r.Context(), ucID)
+	if err != nil {
+		writeInternalError(w, logger, "contract_list", err)
+		return
+	}
+
+	out := make([]map[string]any, len(contracts))
+	for i, c := range contracts {
+		out[i] = contractView(c)
+	}
+	writeJSON(w, http.StatusOK, map[string]any{"items": out, "count": len(out)})
 }
 
 // -----------------------------------------------------------------

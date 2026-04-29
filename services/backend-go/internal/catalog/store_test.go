@@ -42,6 +42,7 @@ func strPtr(s string) *string { return &s }
 func cleanTables(t *testing.T, pool *pgxpool.Pool) {
 	ctx := context.Background()
 	_, err := pool.Exec(ctx, `
+		DELETE FROM public.billing_calculation WHERE 1=1;
 		DELETE FROM public.contract WHERE 1=1;
 		DELETE FROM public.consumer_unit WHERE 1=1;
 		DELETE FROM public.customer WHERE 1=1;

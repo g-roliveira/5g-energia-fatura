@@ -157,14 +157,23 @@ func (r *CalculationRepo) MarkSuperseded(
 func (r *CalculationRepo) Approve(
 	ctx context.Context, id uuid.UUID, approverID uuid.UUID,
 ) error {
-	ct, err := r.pool.Exec(ctx,
-		`UPDATE public.billing_calculation
-		    SET status = 'approved',
-		        approved_at = NOW(),
-		        approved_by = $2
-		  WHERE id = $1 AND status != 'superseded'`,
-		id, approverID,
-	)
+	var query string
+	var args []any
+	if approverID == uuid.Nil {
+		query = `UPDATE public.billing_calculation
+			    SET status = 'approved',
+			        approved_at = NOW()
+			  WHERE id = $1 AND status != 'superseded'`
+		args = []any{id}
+	} else {
+		query = `UPDATE public.billing_calculation
+			    SET status = 'approved',
+			        approved_at = NOW(),
+			        approved_by = $2
+			  WHERE id = $1 AND status != 'superseded'`
+		args = []any{id, approverID}
+	}
+	ct, err := r.pool.Exec(ctx, query, args...)
 	if err != nil {
 		return fmt.Errorf("Approve: %w", err)
 	}
